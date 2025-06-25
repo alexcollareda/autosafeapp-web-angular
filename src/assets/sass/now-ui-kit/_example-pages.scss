@@ -212,43 +212,85 @@
 
 }
 
-.login-page{
+.login-page {
 
-    .card-login{
+    .card-login {
         border-radius: $border-radius-large;
         padding-bottom: $padding-base-horizontal;
         max-width: 320px;
 
-        .btn-wd{
+        .btn-wd {
             min-width: 180px;
         }
 
-        .logo-container{
-            width: 65px;
+        .logo-container {
+            width: 250px;
             margin: 0 auto;
             margin-bottom: 55px;
 
-            img{
+            img {
                 width: 100%;
             }
         }
 
-        .input-group:last-child{
+        .input-group:last-child {
             margin-bottom: 40px;
         }
 
-        &.card-plain{
+        &.card-plain {
             @include input-coloured-bg($opacity-5, $white-color, $white-color, $transparent-bg, $opacity-1, $opacity-2);
 
             .input-group-text,
             .form-group.form-group-no-border .input-group-text,
-            .input-group.form-group-no-border .input-group-text{
+            .input-group.form-group-no-border .input-group-text {
                 color: $opacity-8;
             }
         }
     }
 
-    .link{
+    .link {
+        font-size: 10px;
+        color: $white-color;
+        text-decoration: none;
+    }
+}
+
+.register-page {
+
+    .card-login {
+        border-radius: $border-radius-large;
+        padding-bottom: $padding-base-horizontal;
+
+        .btn-wd {
+            min-width: 180px;
+        }
+
+        .logo-container {
+            width: 250px;
+            margin: 0 auto;
+            margin-bottom: 55px;
+
+            img {
+                width: 100%;
+            }
+        }
+
+        .input-group:last-child {
+            margin-bottom: 40px;
+        }
+
+        &.card-plain {
+            @include input-coloured-bg($opacity-5, $white-color, $white-color, $transparent-bg, $opacity-1, $opacity-2);
+
+            .input-group-text,
+            .form-group.form-group-no-border .input-group-text,
+            .input-group.form-group-no-border .input-group-text {
+                color: $opacity-8;
+            }
+        }
+    }
+
+    .link {
         font-size: 10px;
         color: $white-color;
         text-decoration: none;

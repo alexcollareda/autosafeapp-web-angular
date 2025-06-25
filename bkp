@@ -1,0 +1,125 @@
+        <div class="page-header" filter-color="black">
+            <div class="page-header-image" style="background-image:url(assets/img/backgroundlogin.png)"></div>
+            <div class="container">
+                <div class="col-md-2 content-center">
+                    <div class="card card-login card-plain">
+                        <form class="form" method="" action="">
+                            <div class="content">
+                                <h4>Seu Parceiro Estrategico para Mais Clientes e Oportunidades.</h4>
+                                <br />
+                                <p class="category">Dados da Empresa</p>
+                                <div class="row">
+                                    <div class="input-group form-group-no-border input-lg" [ngClass]="{'input-group-focus':focus===true}">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">  <i class="now-ui-icons users_circle-08"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="CNPJ" (focus)="focus=true" (blur)="focus=false">
+                                    </div>
+                                    <div class="col-sm-6 col-lg-4">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="cnpj" [(ngModel)]="cnpj" (blur)="onCnpjBlur()" maxlength="14" placeholder="Digite seu CNPJ" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-6">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="razaoSocial" [(ngModel)]="razaoSocial" placeholder="Razao Social" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="nomeFantasia" [(ngModel)]="nomeFantasia" placeholder="Nome Fantasia" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-6">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="email" [(ngModel)]="email" placeholder="E-Mail" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="telefone" [(ngModel)]="telefone" placeholder="Telefone" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-6">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="celular" [(ngModel)]="celular" placeholder="Celular" class="form-control" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <br />
+                                <p class="category">Endereco</p>
+                                <div class="row">
+                                    <div class="col-sm-6 col-lg-3">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="cep" [(ngModel)]="cep" maxlength="8" (blur)="buscarCep()" placeholder="CEP" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-4">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="rua" [(ngModel)]="rua" placeholder="Rua" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-2">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="numero" [(ngModel)]="numero" placeholder="Numero" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-3">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="bairro" [(ngModel)]="bairro" placeholder="Bairro" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-4">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="cidade" [(ngModel)]="cidade" placeholder="Cidade" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6 col-lg-2">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" name="estado" [(ngModel)]="estado" placeholder="Estado" class="form-control" />
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="footer text-center">
+                                    <a href="#pablo" class="btn btn-primary btn-round btn-lg btn-block">Cadastrar</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer">
+                <div class="container">
+                    <nav>
+                        <ul>
+                            <li>
+                                <a href="https://www.creative-tim.com">
+                                    Creative Tim
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.creative-tim.com/about-us">
+                                    About Us
+                                </a>
+                            </li>
+                            <li>
+                                <a href="http://blog.creative-tim.com">
+                                    Blog
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/creativetimofficial/now-ui-kit/blob/master/LICENSE.md">
+                                    MIT License
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </footer>
+        </div>

@@ -127,8 +127,8 @@
   "defaultProject": "now-ui-kit-angular",
   "schematics": {
     "@schematics/angular:component": {
-      "prefix": "app",
-      "styleext": "scss"
+        "prefix": "app",
+        "style": "scss"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

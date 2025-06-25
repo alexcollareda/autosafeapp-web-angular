@@ -5,11 +5,14 @@ import { NouisliderModule } from 'ng2-nouislider';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { JwBootstrapSwitchNg2Module } from 'jw-bootstrap-switch-ng2';
 import { AgmCoreModule } from '@agm/core';
+import { Routes, RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
 
 import { LandingComponent } from './landing/landing.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ExamplesComponent } from './examples.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
     imports: [
@@ -18,6 +21,8 @@ import { ExamplesComponent } from './examples.component';
         NgbModule,
         NouisliderModule,
         JwBootstrapSwitchNg2Module,
+        RouterModule,
+        HttpClientModule,
         AgmCoreModule.forRoot({
             apiKey: 'YOUR_KEY_HERE'
         })
@@ -26,7 +31,8 @@ import { ExamplesComponent } from './examples.component';
         LandingComponent,
         LoginComponent,
         ExamplesComponent,
-        ProfileComponent
+        ProfileComponent,
+        RegisterComponent
     ]
 })
 export class ExamplesModule { }
