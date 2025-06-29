@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 
@@ -15,9 +15,12 @@ interface CompanyType {
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent implements OnInit {
+  @Input()
+  public alerts: Array<IAlert> = [];
   companyTypes: CompanyType[] = [];
   selectedCompanyTypeIds: number[] = [];
-
+  password: string = '';
+  password2: string = '';
   cnpj: string = '';
   razaoSocial: string = '';
   nomeFantasia: string = '';
@@ -33,11 +36,14 @@ export class RegisterComponent implements OnInit {
   email: string = '';
   focus;
   focus1;
+  companyId: number | null = null;
+  isCnpjExiste = false; // Controla se o CNPJ já existe
 
-  step: number = 1; // Controla o passo do formul�rio
+  step: number = 1; // Controla o passo do formulário
   buttonDescription: string = 'Continuar Cadastro';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
+
 
  ngOnInit() {
         var body = document.getElementsByTagName('body')[0];
@@ -57,7 +63,7 @@ export class RegisterComponent implements OnInit {
     }
 
 loadCompanyTypes() {
-    this.http.get<CompanyType[]>('http://localhost:8082/company-types')
+    this.http.get<CompanyType[]>('http://192.168.15.16:8082/company-types')
       .subscribe({
         next: (data) => {
           this.companyTypes = data;
@@ -71,9 +77,9 @@ loadCompanyTypes() {
    toggleCompanyType(id: number) {
     const idx = this.selectedCompanyTypeIds.indexOf(id);
     if (idx > -1) {
-      this.selectedCompanyTypeIds.splice(idx, 1); // Remove se j� estiver selecionado
+      this.selectedCompanyTypeIds.splice(idx, 1); // Remove se já estiver selecionado
     } else {
-      this.selectedCompanyTypeIds.push(id); // Adiciona se n�o estiver selecionado
+      this.selectedCompanyTypeIds.push(id); // Adiciona se não estiver selecionado
     }
   }
 
@@ -81,42 +87,63 @@ loadCompanyTypes() {
     return this.selectedCompanyTypeIds.includes(id);
   }
 
-  onCnpjBlur() {
-    if (this.cnpj && this.cnpj.length === 14) {
-      this.http.get<any>(`https://open.cnpja.com/office/${this.cnpj}`)
-        .subscribe({
-          next: (data) => {
-            this.razaoSocial = data.company?.name || '';
-            this.nomeFantasia = data.alias || '';
-            this.cep = data.address?.zip || '';
-            this.numero = data.address?.number || '';
-            // Busca o endere�o pelo CEP no servi�o local
-            if (this.cep) {
-              this.buscarCep();
-            } else {
-              this.rua = '';
-              this.bairro = '';
-              this.cidade = '';
-              this.estado = '';
-            }
-          },
-          error: () => {
-            this.razaoSocial = '';
-            this.nomeFantasia = '';
-            this.cep = '';
-            this.rua = '';
-            this.numero = '';
-            this.bairro = '';
-            this.cidade = '';
-            this.estado = '';
-          }
-        });
+    onCnpjBlur() {
+        if (this.cnpj && this.cnpj.length === 14) {
+            // 1. Verifica se a empresa já está cadastrada no backend local
+            this.http.get<any>(`http://localhost:8082/companies/cnpj/${this.cnpj}`)
+                .subscribe({
+                    next: (data) => {
+                        // Se retornar dados, empresa já cadastrada
+                        if (data && data.idCompany) {
+                            this.createAlert('danger', 'Atenção!', 'Empresa já cadastrada.');
+
+                            this.isCnpjExiste = true; // Marca que o CNPJ já existe
+                            return;
+                        }
+                    },
+                    error: (err) => {
+                        // Se der erro 404, empresa não existe, pode buscar no open.cnpja.com
+                        if (err.status === 404) {
+                            // 2. Busca dados externos
+                            this.http.get<any>(`https://open.cnpja.com/office/${this.cnpj}`)
+                                .subscribe({
+                                    next: (data) => {
+                                        this.razaoSocial = data.company?.name || '';
+                                        this.nomeFantasia = data.alias || '';
+                                        this.cep = data.address?.zip || '';
+                                        this.numero = data.address?.number || '';
+                                        if (this.cep) {
+                                            this.buscarCep();
+                                        } else {
+                                            this.rua = '';
+                                            this.bairro = '';
+                                            this.cidade = '';
+                                            this.estado = '';
+                                        }
+                                    },
+                                    error: () => {
+                                        this.razaoSocial = '';
+                                        this.nomeFantasia = '';
+                                        this.cep = '';
+                                        this.rua = '';
+                                        this.numero = '';
+                                        this.bairro = '';
+                                        this.cidade = '';
+                                        this.estado = '';
+                                    }
+                                });
+                        } else {
+                            // Outros erros (ex: servidor fora do ar)
+                            this.createAlert('danger', 'Erro!', 'Erro ao verificar CNPJ.');
+                        }
+                    }
+                });
+        }
     }
-  }
 
   buscarCep() {
     if (this.cep) {
-      this.http.get<any>(`http://localhost:8082/cep/${this.cep}`)
+      this.http.get<any>(`http://192.168.15.16:8082/cep/${this.cep}`)
         .subscribe({
           next: (cepData) => {
             this.rua = cepData.logradouro || '';
@@ -134,19 +161,22 @@ loadCompanyTypes() {
     }
   }
   nextStep() {
-      this.validateFields()
-      this.step++;
-      if(this.step === 3) {
-            this.buttonDescription = 'Finalizar';
-        } else {
-            this.buttonDescription = 'Continuar Cadastro';
-        }
+      if (this.validateFields()) {
+          this.step++;
+          if (this.step === 4) {
+              this.buttonDescription = 'Finalizar';
+          } else if (this.step === 5) {
+              this.finalizarCadastro();
+          } else {
+              this.buttonDescription = 'Continuar Cadastro';
+          }
+      }
   }
 
   backStep() {
       if (this.step > 1) {
             this.step--;
-            if(this.step === 3) {
+            if(this.step === 4) {
                 this.buttonDescription = 'Finalizar';
             } else {
                 this.buttonDescription = 'Continuar Cadastro';
@@ -154,17 +184,178 @@ loadCompanyTypes() {
         }
 }
 
-validateFields() {
-    if (this.step === 1) {
-        // Valida��o do step 1
+    validateFields() {
+        if (this.step === 1) {
+            // Verifica se o CNPJ já existe
+            if (this.isCnpjExiste) {
+                this.createAlert('danger', 'Atenção!', 'CNPJ já cadastrado.');
+                return false;
+            }
+        // Validação de campos obrigatórios
+        if (!this.cnpj || !this.razaoSocial || !this.nomeFantasia || !this.telefone || !this.email) {
+            this.createAlert('danger', 'Atenção!', 'Preencha todos os campos obrigatórios.');
+            return false;
+        }
+
+        // Validação de CNPJ (apenas se quiser validar tamanho)
+        if (this.cnpj.length !== 14) {
+            this.createAlert('danger', 'Atenção!', 'CNPJ inválido.');
+            return false;
+        }
+
+        // Validação de telefone (10 ou 11 dígitos, apenas números)
+        const telefoneLimpo = this.telefone.replace(/\D/g, '');
+        if (!(telefoneLimpo.length === 10 || telefoneLimpo.length === 11)) {
+            this.createAlert('danger', 'Atenção!', 'Telefone inválido.');
+            return false;
+        }
+
+        // Validação de e-mail
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(this.email)) {
+            this.createAlert('danger', 'Atenção!', 'E-mail inválido.');
+            return false;
+        }
+        return true;
     }
 
     if (this.step === 2) {
-        // Valida��o do step 2
+        if (!this.cep || !this.rua || !this.bairro || !this.cidade || !this.estado || !this.numero) {
+            this.createAlert('danger', 'Atenção!', 'Preencha todos os campos de endereço.');
+            return false;
+        }
+
+        // Validação de CEP (8 dígitos numéricos)
+        const cepLimpo = this.cep.replace(/\D/g, '');
+        if (cepLimpo.length !== 8) {
+            this.createAlert('danger', 'Atenção!', 'CEP deve conter 8 dígitos.');
+            return false;
+        }
+
+        // Validação de número (pode ser só não vazio, mas pode adicionar mais regras se quiser)
+        if (!this.numero.trim()) {
+            this.createAlert('danger', 'Atenção!', 'Número do endereço é obrigatório.');
+            return false;
+        }
+        return true;
     }
 
     if (this.step === 3) {
-        // Valida��o do step 3
+        if (this.selectedCompanyTypeIds.length === 0) {
+            this.createAlert('danger', 'Atenção!', 'Selecione pelo menos um tipo de empresa.');
+            return false;
+        }
+        return true;
+    }
+
+        if (this.step === 4) {
+            // Validação de senha: ao menos 6 caracteres, pelo menos uma letra e um número
+            const senhaValida = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(this.password);
+            if (!senhaValida) {
+                this.createAlert(
+                    'danger',
+                    'Atenção!',
+                    'A senha deve ter pelo menos 6 caracteres, incluindo letras e números.'
+                );
+                return false;
+            }
+            if (this.password !== this.password2) {
+                this.createAlert('danger', 'Atenção!', 'As senhas não coincidem.');
+                return false;
+            }
+
+            return true;
+        }
+}
+
+    createAlert(type: string, strong: string, message: string) {
+        let icon = '';
+        if (type === 'success') {
+            icon = 'ui-2_like';
+        } else if (type === 'danger') {
+            icon = 'objects_support-17';
+        }
+
+        const newAlert: IAlert = {
+            id: this.alerts.length + 1,
+            type,
+            strong,
+            message,
+            icon
+        };
+        this.alerts.push(newAlert);
+        setTimeout(() => {
+            this.closeAlert(newAlert);
+        }, 6000);
+    }
+    public closeAlert(alert: IAlert) {
+        const index: number = this.alerts.indexOf(alert);
+        this.alerts.splice(index, 1);
+    }
+
+    finalizarCadastro() {
+        // Monta o payload da empresa
+        const companyPayload = {
+            name: this.nomeFantasia,
+            cnpj: this.cnpj,
+            phone: this.telefone,
+            phoneIsWpp: this.isWatsApp,
+            email: this.email,
+            description: '',
+            logoUrl: '', // ajuste se necessário
+            typeIds: this.selectedCompanyTypeIds,
+            address: {
+                street: this.rua,
+                number: this.numero,
+                neighborhood: this.bairro,
+                city: this.cidade,
+                state: this.estado,
+                zipCode: this.cep,
+                complement: '', // ajuste se necessário
+                latitude: 0,
+                longitude: 0
+            }
+        };
+
+        this.http.post<any>('http://localhost:8082/companies', companyPayload)
+            .subscribe({
+                next: (companyResponse) => {
+                    this.companyId = companyResponse.idCompany;
+                    this.cadastrarLogin();
+                },
+                error: () => {
+                    this.createAlert('danger', 'Erro!', 'Erro ao cadastrar empresa.');
+                }
+            });
+    }
+
+    cadastrarLogin() {
+        if (!this.companyId) {
+            this.createAlert('danger', 'Erro!', 'ID da empresa não encontrado.');
+            return;
+        }
+
+        const loginPayload = {
+            cnpj: this.cnpj,
+            password: this.password,
+            companyId: this.companyId
+        };
+
+        this.http.post<any>('http://localhost:8082/api/login-company', loginPayload)
+            .subscribe({
+                next: () => {
+                    this.createAlert('success', 'Sucesso!', 'Cadastro realizado com sucesso!');
+                },
+                error: () => {
+                    this.createAlert('danger', 'Erro!', 'Erro ao cadastrar login.');
+                }
+            });
     }
 }
+export interface IAlert {
+    id: number;
+    type: string;
+    strong?: string;
+    message: string;
+    icon?: string;
 }

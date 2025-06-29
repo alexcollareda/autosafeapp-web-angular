@@ -10,6 +10,8 @@ import { ExamplesModule } from './examples/examples.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { HttpClientModule } from '@angular/common/http';
+import { NgxMaskModule } from 'ngx-mask';
+
 
 @NgModule({
     declarations: [
@@ -24,7 +26,8 @@ import { HttpClientModule } from '@angular/common/http';
         AppRoutingModule,
         ComponentsModule,
         ExamplesModule,
-        HttpClientModule
+        HttpClientModule,
+        NgxMaskModule.forRoot()
     ],
     providers: [],
     bootstrap: [AppComponent]
