@@ -3,6 +3,7 @@ frontend:
   phases:
     preBuild:
       commands:
+        - npm install -g @angular/cli@14
         - npm install --legacy-peer-deps
     build:
       commands:
