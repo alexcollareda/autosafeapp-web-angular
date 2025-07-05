@@ -11,12 +11,14 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxMaskModule } from 'ngx-mask';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 
 @NgModule({
     declarations: [
         AppComponent,
-        NavbarComponent
+        NavbarComponent,
+        DashboardComponent
     ],
     imports: [
         BrowserAnimationsModule,

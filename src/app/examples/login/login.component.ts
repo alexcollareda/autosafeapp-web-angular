@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginComponent implements OnInit {
       cnpj: string = '';
   password: string = '';
 
-    constructor(private http: HttpClient, private router: Router) {}
+    constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
     ngOnInit() {
         var body = document.getElementsByTagName('body')[0];
@@ -33,24 +34,28 @@ export class LoginComponent implements OnInit {
     }
 
     login() {
-    const payload = {
-      cnpj: this.cnpj,
-      password: this.password
-    };
+        const payload = {
+            cnpj: this.cnpj,
+            password: this.password
+        };
 
-    this.http.post<any>('http://localhost:8082/api/login-company/login', payload)
-      .subscribe({
-        next: (response) => {
-          // Aqui você pode salvar o token ou dados do usuário, se o backend retornar
-          // Exemplo: localStorage.setItem('token', response.token);
-          // Redireciona para a área logada
-           alert('Deu certo!');
-          this.router.navigate(['/dashboard']);
-        },
-        error: () => {
-          alert('CNPJ ou senha inválidos!');
-        }
-      });
-  }
+        this.http.post<any>('http://localhost:8082/api/login-company/login', payload)
+            .subscribe({
+                next: (response) => {
+                    // Salva o token
+                    this.authService.setToken(response.token);
+                    // Redireciona para a área logada
+                    this.router.navigate(['/dashboard']);
+                },
+                error: () => {
+                    alert('CNPJ ou senha inválidos!');
+                }
+            });
+    }
+
+    logout() {
+        this.authService.logout();
+        this.router.navigate(['/examples/login']);
+    }
 
 }
