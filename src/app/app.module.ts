@@ -12,13 +12,19 @@ import { NavbarComponent } from './shared/navbar/navbar.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgxMaskModule } from 'ngx-mask';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
+import { LoggedInLayoutComponent } from './layouts/logged-in-layout/logged-in-layout.component';
+import { NavbarLoggedComponent } from './shared/navbar-logged/navbar-logged.component';
 
 
 @NgModule({
     declarations: [
         AppComponent,
         NavbarComponent,
-        DashboardComponent
+        DashboardComponent,
+        PublicLayoutComponent,
+        LoggedInLayoutComponent,
+        NavbarLoggedComponent
     ],
     imports: [
         BrowserAnimationsModule,

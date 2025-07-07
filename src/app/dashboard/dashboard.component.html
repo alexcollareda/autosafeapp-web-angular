@@ -1,1 +1,48 @@
-<p>dashboard works!</p>
+<div class="section section-basic">
+    <div class="container">
+      <h3 class="title">Basic Elements</h3>
+
+      <div id="inputs">
+          <h4>Inputs</h4>
+          <p class="category">Form Controls</p>
+          <div class="row">
+              <div class="col-sm-6 col-lg-3">
+                  <div class="form-group">
+                      <input type="text" value="" placeholder="Regular" class="form-control" />
+                  </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                  <div class="form-group has-success">
+                      <input type="text" value="Success" class="form-control form-control-success" />
+                  </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                  <div class="form-group has-danger">
+                      <input type="email" value="Error Input" class="form-control form-control-danger" />
+                  </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                  <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
+                    <div class="input-group-prepend" >
+                      <span class="input-group-text">
+                          <i class="fa fa-user-circle"></i>
+                      </span>
+                    </div>
+                      <input type="text" class="form-control" placeholder="Left Font Awesome Icon" (focus)="focus=true" (blur)="focus=false">
+                  </div>
+              </div>
+              <div class="col-sm-6 col-lg-3">
+                  <div class="input-group" [ngClass]="{'input-group-focus':focus1===true}">
+                      <input type="text" class="form-control" placeholder="Right Nucleo Icon" (focus)="focus1=true" (blur)="focus1=false">
+                      <div class="input-group-append">
+                        <span class="input-group-text">
+                            <i class="now-ui-icons users_single-02"></i>
+                        </span>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+    </div>
+</div>

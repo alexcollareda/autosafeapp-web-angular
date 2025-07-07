@@ -44,11 +44,11 @@ export class LoginComponent implements OnInit {
                 next: (response) => {
                     // Salva o token
                     this.authService.setToken(response.token);
-                    // Redireciona para a área logada
-                    this.router.navigate(['/dashboard']);
+                    // Redireciona para a ï¿½rea logada
+                    this.router.navigate(['/app/dashboard']);
                 },
                 error: () => {
-                    alert('CNPJ ou senha inválidos!');
+                    alert('CNPJ ou senha invalidos!');
                 }
             });
     }

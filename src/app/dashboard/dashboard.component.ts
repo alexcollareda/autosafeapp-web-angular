@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -7,17 +6,14 @@ import { AuthService } from '../services/auth.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-    auth: AuthService;
-    constructor(private authService: AuthService) {
-        this.auth = authService
+    focus;
+    focus1;
+    constructor() {
+  
     }
 
   ngOnInit(): void {
   }
 
-    logout() {
-        this.auth.logout();
-        window.location.href = '/examples/login'; // Redireciona para a página de login
-    } 
 
 }

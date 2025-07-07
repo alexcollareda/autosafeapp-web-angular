@@ -11,5 +11,5 @@
 ## Visual Studio Code
 Criacao de uma nova Tela (Componente)
 1. ng generate component examples/register
-2. deve registrar na app.routing.ts
+2. Deve registrar o novo componente na app.routing.ts
 3. Para fazer redirecionamento: [routerLink]="['/examples/register']"
