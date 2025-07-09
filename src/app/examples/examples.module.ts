@@ -13,11 +13,14 @@ import { ProfileComponent } from './profile/profile.component';
 import { ExamplesComponent } from './examples.component';
 import { RegisterComponent } from './register/register.component';
 import { NgxMaskModule } from 'ngx-mask';
+import { RecoverPasswordComponent } from './recover-password/recover-password.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
     imports: [
         CommonModule,
+        ReactiveFormsModule,
         FormsModule,
         NgbModule,
         NouisliderModule,
@@ -31,7 +34,8 @@ import { NgxMaskModule } from 'ngx-mask';
         LoginComponent,
         ExamplesComponent,
         ProfileComponent,
-        RegisterComponent
+        RegisterComponent,
+        RecoverPasswordComponent
     ]
 })
 export class ExamplesModule { }
