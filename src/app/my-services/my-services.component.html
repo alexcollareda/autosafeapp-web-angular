@@ -1,0 +1,107 @@
+<div class="section section-basic">
+    <br/>
+    <br/>
+    <div class="container">
+        <div id="inputs">
+            <h4>Meus serviços</h4>
+            <p class="category">Form Controls</p>
+            <div class="row">
+                <div class="col-sm-6 col-lg-8">
+                    <div class="form-group">
+                        <input type="text" value="" placeholder="Pesquisar" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-1">
+                    <div class="form-group">
+                        
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="form-group">
+
+                        <button type="button"
+                        class="btn btn-primary btn-round btn-lg btn-block"
+                        (click)="criarNovoServico()">
+                        <i class="now-ui-icons ui-1_simple-add"></i>
+                        Novo Serviço
+                    </button>
+                </div>
+                </div>
+
+
+            </div>
+            <div class="row">
+                <div class="col-md-12 ml-auto col-xl-12 mr-auto">
+                    <div class="row">
+                           <div class="col-lg-4 col-md-4 col-sm-12"> <!-- Aqui se inicia um novo card, deve ser feito o ngFor aqui-->
+                            <div class="card">
+                                <div class="nav-tabs-navigation">
+                                    <div class="nav-tabs-wrapper">
+                                        <div class="content">
+                                            <div style="display: grid;place-items: center;">
+                                                <button class="btn btn-primary btn-simple btn-round" type="button"  (click)="openNewService(1)"> <!-- no lugar do 1, seria o id do item --><i 
+                                                        class="now-ui-icons gestures_tap-01"></i>Abrir</button>
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <div>
+
+                                            <b>Titulo</b>
+                                            <p>Titudo do Servico</p>
+                                            <b>Descricao</b>
+                                            <p>Descricao do Servico</p>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <b>Preco</b>
+                                                    <p>R$ 199,90</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span class="badge badge-success">Ativo</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-12"> <!-- Aqui se inicia um novo card -->
+                            <div class="card">
+                                <div class="nav-tabs-navigation">
+                                    <div class="nav-tabs-wrapper">
+                                        <div class="content">
+                                            <div style="display: grid;place-items: center;">
+                                                <button class="btn btn-primary btn-simple btn-round" type="button"><i
+                                                        class="now-ui-icons gestures_tap-01"></i>Abrir</button>
+                                            </div>
+                                        </div>
+                                        <br/>
+                                        <div>
+
+                                            <b>Titulo</b>
+                                            <p>Titudo do Servico</p>
+                                            <b>Descricao</b>
+                                            <p>Descricao do Servico</p>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <b>Preco</b>
+                                                    <p>R$ 199,90</p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <span class="badge badge-danger">Inativo</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </div>
+    </div>

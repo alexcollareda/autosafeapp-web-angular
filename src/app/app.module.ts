@@ -15,6 +15,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 import { LoggedInLayoutComponent } from './layouts/logged-in-layout/logged-in-layout.component';
 import { NavbarLoggedComponent } from './shared/navbar-logged/navbar-logged.component';
+import { MyServicesComponent } from './my-services/my-services.component';
+import { NewServicesComponent } from './new-services/new-services.component';
 
 
 @NgModule({
@@ -24,7 +26,9 @@ import { NavbarLoggedComponent } from './shared/navbar-logged/navbar-logged.comp
         DashboardComponent,
         PublicLayoutComponent,
         LoggedInLayoutComponent,
-        NavbarLoggedComponent
+        NavbarLoggedComponent,
+        MyServicesComponent,
+        NewServicesComponent
     ],
     imports: [
         BrowserAnimationsModule,

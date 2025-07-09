@@ -13,6 +13,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './services/auth.guard';
 import { LoggedInLayoutComponent } from './layouts/logged-in-layout/logged-in-layout.component';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
+import { MyServicesComponent } from './my-services/my-services.component';
+import { NewServicesComponent } from './new-services/new-services.component';
 
 const routes: Routes = [
   // Rotas para a área pública (sem autenticação)
@@ -37,7 +39,9 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
         { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-        { path: 'dashboard', component: DashboardComponent}
+        { path: 'dashboard', component: DashboardComponent},
+        { path: 'my-services', component: MyServicesComponent},
+        { path: 'new-services', component: NewServicesComponent}
     ]
   },
 

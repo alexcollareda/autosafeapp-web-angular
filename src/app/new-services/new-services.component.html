@@ -1,0 +1,31 @@
+<div class="section section-basic">
+    <br/>
+    <br/>
+    <div class="container">
+        <div id="inputs">
+            <h4 *ngIf="serviceId===null">Novo serviço</h4>
+            <h4 *ngIf="serviceId!==null">Alterar serviço</h4>
+            <p class="category">Form Controls</p>
+            <div class="row">
+                <div class="col-sm-6 col-lg-4">
+                    <div class="form-group">
+                        <input type="text" value="" placeholder="Titulo" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="form-group">
+                        <input type="text" value="" placeholder="Descricao" class="form-control" />
+                    </div>
+                </div>
+
+               <div class="col-sm-6 col-lg-4">
+                    <div class="form-group">
+                        <input type="text" value="" placeholder="Preco" class="form-control" />
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
