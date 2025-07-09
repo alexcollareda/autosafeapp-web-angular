@@ -28,12 +28,14 @@ import { NewServicesComponent } from './new-services/new-services.component';
         DashboardComponent,
         PublicLayoutComponent,
         LoggedInLayoutComponent,
-        NavbarLoggedComponent
+        NavbarLoggedComponent,
+        MyServicesComponent,
+        NewServicesComponent
     ],
     imports: [
-      CommonModule
+        CommonModule,
         BrowserAnimationsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
         NgbModule,
         FormsModule,
         RouterModule,
