@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { LoginCompanyService } from 'app/services/login-company.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ export class LoginComponent implements OnInit {
       cnpj: string = '';
   password: string = '';
 
-    constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
+    constructor(private http: HttpClient, private router: Router, private authService: AuthService, private loginCompanyService: LoginCompanyService) {}
 
     ngOnInit() {
         var body = document.getElementsByTagName('body')[0];
@@ -39,18 +40,17 @@ export class LoginComponent implements OnInit {
             password: this.password
         };
 
-        this.http.post<any>('http://localhost:8082/api/login-company/login', payload)
-            .subscribe({
-                next: (response) => {
-                    // Salva o token
-                    this.authService.setToken(response.token);
-                    // Redireciona para a �rea logada
+        this.loginCompanyService.doLogin(payload).subscribe({
+            next: (data) => {
+                this.authService.setToken(data.token);
+                this.authService.setCompanyName(data.companyName);
+                if (this.authService.isAuthenticated()) {
                     this.router.navigate(['/app/dashboard']);
-                },
-                error: () => {
-                    alert('CNPJ ou senha invalidos!');
+                } else {
+                    alert('CNPJ ou senha inválidos!');
                 }
-            });
+            }
+        });
     }
 
     logout() {

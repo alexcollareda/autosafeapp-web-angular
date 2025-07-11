@@ -1,0 +1,187 @@
+<div class="section section-basic">
+    <br />
+    <br />
+    <div class="container">
+        <div id="inputs">
+            <h4>Minha Empresa</h4>
+            <br/>
+            <p class="category">Dados da Empresa</p>
+            <div class="row">
+                <div class="col-sm-6 col-lg-3">
+                    <div class="form-group">
+                        <p>CNPJ</p>
+                        <input type="text" [(ngModel)]="cnpj" placeholder="CNPJ" class="form-control"
+                            [disabled]="true" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="form-group">
+                        <p>Nome da Empresa</p>
+                        <input type="text" [(ngModel)]="companyName" placeholder="Nome" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-5">
+                    <div class="form-group">
+                        <p>Descricao</p>
+                        <input type="text" [(ngModel)]="description" placeholder="Descricao" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="form-group">
+                        <p>Telefone</p>
+                        <input type="text" [(ngModel)]="phone" placeholder="Telefone" class="form-control"
+                            mask="(00) 00000-0000" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="form-group">
+                        <p>E-mail</p>
+                        <input type="text" [(ngModel)]="email" placeholder="E-Mail" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-4">
+                    <div class="form-group">
+                        <p>Imagem da Empresa</p>
+                        <input *ngIf="!logoUrl" type="text" [(ngModel)]="logoUrl" class="form-control" type="file" />
+
+                        <a *ngIf="logoUrl" class="btn btn-primary btn-round" type="button"
+                            (click)="open(classic,'' , '')">
+                            <ng-container>
+                                <i class="now-ui-icons ui-1_zoom-bold"></i>
+                            </ng-container>
+                            Ver Imagem
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <br />
+            <div class="row">
+
+                <div class="col-sm-6 col-lg-12">
+                    <div class="form-group">
+                        <p class="category">Seu Endereco</p>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-2">
+                    <div class="form-group">
+                        <p>CEP</p>
+                        <input type="text" [(ngModel)]="address.zipCode" placeholder="CEP" maxlength="8" (blur)="buscarCep()" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-5">
+                    <div class="form-group">
+                        <p>Rua</p>
+                        <input type="text" [(ngModel)]="address.street" placeholder="Rua" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="form-group">
+                        <p>Bairro</p>
+                        <input type="text" [(ngModel)]="address.neighborhood" placeholder="Bairro"
+                            class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-2">
+                    <div class="form-group">
+                        <p>Numero</p>
+                        <input type="text" [(ngModel)]="address.number" placeholder="Bairro" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-3">
+                    <div class="form-group">
+                        <p>Cidade</p>
+                        <input type="text" [(ngModel)]="address.city" placeholder="Cidade" class="form-control" />
+                    </div>
+                </div>
+
+
+                <div class="col-sm-6 col-lg-2">
+                    <div class="form-group">
+                        <p>Estado</p>
+                        <input type="text" [(ngModel)]="address.state" placeholder="Estado" maxlength="2"  class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <br />
+
+            <div class="row">
+
+                <div class="col-sm-6 col-lg-3" *ngIf="types.length > 0 && !updateTypes">
+                    <div class="form-group">
+                        <p class="category" *ngIf="types.length > 0">Tipos da sua Empresa:</p>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-2" *ngIf="types.length > 0 && !updateTypes">
+                    <div class="form-group">
+                        <a class="btn btn-primary btn-round" type="button"
+                            [ngbTooltip]="'Clique para atualizar os tipos da sua empresa'"
+                            (click)="clickToUpdateType()">
+                            <ng-container>
+                                <i class="now-ui-icons ui-1_settings-gear-63"></i>
+                            </ng-container>
+                            Alterar Tipos
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-12" *ngIf="types.length > 0 && !updateTypes">
+                    <div class="form-group">
+                        <button *ngFor="let type of types" class="btn btn-primary btn-round" type="button"
+                            [ngbTooltip]="type.description" [ngClass]="{'active': true}">
+                            <ng-container>
+                                <i class="now-ui-icons ui-1_check"></i>
+                            </ng-container>
+                            {{ type.name }}
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row mb-3" *ngIf="companyTypes.length > 0 && updateTypes">
+                <div class="col-12">
+                    <p class="category">Selecione os tipos da sua Empresa:</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button *ngFor="let type of companyTypes" class="btn btn-primary btn-round" type="button"
+                            [ngbTooltip]="type.description" [ngClass]="{'active': isCompanyTypeSelected(type.id),
+                                                            'btn-simple': !isCompanyTypeSelected(type.id)
+                                                          }" (click)="toggleCompanyType(type.id)">
+                            <ng-container *ngIf="isCompanyTypeSelected(type.id)">
+                                <i class="now-ui-icons ui-1_check"></i>
+                            </ng-container>
+                            {{ type.name }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <ng-template #classic let-c="close" let-d="dismiss">
+            <div class="modal-header justify-content-center">
+                <button type="button" class="close" (click)="d('Cross click')">
+                    <i class="now-ui-icons ui-1_simple-remove"></i>
+                </button>
+                <h4 class="title title-up">Imagem</h4>
+            </div>
+            <div class="modal-body">
+                <img *ngIf="logoUrl !== null" [src]="logoUrl" alt="Logo da Empresa" class="img-fluid"
+                    style="max-width: 60%; max-height: 60%;" />
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" (click)="excluirImagem()">Excluir Imagem</button>
+                <button type="button" class="btn btn-danger" (click)="c('Close click')">Fechar</button>
+            </div>
+        </ng-template>
+    </div>

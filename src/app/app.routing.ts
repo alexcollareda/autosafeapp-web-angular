@@ -16,6 +16,7 @@ import { PublicLayoutComponent } from './layouts/public-layout/public-layout.com
 import { MyServicesComponent } from './my-services/my-services.component';
 import { NewServicesComponent } from './new-services/new-services.component';
 import { RecoverPasswordComponent } from './examples/recover-password/recover-password.component';
+import { MyCompanyComponent } from './my-company/my-company.component';
 
 const routes: Routes = [
   // Rotas para a área pública (sem autenticação)
@@ -43,7 +44,8 @@ const routes: Routes = [
         { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
         { path: 'dashboard', component: DashboardComponent},
         { path: 'my-services', component: MyServicesComponent},
-        { path: 'new-services', component: NewServicesComponent}
+        { path: 'new-services', component: NewServicesComponent},
+        { path: 'my-company', component: MyCompanyComponent}
     ]
   },
 

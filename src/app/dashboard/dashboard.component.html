@@ -1,48 +1,92 @@
 <div class="section section-basic">
     <div class="container">
-      <h3 class="title">Basic Elements</h3>
+        <h3 class="title">Basic Elements</h3>
+        <div id="inputs">
+            <h4>Bem vindo, {{companyName}}</h4>
+            <p class="category"></p>
+            <br />
+            <br />
+            <br />
+            <div class="row">
+                <div class="col-md-12 ml-auto col-xl-12 mr-auto">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <!-- Aqui se inicia um novo card, deve ser feito o ngFor aqui-->
+                            <div class="card">
+                                <div class="nav-tabs-navigation">
+                                    <div class="nav-tabs-wrapper">
+                                        <div class="content">
+                                            <p style="font-size: 30px;"><i class="now-ui-icons ui-1_zoom-bold" style="font-size: 25px;"></i> Visualizacoes</p>
+                                        </div>
+                                        
+                                        <div>
+                                            <p class="category" style="font-size: 60px;">32<a class="category" style="font-size: 15px;"> Acessos hoje </a></p>
+                                        </div>
 
-      <div id="inputs">
-          <h4>Inputs</h4>
-          <p class="category">Form Controls</p>
-          <div class="row">
-              <div class="col-sm-6 col-lg-3">
-                  <div class="form-group">
-                      <input type="text" value="" placeholder="Regular" class="form-control" />
-                  </div>
-              </div>
-              <div class="col-sm-6 col-lg-3">
-                  <div class="form-group has-success">
-                      <input type="text" value="Success" class="form-control form-control-success" />
-                  </div>
-              </div>
-              <div class="col-sm-6 col-lg-3">
-                  <div class="form-group has-danger">
-                      <input type="email" value="Error Input" class="form-control form-control-danger" />
-                  </div>
-              </div>
-              <div class="col-sm-6 col-lg-3">
-                  <div class="input-group" [ngClass]="{'input-group-focus':focus===true}">
-                    <div class="input-group-prepend" >
-                      <span class="input-group-text">
-                          <i class="fa fa-user-circle"></i>
-                      </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <!-- Aqui se inicia um novo card, deve ser feito o ngFor aqui-->
+                            <div class="card">
+                                <div class="nav-tabs-navigation">
+                                    <div class="nav-tabs-wrapper">
+                                        <div class="content">
+                                            <p style="font-size: 30px;"><i class="now-ui-icons gestures_tap-01" style="font-size: 25px;"></i> Cliques no Ligar</p>
+                                        </div>
+                                       
+                                        <div>
+                                            <p class="category" style="font-size: 60px;">0<a class="category" style="font-size: 15px;">  ligacoes </a></p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-sm-12">
+                            <!-- Aqui se inicia um novo card, deve ser feito o ngFor aqui-->
+                            <div class="card">
+                                <div class="nav-tabs-navigation">
+                                    <div class="nav-tabs-wrapper">
+                                        <div class="content">
+                                            <p style="font-size: 30px;"><i class="now-ui-icons sport_trophy" style="font-size: 25px;"></i> Sua Nota</p>
+                                        </div>
+                                        
+                                        <div>
+                                            <p class="category" style="font-size: 60px;">5/5<a class="category" style="font-size: 15px;"> 15 avaliacoes </a></p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                          <div class="col-lg-4 col-md-4 col-sm-12">
+                            <!-- Aqui se inicia um novo card, deve ser feito o ngFor aqui-->
+                            <div class="card">
+                                <div class="nav-tabs-navigation">
+                                    <div class="nav-tabs-wrapper">
+                                        <div class="content">
+                                            <p style="font-size: 30px;"><i class="now-ui-icons ui-2_settings-90" style="font-size: 25px;"></i> Servicos</p>
+                                        </div>
+                                        
+                                        <div>
+                                            <p class="category" style="font-size: 60px;">2<a class="category" style="font-size: 15px;"> Ativos </a></p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
-                      <input type="text" class="form-control" placeholder="Left Font Awesome Icon" (focus)="focus=true" (blur)="focus=false">
-                  </div>
-              </div>
-              <div class="col-sm-6 col-lg-3">
-                  <div class="input-group" [ngClass]="{'input-group-focus':focus1===true}">
-                      <input type="text" class="form-control" placeholder="Right Nucleo Icon" (focus)="focus1=true" (blur)="focus1=false">
-                      <div class="input-group-append">
-                        <span class="input-group-text">
-                            <i class="now-ui-icons users_single-02"></i>
-                        </span>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 </div>

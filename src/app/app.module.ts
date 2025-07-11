@@ -8,7 +8,7 @@ import { ComponentsModule } from './components/components.module';
 import { ExamplesModule } from './examples/examples.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { NgxMaskModule } from 'ngx-mask';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
@@ -18,6 +18,8 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MyServicesComponent } from './my-services/my-services.component';
 import { NewServicesComponent } from './new-services/new-services.component';
+import { MyCompanyComponent } from './my-company/my-company.component';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 
 
@@ -30,7 +32,8 @@ import { NewServicesComponent } from './new-services/new-services.component';
         LoggedInLayoutComponent,
         NavbarLoggedComponent,
         MyServicesComponent,
-        NewServicesComponent
+        NewServicesComponent,
+        MyCompanyComponent
     ],
     imports: [
         CommonModule,
@@ -45,7 +48,13 @@ import { NewServicesComponent } from './new-services/new-services.component';
         HttpClientModule,
         NgxMaskModule.forRoot()
     ],
-    providers: [],
+    providers: [
+       {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true // Importante! Indica que pode haver múltiplos interceptors
+    }
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {}
