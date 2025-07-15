@@ -130,6 +130,12 @@
         }
     }
 
+    .button-dropdown-new{
+        .navbar-toggler-bar:nth-child(2){
+            width: 17px;
+        }
+    }
+
     &.navbar-transparent{
         background-color: $transparent-bg !important;
         box-shadow: none;

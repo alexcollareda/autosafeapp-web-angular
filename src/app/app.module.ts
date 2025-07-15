@@ -20,6 +20,8 @@ import { MyServicesComponent } from './my-services/my-services.component';
 import { NewServicesComponent } from './new-services/new-services.component';
 import { MyCompanyComponent } from './my-company/my-company.component';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { JwBootstrapSwitchNg2Module } from 'jw-bootstrap-switch-ng2';
+
 
 
 
@@ -46,6 +48,7 @@ import { AuthInterceptor } from './services/auth.interceptor';
         ComponentsModule,
         ExamplesModule,
         HttpClientModule,
+        JwBootstrapSwitchNg2Module,
         NgxMaskModule.forRoot()
     ],
     providers: [

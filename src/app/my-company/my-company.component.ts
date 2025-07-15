@@ -23,12 +23,21 @@ interface Address {
   longitude?: number;
 }
 
+export interface IAlert {
+  id: number;
+  type: string;
+  strong?: string;
+  message: string;
+  icon?: string;
+}
+
 @Component({
   selector: 'app-my-company',
   templateUrl: './my-company.component.html',
   styleUrls: ['./my-company.component.scss']
 })
 export class MyCompanyComponent implements OnInit {
+
   cnpj: string = '';
   companyName: string = '';
   phone: string = '';
@@ -46,6 +55,7 @@ export class MyCompanyComponent implements OnInit {
   selectedCompanyTypeIds: number[] = [];
   updateTypes: boolean = false;
   closeResult: string;
+  public alerts: Array<IAlert> = [];
 
 
   constructor(private companiesService: CompaniesService, private companyTypesService: CompanyTypesService, private modalService: NgbModal, private cepService: CepService) { }
@@ -162,6 +172,35 @@ export class MyCompanyComponent implements OnInit {
           }
         });
     }
+  }
+
+    createAlert(type: string, strong: string, message: string) {
+      let icon = '';
+      if (type === 'success') {
+        icon = 'ui-2_like';
+      } else if (type === 'danger') {
+        icon = 'objects_support-17';
+      }
+  
+      const newAlert: IAlert = {
+        id: this.alerts.length + 1,
+        type,
+        strong,
+        message,
+        icon
+      };
+      this.alerts.push(newAlert);
+      setTimeout(() => {
+        this.closeAlert(newAlert);
+      }, 6000);
+    }
+    public closeAlert(alert: IAlert) {
+      const index: number = this.alerts.indexOf(alert);
+      this.alerts.splice(index, 1);
+    }
+
+  saveCompany() {
+    throw new Error('Method not implemented.');
   }
 
 }

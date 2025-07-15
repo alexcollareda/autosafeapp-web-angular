@@ -104,3 +104,18 @@
         }
     }
 }
+
+.button-dropdown-new{
+    padding-right: $padding-base-horizontal;
+    cursor: pointer;
+
+    & .dropdown-toggle{
+        padding-top: $padding-base-vertical;
+        padding-bottom: $padding-base-vertical;
+        display: block;
+
+        &:after{
+            display: none;
+        }
+    }
+}

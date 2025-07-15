@@ -4,7 +4,7 @@
     <div class="container">
         <div id="inputs">
             <h4>Minha Empresa</h4>
-            <br/>
+            <br />
             <p class="category">Dados da Empresa</p>
             <div class="row">
                 <div class="col-sm-6 col-lg-3">
@@ -47,7 +47,8 @@
                 <div class="col-sm-6 col-lg-4">
                     <div class="form-group">
                         <p>Imagem da Empresa</p>
-                        <input *ngIf="!logoUrl" type="text" [(ngModel)]="logoUrl" class="form-control" type="file" />
+                        <input *ngIf="!logoUrl" [(ngModel)]="logoUrl" class="form-control" type="file" />
+                        <p *ngIf="!logoUrl">Dimesao Sugerida: 1200x675 px Proporcao:16:9</p>
 
                         <a *ngIf="logoUrl" class="btn btn-primary btn-round" type="button"
                             (click)="open(classic,'' , '')">
@@ -72,7 +73,8 @@
                 <div class="col-sm-6 col-lg-2">
                     <div class="form-group">
                         <p>CEP</p>
-                        <input type="text" [(ngModel)]="address.zipCode" placeholder="CEP" maxlength="8" (blur)="buscarCep()" class="form-control" />
+                        <input type="text" [(ngModel)]="address.zipCode" placeholder="CEP" maxlength="8"
+                            (blur)="buscarCep()" class="form-control" />
                     </div>
                 </div>
 
@@ -109,7 +111,8 @@
                 <div class="col-sm-6 col-lg-2">
                     <div class="form-group">
                         <p>Estado</p>
-                        <input type="text" [(ngModel)]="address.state" placeholder="Estado" maxlength="2"  class="form-control" />
+                        <input type="text" [(ngModel)]="address.state" placeholder="Estado" maxlength="2"
+                            class="form-control" />
                     </div>
                 </div>
             </div>
@@ -148,6 +151,7 @@
                 </div>
 
             </div>
+            <br/>
 
             <div class="row mb-3" *ngIf="companyTypes.length > 0 && updateTypes">
                 <div class="col-12">
@@ -165,7 +169,9 @@
                     </div>
                 </div>
             </div>
-
+            <button class="btn btn-success btn-round btn-lg" type="button" (click)="saveCompany()">
+                <i class="now-ui-icons ui-1_check"></i> Salvar Serviço
+            </button>
         </div>
         <ng-template #classic let-c="close" let-d="dismiss">
             <div class="modal-header justify-content-center">
