@@ -511,6 +511,14 @@
     transition: transform .3s cubic-bezier(.34, 2, .6, 1), box-shadow .2s ease, -webkit-transform .3s cubic-bezier(.34, 2, .6, 1);
 }
 
+.autosafe-card .dashboard-title {
+    font-size: 20px;
+}
+
+.autosafe-card .main-information {
+    font-size: 50px;
+}
+
 @media screen and (max-width: 991px) {
     .section-navbars .navbar-collapse {
         display: none !important;
