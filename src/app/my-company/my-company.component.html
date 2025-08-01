@@ -5,173 +5,204 @@
         <div id="inputs">
             <h4>Minha Empresa</h4>
             <br />
-            <p class="category">Dados da Empresa</p>
-            <div class="row">
-                <div class="col-sm-6 col-lg-3">
-                    <div class="form-group">
-                        <p>CNPJ</p>
-                        <input type="text" [(ngModel)]="cnpj" placeholder="CNPJ" class="form-control"
-                            [disabled]="true" />
+            <div *ngFor="let alert of alerts">
+                <ngb-alert [type]="alert.type" [dismissible]="false">
+                    <div class="container">
+                        <div class="alert-wrapper">
+                            <button type="button" name="button" class="close" (click)="closeAlert(alert)">
+                                <span aria-hidden="true">
+                                    <i class="now-ui-icons ui-1_simple-remove"></i>
+                                </span>
+                            </button>
+                            <div class="message">
+                                <ng-container *ngIf="alert.icon">
+                                    <div class="alert-icon">
+                                        <i class="now-ui-icons {{alert.icon}}"></i>
+                                    </div>
+                                </ng-container>
+                                <strong>{{alert.strong}} </strong>{{ alert.message }}
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-4">
-                    <div class="form-group">
-                        <p>Nome da Empresa</p>
-                        <input type="text" [(ngModel)]="companyName" placeholder="Nome" class="form-control" />
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-5">
-                    <div class="form-group">
-                        <p>Descricao</p>
-                        <input type="text" [(ngModel)]="description" placeholder="Descricao" class="form-control" />
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-3">
-                    <div class="form-group">
-                        <p>Telefone</p>
-                        <input type="text" [(ngModel)]="phone" placeholder="Telefone" class="form-control"
-                            mask="(00) 00000-0000" />
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-4">
-                    <div class="form-group">
-                        <p>E-mail</p>
-                        <input type="text" [(ngModel)]="email" placeholder="E-Mail" class="form-control" />
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-4">
-                    <div class="form-group">
-                        <p>Imagem da Empresa</p>
-                        <input *ngIf="!logoUrl" [(ngModel)]="logoUrl" class="form-control" type="file" />
-                        <p *ngIf="!logoUrl">Dimesao Sugerida: 1200x675 px Proporcao:16:9</p>
-
-                        <a *ngIf="logoUrl" class="btn btn-primary btn-round" type="button"
-                            (click)="open(classic,'' , '')">
-                            <ng-container>
-                                <i class="now-ui-icons ui-1_zoom-bold"></i>
-                            </ng-container>
-                            Ver Imagem
-                        </a>
-                    </div>
-                </div>
-
+                </ngb-alert>
             </div>
-            <br />
-            <div class="row">
+            <div class="autosafe-card">
+                <p class="category">Dados da Empresa</p>
+                <div class="row">
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-group">
+                            <label>CNPJ</label>
+                            <input type="text" [(ngModel)]="cnpj" placeholder="CNPJ" class="form-control"
+                                [disabled]="true" />
+                        </div>
+                    </div>
 
-                <div class="col-sm-6 col-lg-12">
-                    <div class="form-group">
-                        <p class="category">Seu Endereco</p>
+                    <div class="col-sm-6 col-lg-4">
+                        <div class="form-group">
+                            <label>Nome da Empresa</label>
+                            <input type="text" [(ngModel)]="companyName" placeholder="Nome" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-5">
+                        <div class="form-group">
+                            <label>Descricao</label>
+                            <input type="text" [(ngModel)]="description" placeholder="Descricao" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-group">
+                            <label>Telefone</label>
+                            <input type="text" [(ngModel)]="phone" placeholder="Telefone" class="form-control"
+                                mask="(00) 00000-0000" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-4">
+                        <div class="form-group">
+                            <label>E-mail</label>
+                            <input type="text" [(ngModel)]="email" placeholder="E-Mail" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-4">
+                        <div class="form-group">
+                            <label>Imagem da Empresa</label>
+                            <input *ngIf="!logoUrl && !preview" (change)="selectFile($event)" class="form-control"
+                                type="file" />
+                            <p *ngIf="!logoUrl && !preview">Dimesao Sugerida: 1200x675 px Proporcao:16:9</p>
+
+                            <a *ngIf="logoUrl || preview" class="btn btn-primary btn-round" type="button"
+                                (click)="open(classic,'' , '')">
+                                <ng-container>
+                                    <i class="now-ui-icons ui-1_zoom-bold"></i>
+                                </ng-container>
+                                Ver Imagem
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+                <br />
+                <div class="row">
+
+                    <div class="col-sm-6 col-lg-12">
+                        <div class="form-group">
+                            <p class="category">Seu Endereco</p>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-2">
+                        <div class="form-group">
+                            <label>CEP</label>
+                            <input type="text" [(ngModel)]="address.zipCode" placeholder="CEP" maxlength="8"
+                                (blur)="buscarCep()" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-5">
+                        <div class="form-group">
+                            <label>Rua</label>
+                            <input type="text" [(ngModel)]="address.street" placeholder="Rua" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-group">
+                            <label>Bairro</label>
+                            <input type="text" [(ngModel)]="address.neighborhood" placeholder="Bairro"
+                                class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-2">
+                        <div class="form-group">
+                            <label>Numero</label>
+                            <input type="text" [(ngModel)]="address.number" placeholder="Bairro" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="form-group">
+                            <label>Cidade</label>
+                            <input type="text" [(ngModel)]="address.city" placeholder="Cidade" class="form-control" />
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-6 col-lg-2">
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <input type="text" [(ngModel)]="address.state"
+                                (ngModelChange)="address.state = $event.toUpperCase()" placeholder="Estado"
+                                maxlength="2" class="form-control" />
+                        </div>
                     </div>
                 </div>
+                <br />
 
-                <div class="col-sm-6 col-lg-2">
-                    <div class="form-group">
-                        <p>CEP</p>
-                        <input type="text" [(ngModel)]="address.zipCode" placeholder="CEP" maxlength="8"
-                            (blur)="buscarCep()" class="form-control" />
+                <div class="row">
+
+                    <div class="col-sm-6 col-lg-3" *ngIf="types.length > 0 && !updateTypes">
+                        <div class="form-group">
+                            <p class="category" *ngIf="types.length > 0">Tipos da sua Empresa:</p>
+                        </div>
                     </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-5">
-                    <div class="form-group">
-                        <p>Rua</p>
-                        <input type="text" [(ngModel)]="address.street" placeholder="Rua" class="form-control" />
+                    <div class="col-sm-6 col-lg-2" *ngIf="types.length > 0 && !updateTypes">
+                        <div class="form-group">
+                            <a class="btn btn-primary btn-round" type="button"
+                                [ngbTooltip]="'Clique para atualizar os tipos da sua empresa'"
+                                (click)="clickToUpdateType()">
+                                <ng-container>
+                                    <i class="now-ui-icons ui-1_settings-gear-63"></i>
+                                </ng-container>
+                                Alterar Tipos
+                            </a>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-sm-6 col-lg-3">
-                    <div class="form-group">
-                        <p>Bairro</p>
-                        <input type="text" [(ngModel)]="address.neighborhood" placeholder="Bairro"
-                            class="form-control" />
+                    <div class="col-sm-6 col-lg-12" *ngIf="types.length > 0 && !updateTypes">
+                        <div class="form-group">
+                            <button *ngFor="let type of types" class="btn btn-primary btn-round" type="button"
+                                [ngbTooltip]="type.description" [ngClass]="{'active': true}">
+                                <ng-container>
+                                    <i class="now-ui-icons ui-1_check"></i>
+                                </ng-container>
+                                {{ type.name }}
+                            </button>
+                        </div>
                     </div>
+
                 </div>
+                <br />
 
-                <div class="col-sm-6 col-lg-2">
-                    <div class="form-group">
-                        <p>Numero</p>
-                        <input type="text" [(ngModel)]="address.number" placeholder="Bairro" class="form-control" />
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-3">
-                    <div class="form-group">
-                        <p>Cidade</p>
-                        <input type="text" [(ngModel)]="address.city" placeholder="Cidade" class="form-control" />
-                    </div>
-                </div>
-
-
-                <div class="col-sm-6 col-lg-2">
-                    <div class="form-group">
-                        <p>Estado</p>
-                        <input type="text" [(ngModel)]="address.state" placeholder="Estado" maxlength="2"
-                            class="form-control" />
-                    </div>
-                </div>
-            </div>
-            <br />
-
-            <div class="row">
-
-                <div class="col-sm-6 col-lg-3" *ngIf="types.length > 0 && !updateTypes">
-                    <div class="form-group">
-                        <p class="category" *ngIf="types.length > 0">Tipos da sua Empresa:</p>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-lg-2" *ngIf="types.length > 0 && !updateTypes">
-                    <div class="form-group">
-                        <a class="btn btn-primary btn-round" type="button"
-                            [ngbTooltip]="'Clique para atualizar os tipos da sua empresa'"
-                            (click)="clickToUpdateType()">
-                            <ng-container>
-                                <i class="now-ui-icons ui-1_settings-gear-63"></i>
-                            </ng-container>
-                            Alterar Tipos
-                        </a>
-                    </div>
-                </div>
-
-                <div class="col-sm-6 col-lg-12" *ngIf="types.length > 0 && !updateTypes">
-                    <div class="form-group">
-                        <button *ngFor="let type of types" class="btn btn-primary btn-round" type="button"
-                            [ngbTooltip]="type.description" [ngClass]="{'active': true}">
-                            <ng-container>
-                                <i class="now-ui-icons ui-1_check"></i>
-                            </ng-container>
-                            {{ type.name }}
-                        </button>
-                    </div>
-                </div>
-
-            </div>
-            <br/>
-
-            <div class="row mb-3" *ngIf="companyTypes.length > 0 && updateTypes">
-                <div class="col-12">
-                    <p class="category">Selecione os tipos da sua Empresa:</p>
-                    <div class="d-flex flex-wrap gap-2">
-                        <button *ngFor="let type of companyTypes" class="btn btn-primary btn-round" type="button"
-                            [ngbTooltip]="type.description" [ngClass]="{'active': isCompanyTypeSelected(type.id),
+                <div class="row mb-3" *ngIf="companyTypes.length > 0 && updateTypes">
+                    <div class="col-12">
+                        <p class="category">Selecione os tipos da sua Empresa:</p>
+                        <div class="d-flex flex-wrap gap-2">
+                            <button *ngFor="let type of companyTypes" class="btn btn-primary btn-round" type="button"
+                                [ngbTooltip]="type.description" [ngClass]="{'active': isCompanyTypeSelected(type.id),
                                                             'btn-simple': !isCompanyTypeSelected(type.id)
                                                           }" (click)="toggleCompanyType(type.id)">
-                            <ng-container *ngIf="isCompanyTypeSelected(type.id)">
-                                <i class="now-ui-icons ui-1_check"></i>
-                            </ng-container>
-                            {{ type.name }}
+                                <ng-container *ngIf="isCompanyTypeSelected(type.id)">
+                                    <i class="now-ui-icons ui-1_check"></i>
+                                </ng-container>
+                                {{ type.name }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="ml-auto mr-auto">
+
+                        <button class="btn btn-success btn-round btn-lg" type="button" (click)="saveCompany()">
+                            <i class="now-ui-icons ui-1_check"></i> Salvar Empresa
                         </button>
                     </div>
                 </div>
             </div>
-            <button class="btn btn-success btn-round btn-lg" type="button" (click)="saveCompany()">
-                <i class="now-ui-icons ui-1_check"></i> Salvar Serviço
-            </button>
         </div>
         <ng-template #classic let-c="close" let-d="dismiss">
             <div class="modal-header justify-content-center">
@@ -181,7 +212,9 @@
                 <h4 class="title title-up">Imagem</h4>
             </div>
             <div class="modal-body">
-                <img *ngIf="logoUrl !== null" [src]="logoUrl" alt="Logo da Empresa" class="img-fluid"
+                <img *ngIf="logoUrl" [src]="logoUrl" alt="Imagem da Empresa" class="img-fluid"
+                    style="max-width: 60%; max-height: 60%;" />
+                <img *ngIf="preview && !logoUrl" [src]="preview" class="img-fluid"
                     style="max-width: 60%; max-height: 60%;" />
             </div>
 

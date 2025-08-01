@@ -9,18 +9,22 @@ export class ServicesService {
     constructor(private authService: AuthService, private http: HttpClient) { }
 
     createService(service: any): Observable<any> {
-        return this.http.post<any>(environment.backendApiUrl + '/services', service);
+        return this.http.post<any>(environment.backendApiUrl + '/public/services', service);
     }
 
     findByCompanyLogged(): Observable<any> {
-        return this.http.get<any>(environment.backendApiUrl + '/services');
+        return this.http.get<any>(environment.backendApiUrl + '/public/services');
     }
 
     countActiveServices(): Observable<any> {
-        return this.http.get<Number>(environment.backendApiUrl + '/services/count/active');
+        return this.http.get<Number>(environment.backendApiUrl + '/public/services/count/active');
     }
 
     findByServiceId(serviceId): Observable<any> {
-        return this.http.get<any>(environment.backendApiUrl + '/services/company/' + serviceId);
+        return this.http.get<any>(environment.backendApiUrl + '/public/services/company/' + serviceId);
+    }
+
+    updateService(serviceId: number, servicePayload: any): Observable<any> {
+        return this.http.put<any>(environment.backendApiUrl + '/public/services/edit/' + serviceId, servicePayload);
     }
 }

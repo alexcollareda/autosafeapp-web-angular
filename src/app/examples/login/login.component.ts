@@ -35,6 +35,7 @@ export class LoginComponent implements OnInit {
     }
 
     login() {
+        this.authService.logout();
         const payload = {
             cnpj: this.cnpj,
             password: this.password

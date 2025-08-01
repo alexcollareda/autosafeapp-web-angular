@@ -89,11 +89,17 @@ export class NewServicesComponent implements OnInit {
     this.serviceId = null;
     this.selectedCompanyTypeIds = 0;
 
-     const serviceIdString = this.route.snapshot.queryParamMap.get('serviceId');
+    const serviceIdString = this.route.snapshot.queryParamMap.get('serviceId');
     if (serviceIdString) {
       this.serviceId = +serviceIdString; // O '+' converte a string para número
       console.log('Service ID (from snapshot):', this.serviceId);
-    } 
+    }
+
+    
+    if (this.serviceId === null || this.serviceId === 0) {
+      this.service.isActive = true;
+      this.service.appliesToAllVehicles = true;
+    }
 
     this.companyTypesService.getMyCompanyTypes().subscribe(
       (data) => {
@@ -110,10 +116,6 @@ export class NewServicesComponent implements OnInit {
       { value: 'STARTING_FROM', label: 'A Partir de' }
     ];
 
-    if (this.service.companyId === 0 || this.service.companyId === undefined || this.service.companyId === null) {
-      this.service.isActive = true;
-      this.service.appliesToAllVehicles = true;
-    }
     this.brandService.getAllBrands().subscribe(
       (data) => {
         this.brandList = data;
@@ -122,7 +124,7 @@ export class NewServicesComponent implements OnInit {
       (error) => {
       }
     );
-console.log('Carregando serviço com ID:', this.serviceId);
+    console.log('Carregando serviço com ID:', this.serviceId);
     if (this.serviceId !== 0) {
       console.log('Carregando serviço com ID:', this.serviceId);
       this.servicesService.findByServiceId(this.serviceId).subscribe(
@@ -254,16 +256,32 @@ console.log('Carregando serviço com ID:', this.serviceId);
         this.service.models = this.listBrandModelSelected.map(item => item.model ? item.model.idModel : null).filter(id => id !== null);
       }
 
-      this.servicesService.createService(this.service).subscribe(
-        (response) => {
-          this.createAlert('success', '', 'Serviço salvo com sucesso!');
-          this.clearInputs();
-        },
-        (error) => {
-          console.error('Erro ao salvar serviço:', error);
-          this.createAlert('danger', '', 'Erro ao salvar serviço. Tente novamente mais tarde.');
-        }
-      );
+      if (this.serviceId === null || this.serviceId === 0) {
+
+        this.servicesService.createService(this.service).subscribe(
+          (response) => {
+            this.createAlert('success', '', 'Serviço salvo com sucesso!');
+            this.clearInputs();
+          },
+          (error) => {
+            console.error('Erro ao salvar serviço:', error);
+            this.createAlert('danger', '', 'Erro ao salvar serviço. Tente novamente mais tarde.');
+          }
+        );
+      } else {
+        this.servicesService.updateService(this.serviceId, this.service).subscribe(
+          (response) => {
+            this.createAlert('success', '', 'Serviço atualizado com sucesso!');
+            this.clearInputs();
+          },
+          (error) => {
+            console.error('Erro ao atualizar serviço:', error);
+            this.createAlert('danger', '', 'Erro ao atualizar serviço. Tente novamente mais tarde.');
+          }
+        );
+      }
+
+
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

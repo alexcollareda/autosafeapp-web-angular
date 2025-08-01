@@ -20,5 +20,8 @@ export class CompaniesService {
         return this.http.get<any>(environment.backendApiUrl + '/public/companies/id')      
     }
 
+    updateCompany(companyPayload: any): Observable<any> {
+        return this.http.patch<any>(environment.backendApiUrl + '/public/companies/me', companyPayload)
+    }
 
 }

@@ -6,27 +6,29 @@
             <h4 *ngIf="!service.id">Novo serviço</h4>
             <h4 *ngIf="service.id">Alterar serviço</h4>
             <br />
-             <div *ngFor="let alert of alerts">
-                    <ngb-alert [type]="alert.type" [dismissible]="false">
-                        <div class="container">
-                            <div class="alert-wrapper">
-                                <button type="button" name="button" class="close" (click)="closeAlert(alert)">
-                                    <span aria-hidden="true">
-                                        <i class="now-ui-icons ui-1_simple-remove"></i>
-                                    </span>
-                                </button>
-                                <div class="message">
-                                    <ng-container *ngIf="alert.icon">
-                                        <div class="alert-icon">
-                                            <i class="now-ui-icons {{alert.icon}}"></i>
-                                        </div>
-                                    </ng-container>
-                                    <strong>{{alert.strong}} </strong>{{ alert.message }}
-                                </div>
+            <div *ngFor="let alert of alerts">
+                <ngb-alert [type]="alert.type" [dismissible]="false">
+                    <div class="container">
+                        <div class="alert-wrapper">
+                            <button type="button" name="button" class="close" (click)="closeAlert(alert)">
+                                <span aria-hidden="true">
+                                    <i class="now-ui-icons ui-1_simple-remove"></i>
+                                </span>
+                            </button>
+                            <div class="message">
+                                <ng-container *ngIf="alert.icon">
+                                    <div class="alert-icon">
+                                        <i class="now-ui-icons {{alert.icon}}"></i>
+                                    </div>
+                                </ng-container>
+                                <strong>{{alert.strong}} </strong>{{ alert.message }}
                             </div>
                         </div>
-                    </ngb-alert>
-                </div>
+                    </div>
+                </ngb-alert>
+            </div>
+        </div>
+        <div class="autosafe-card">
             <div class="row">
 
                 <div class="col-sm-12 col-lg-12">
@@ -49,171 +51,181 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
+            <div class="row">
 
-            <div class="col-sm-6 col-lg-4">
-                <div class="form-group">
-                    <p>Titulo *</p>
-                    <input type="text" [(ngModel)]="service.title" placeholder="Titulo" maxlength="35" class="form-control" />
+                <div class="col-sm-6 col-lg-4">
+                    <div class="form-group">
+                        <label>Titulo *</label>
+                        <input type="text" [(ngModel)]="service.title" placeholder="Titulo" maxlength="35"
+                            class="form-control" />
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-sm-6 col-lg-8">
-                <div class="form-group">
-                    <p>Descricao *</p>
-                    <input type="text" [(ngModel)]="service.description"  maxlength="120" placeholder="Descricao" class="form-control" />
+                <div class="col-sm-6 col-lg-8">
+                    <div class="form-group">
+                        <label>Descricao *</label>
+                        <input type="text" [(ngModel)]="service.description" maxlength="120" placeholder="Descricao"
+                            class="form-control" />
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-sm-6 col-lg-2">
-                <div class="form-group">
-                    <p>Preco *</p>
-                    <input type="text" [(ngModel)]="service.price" mask="separator.2" thousandSeparator="."
-                        decimalMarker="," prefix="R$ " [dropSpecialCharacters]="true"
-                        [allowNegativeNumbers]="false" [validation]="true"  placeholder="Preco" class="form-control" />
+                <div class="col-sm-6 col-lg-2">
+                    <div class="form-group">
+                        <label>Preco *</label>
+                        <input type="text" [(ngModel)]="service.price" mask="separator.2" thousandSeparator="."
+                            decimalMarker="," prefix="R$ " [dropSpecialCharacters]="true" [allowNegativeNumbers]="false"
+                            [validation]="true" placeholder="Preco" class="form-control" />
+                    </div>
                 </div>
-            </div>
-            <div class="col-sm-6 col-lg-2">
-                <div class="form-group">
-                    <p>Tipo preco</p>
-                    <!-- Onde o dropdown vai entrar -->
-                    <div class="dropdown button-dropdown-new">
-                        <div ngbDropdown>
-                            <a *ngIf="priceTypeSelected" class="btn btn-primary btn-round" type="button"
-                                ngbDropdownToggle>
-                                {{priceTypeSelected.label}}
-                            </a>
-                            <a *ngIf="!priceTypeSelected" class="btn btn-primary btn-round" type="button"
-                                ngbDropdownToggle>
-                                Selecione
-                            </a>
-                            <div ngbDropdownMenu>
-                                <a class="dropdown-header">Tipos de precos</a>
-                                <a *ngFor="let type of priceTypes" class="dropdown-item"
-                                    (click)="selectPriceType(type)">{{type.label}}</a>
+                <div class="col-sm-6 col-lg-2">
+                    <div class="form-group">
+                        <label>Tipo preco</label>
+                        <!-- Onde o dropdown vai entrar -->
+                        <div class="dropdown button-dropdown-new">
+                            <div ngbDropdown>
+                                <a *ngIf="priceTypeSelected" class="btn btn-primary btn-round" type="button"
+                                    ngbDropdownToggle>
+                                    {{priceTypeSelected.label}}
+                                </a>
+                                <a *ngIf="!priceTypeSelected" class="btn btn-primary btn-round" type="button"
+                                    ngbDropdownToggle>
+                                    Selecione
+                                </a>
+                                <div ngbDropdownMenu>
+                                    <a class="dropdown-header">Tipos de precos</a>
+                                    <a *ngFor="let type of priceTypes" class="dropdown-item"
+                                        (click)="selectPriceType(type)">{{type.label}}</a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-sm-6 col-lg-2">
-                <div class="form-group">
-                    <p>Ativo</p>
-                    <bSwitch [(ngModel)]="service.isActive" switch-on-text="Sim" switch-off-text="Nao">
-                    </bSwitch>
-                </div>
-            </div>
-
-
-        </div>
-        <br />
-        <div class="row">
-            <div class="col-sm-12 col-lg-12">
-                <div class="form-group">
-                    <p class="category">Personalizar</p>
-                </div>
-            </div>
-
-
-            <div class="col-sm-12 col-lg-12">
-                <div class="form-group">
-                    <p>Configuracao de veiculos</p>
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="checkbox" [(ngModel)]="service.appliesToAllVehicles">
-                            <span class="form-check-sign"></span>
-                            {{ service.appliesToAllVehicles ? 'Aplica-se a todos os veiculos' : 'Aplica-se apenas ao veiculo selecionado' }}
-                        </label>
+                <div class="col-sm-6 col-lg-2">
+                    <div class="form-group">
+                        <p>Ativo</p>
+                        <bSwitch [(ngModel)]="service.isActive" switch-on-text="Sim" switch-off-text="Nao">
+                        </bSwitch>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-sm-6 col-lg-3" *ngIf="!service.appliesToAllVehicles">
-                <div class="form-group">
-                    <p>Marcas</p>
 
-                    <div class="dropdown button-dropdown-new">
-                        <div ngbDropdown>
-                            <a *ngIf="brandSelected !== null" class="btn btn-primary btn-round" type="button"
-                                ngbDropdownToggle>
-                                {{brandSelected.name}}
-                            </a>
-                            <a *ngIf="brandSelected === null" class="btn btn-primary btn-round" type="button"
-                                ngbDropdownToggle>
-                                Selecione a Marca
-                            </a>
-                            <div ngbDropdownMenu>
-                                <a class="dropdown-header">Marcas</a>
-                                <input type="text" placeholder="Pesquisar marca" class="form-control mb-2"
-                                    [(ngModel)]="searchBrandTerm" (input)="onBrandSearchChange()" />
-                                <a *ngFor="let brand of filteredBrandList" class="dropdown-item"
-                                    (click)="setBrandSelected(brand)">{{brand.name}}</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-6 col-lg-3" *ngIf="!service.appliesToAllVehicles">
-                <div class="form-group">
-                    <p>Modelos</p>
-
-                    <div class="dropdown button-dropdown-new">
-                        <div ngbDropdown>
-                            <a *ngIf="modelSelected !== null" class="btn btn-primary btn-round" type="button"
-                                ngbDropdownToggle>
-                                {{modelSelected.name}}
-                            </a>
-                            <a *ngIf="modelSelected === null" class="btn btn-primary btn-round" type="button"
-                                ngbDropdownToggle>
-                                Selecione o Modelo
-                            </a>
-                            <div ngbDropdownMenu>
-                                <a class="dropdown-header">Modelos</a>
-                                <input type="text" placeholder="Pesquisar modelo" class="form-control mb-2"
-                                    [(ngModel)]="searchModelTerm" (input)="onModelSearchChange()" />
-                                <a *ngFor="let model of filteredModelList" class="dropdown-item"
-                                    (click)="setModelSelected(model)">{{model.name}}</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-6 col-lg-3" *ngIf="!service.appliesToAllVehicles">
-                <div class="form-group">
-                    <p></p>
-                    <a class="btn btn-primary btn-simple btn-round" type="button" (click)="addBrandModelToList()">
-                        <i class="now-ui-icons ui-1_simple-add"></i> Adicionar
-                    </a>
-                </div>
             </div>
             <br />
-            <div class="col-sm-6 col-lg-12" *ngIf="!service.appliesToAllVehicles && listBrandModelSelected.length > 0">
-                <div class="form-group">
-                    <p>Seus servicos aparecerao apenas para donos de </p>
-                    <p *ngFor="let brandModel of listBrandModelSelected; let i = index">
-                        {{ brandModel.brand.name }}
-                        <ng-container *ngIf="brandModel.model">
-                            {{ brandModel.model.name }}
-                        </ng-container>
-                        <a class="btn btn-primary btn-simple btn-round btn-sm" type="button"
-                            (click)="removeBrandModelSelected(i)">
-                            <i class="now-ui-icons ui-1_simple-remove"></i> Remover
+            <div class="row">
+                <div class="col-sm-12 col-lg-12">
+                    <div class="form-group">
+                        <p class="category">Personalizar</p>
+                    </div>
+                </div>
+
+
+                <div class="col-sm-12 col-lg-12">
+                    <div class="form-group">
+                        <label>Configuracao de veiculos</label>
+                        <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"
+                                    [(ngModel)]="service.appliesToAllVehicles">
+                                <span class="form-check-sign"></span>
+                                {{ service.appliesToAllVehicles ? 'Aplica-se a todos os veiculos' : 'Aplica-se apenas ao
+                                veiculo selecionado' }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-3" *ngIf="!service.appliesToAllVehicles">
+                    <div class="form-group">
+                        <label>Marcas</label>
+
+                        <div class="dropdown button-dropdown-new">
+                            <div ngbDropdown>
+                                <a *ngIf="brandSelected !== null" class="btn btn-primary btn-round" type="button"
+                                    ngbDropdownToggle>
+                                    {{brandSelected.name}}
+                                </a>
+                                <a *ngIf="brandSelected === null" class="btn btn-primary btn-round" type="button"
+                                    ngbDropdownToggle>
+                                    Selecione a Marca
+                                </a>
+                                <div ngbDropdownMenu>
+                                    <a class="dropdown-header">Marcas</a>
+                                    <input type="text" placeholder="Pesquisar marca" class="form-control mb-2"
+                                        [(ngModel)]="searchBrandTerm" (input)="onBrandSearchChange()" />
+                                    <a *ngFor="let brand of filteredBrandList" class="dropdown-item"
+                                        (click)="setBrandSelected(brand)">{{brand.name}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-3" *ngIf="!service.appliesToAllVehicles">
+                    <div class="form-group">
+                        <label>Modelos</label>
+
+                        <div class="dropdown button-dropdown-new">
+                            <div ngbDropdown>
+                                <a *ngIf="modelSelected !== null" class="btn btn-primary btn-round" type="button"
+                                    ngbDropdownToggle>
+                                    {{modelSelected.name}}
+                                </a>
+                                <a *ngIf="modelSelected === null" class="btn btn-primary btn-round" type="button"
+                                    ngbDropdownToggle>
+                                    Selecione o Modelo
+                                </a>
+                                <div ngbDropdownMenu>
+                                    <a class="dropdown-header">Modelos</a>
+                                    <input type="text" placeholder="Pesquisar modelo" class="form-control mb-2"
+                                        [(ngModel)]="searchModelTerm" (input)="onModelSearchChange()" />
+                                    <a *ngFor="let model of filteredModelList" class="dropdown-item"
+                                        (click)="setModelSelected(model)">{{model.name}}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-lg-3" *ngIf="!service.appliesToAllVehicles">
+                    <div class="form-group">
+                        <p></p>
+                        <a class="btn btn-primary btn-simple btn-round" type="button" (click)="addBrandModelToList()">
+                            <i class="now-ui-icons ui-1_simple-add"></i> Adicionar
                         </a>
-                    </p>
+                    </div>
+                </div>
+                <br />
+                <div class="col-sm-6 col-lg-12"
+                    *ngIf="!service.appliesToAllVehicles && listBrandModelSelected.length > 0">
+                    <div class="form-group">
+                        <label>Seus servicos aparecerao apenas para donos de </label>
+                        <p *ngFor="let brandModel of listBrandModelSelected; let i = index">
+                            {{ brandModel.brand.name }}
+                            <ng-container *ngIf="brandModel.model">
+                                {{ brandModel.model.name }}
+                            </ng-container>
+                            <a class="btn btn-primary btn-simple btn-round btn-sm" type="button"
+                                (click)="removeBrandModelSelected(i)">
+                                <i class="now-ui-icons ui-1_simple-remove"></i> Remover
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+
+            </div>
+            <br />
+            <br />
+            <div class="row">
+
+                <div class="ml-auto mr-auto">
+                    <button class="btn btn-success btn-round btn-lg" type="button" (click)="saveService()">
+                        <i class="now-ui-icons ui-1_check"></i> Salvar Serviço
+                    </button>
                 </div>
             </div>
-
-
         </div>
-        <br />
-        <br />
-        <button class="btn btn-success btn-round btn-lg" type="button" (click)="saveService()">
-            <i class="now-ui-icons ui-1_check"></i> Salvar Serviço
-        </button>
+
+
     </div>
-
-
 </div>
