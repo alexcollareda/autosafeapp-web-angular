@@ -21,6 +21,7 @@ import { NewServicesComponent } from './new-services/new-services.component';
 import { MyCompanyComponent } from './my-company/my-company.component';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { JwBootstrapSwitchNg2Module } from 'jw-bootstrap-switch-ng2';
+import { NewPromotionsComponent } from './new-promotions/new-promotions.component';
 
 
 
@@ -35,7 +36,8 @@ import { JwBootstrapSwitchNg2Module } from 'jw-bootstrap-switch-ng2';
         NavbarLoggedComponent,
         MyServicesComponent,
         NewServicesComponent,
-        MyCompanyComponent
+        MyCompanyComponent,
+        NewPromotionsComponent
     ],
     imports: [
         CommonModule,

@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, } from '@angular/common';
-import { BrowserModule  } from '@angular/platform-browser';
+import { BrowserModule } from '@angular/platform-browser';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ComponentsComponent } from './components/components.component';
@@ -17,6 +17,7 @@ import { MyServicesComponent } from './my-services/my-services.component';
 import { NewServicesComponent } from './new-services/new-services.component';
 import { RecoverPasswordComponent } from './examples/recover-password/recover-password.component';
 import { MyCompanyComponent } from './my-company/my-company.component';
+import { NewPromotionsComponent } from './new-promotions/new-promotions.component';
 
 const routes: Routes = [
   // Rotas para a área pública (sem autenticação)
@@ -24,28 +25,29 @@ const routes: Routes = [
     path: '', // Rota raiz (ou 'auth', 'public', etc.)
     component: PublicLayoutComponent, // Este é o layout que será renderizado
     children: [
-        { path: '', redirectTo: 'index', pathMatch: 'full' },
-        { path: 'index',                component: ComponentsComponent },
-        { path: 'nucleoicons',          component: NucleoiconsComponent },
-        { path: 'examples/landing',     component: LandingComponent },
-        { path: 'examples/login',       component: LoginComponent },
-        { path: 'examples/profile',     component: ProfileComponent },
-        { path: 'examples/register',    component: RegisterComponent },
-        { path: 'examples/recover-password',    component: RecoverPasswordComponent },
+      { path: '', redirectTo: 'index', pathMatch: 'full' },
+      { path: 'index', component: ComponentsComponent },
+      { path: 'nucleoicons', component: NucleoiconsComponent },
+      { path: 'examples/landing', component: LandingComponent },
+      { path: 'examples/login', component: LoginComponent },
+      { path: 'examples/profile', component: ProfileComponent },
+      { path: 'examples/register', component: RegisterComponent },
+      { path: 'examples/recover-password', component: RecoverPasswordComponent },
     ]
   },
 
   // Rotas para a área logada (com autenticação)
   {
-    path: 'app', 
-    component: LoggedInLayoutComponent, 
+    path: 'app',
+    component: LoggedInLayoutComponent,
     canActivate: [AuthGuard],
     children: [
-        { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-        { path: 'dashboard', component: DashboardComponent},
-        { path: 'my-services', component: MyServicesComponent},
-        { path: 'new-services', component: NewServicesComponent},
-        { path: 'my-company', component: MyCompanyComponent}
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'my-services', component: MyServicesComponent },
+      { path: 'new-services', component: NewServicesComponent },
+      { path: 'my-company', component: MyCompanyComponent },
+      { path: 'new-promotions', component: NewPromotionsComponent }
     ]
   },
 
@@ -54,12 +56,12 @@ const routes: Routes = [
 
 
 @NgModule({
-    imports: [
-        CommonModule,
-        BrowserModule,
-        RouterModule.forRoot(routes)
-    ],
-    exports: [
-    ],
+  imports: [
+    CommonModule,
+    BrowserModule,
+    RouterModule.forRoot(routes)
+  ],
+  exports: [
+  ],
 })
 export class AppRoutingModule { }
