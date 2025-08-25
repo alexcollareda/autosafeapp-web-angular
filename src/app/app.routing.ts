@@ -18,6 +18,7 @@ import { NewServicesComponent } from './new-services/new-services.component';
 import { RecoverPasswordComponent } from './examples/recover-password/recover-password.component';
 import { MyCompanyComponent } from './my-company/my-company.component';
 import { NewPromotionsComponent } from './new-promotions/new-promotions.component';
+import { MyPromotionsComponent } from './my-promotions/my-promotions.component';
 
 const routes: Routes = [
   // Rotas para a área pública (sem autenticação)
@@ -47,6 +48,7 @@ const routes: Routes = [
       { path: 'my-services', component: MyServicesComponent },
       { path: 'new-services', component: NewServicesComponent },
       { path: 'my-company', component: MyCompanyComponent },
+      { path: 'my-promotions', component: MyPromotionsComponent, canActivate: [AuthGuard] },
       { path: 'new-promotions', component: NewPromotionsComponent }
     ]
   },

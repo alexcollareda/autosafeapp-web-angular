@@ -1,6 +1,5 @@
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
-import { FormsModule} from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app.routing';
@@ -15,13 +14,14 @@ import { PublicLayoutComponent } from './layouts/public-layout/public-layout.com
 import { LoggedInLayoutComponent } from './layouts/logged-in-layout/logged-in-layout.component';
 import { NavbarLoggedComponent } from './shared/navbar-logged/navbar-logged.component';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule,FormsModule  } from '@angular/forms';
 import { MyServicesComponent } from './my-services/my-services.component';
 import { NewServicesComponent } from './new-services/new-services.component';
 import { MyCompanyComponent } from './my-company/my-company.component';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { JwBootstrapSwitchNg2Module } from 'jw-bootstrap-switch-ng2';
 import { NewPromotionsComponent } from './new-promotions/new-promotions.component';
+import { MyPromotionsComponent } from './my-promotions/my-promotions.component';
 
 
 
@@ -37,9 +37,11 @@ import { NewPromotionsComponent } from './new-promotions/new-promotions.componen
         MyServicesComponent,
         NewServicesComponent,
         MyCompanyComponent,
-        NewPromotionsComponent
+        NewPromotionsComponent,
+        MyPromotionsComponent
     ],
     imports: [
+        FormsModule ,
         CommonModule,
         BrowserAnimationsModule,
         ReactiveFormsModule,
