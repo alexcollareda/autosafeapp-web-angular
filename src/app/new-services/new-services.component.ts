@@ -4,7 +4,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { BrandService } from 'app/services/brand.service';
 import { ModelService } from 'app/services/model.service';
-import { map, Observable, filter } from 'rxjs';
+import { Observable, of, firstValueFrom } from 'rxjs';
+import { ImageService } from 'app/services/image.service'; // upload de imagem
 
 interface CompanyType {
   id: number;
@@ -83,70 +84,122 @@ export class NewServicesComponent implements OnInit {
   listBrandModelSelected: brandModelSelected[] = [];
   public alerts: Array<IAlert> = [];
 
-  constructor(private route: ActivatedRoute, private companyTypesService: CompanyTypesService, private brandService: BrandService, private modelService: ModelService, private servicesService: ServicesService) { }
+  // Upload / Preview 1:1
+  selectedFile: File | null = null;
+  selectedFileName: string | null = null;
+  previewUrl: string | null = null;
+
+  constructor(
+    private route: ActivatedRoute,
+    private companyTypesService: CompanyTypesService,
+    private brandService: BrandService,
+    private modelService: ModelService,
+    private servicesService: ServicesService,
+    private imageService: ImageService,
+  ) { }
 
   ngOnInit(): void {
     this.serviceId = null;
     this.selectedCompanyTypeIds = 0;
 
     const serviceIdString = this.route.snapshot.queryParamMap.get('serviceId');
-    if (serviceIdString) {
-      this.serviceId = +serviceIdString; // O '+' converte a string para número
-      console.log('Service ID (from snapshot):', this.serviceId);
-    }
+    if (serviceIdString) this.serviceId = +serviceIdString;
 
-    
-    if (this.serviceId === null || this.serviceId === 0) {
+    if (!this.serviceId) {
       this.service.isActive = true;
       this.service.appliesToAllVehicles = true;
     }
 
-    this.companyTypesService.getMyCompanyTypes().subscribe(
-      (data) => {
+    this.companyTypesService.getMyCompanyTypes().subscribe({
+      next: (data) => this.companyTypes = data,
+      error: () => {}
+    });
 
-        this.companyTypes = data;
-        console.log('Tipos de empresa:', this.companyTypes);
-      },
-      (error) => {
-        console.error('Erro ao buscar tipos de empresa:', error);
-      }
-    );
     this.priceTypes = [
-      { value: 'EXACT', label: 'Fixo' },
+      { value: 'EXACT',         label: 'Fixo' },
       { value: 'STARTING_FROM', label: 'A Partir de' }
     ];
 
-    this.brandService.getAllBrands().subscribe(
-      (data) => {
-        this.brandList = data;
-        this.filteredBrandList = this.brandList;
-      },
-      (error) => {
-      }
-    );
-    console.log('Carregando serviço com ID:', this.serviceId);
-    if (this.serviceId !== 0) {
-      console.log('Carregando serviço com ID:', this.serviceId);
-      this.servicesService.findByServiceId(this.serviceId).subscribe(
-        (data) => {
-          this.service = data;
-          this.selectedCompanyTypeIds = this.service.companyTypeId;
-          this.priceTypeSelected = this.priceTypes.find(pt => pt.value === this.service.priceType) || null;
+    this.brandService.getAllBrands().subscribe({
+      next: (data) => { this.brandList = data; this.filteredBrandList = this.brandList; },
+      error: () => {}
+    });
 
-          if (this.service.brands && this.service.brands.length > 0) {
-            this.brandSelected = this.brandList.find(b => this.service.brands.includes(b.idBrand)) || null;
-          }
+    // Edição: carrega dados do serviço
+    if (this.serviceId && this.serviceId !== 0) {
+      this.servicesService.findByServiceId(this.serviceId).subscribe((data) => {
+        this.service = data;
 
-          if (this.service.models && this.service.models.length > 0) {
-            this.modelSelected = this.modelList.find(m => this.service.models.includes(m.idModel)) || null;
-          }
+        this.selectedCompanyTypeIds = this.service.companyTypeId;
+        this.priceTypeSelected = this.priceTypes.find(pt => pt.value === this.service.priceType) || null;
 
-          console.log('Serviço carregado:', this.service);
+        // prévia inicial (imagem existente)
+        this.previewUrl = this.service?.imageUrl || null;
+
+        if (this.service.brands?.length) {
+          this.brandSelected = this.brandList.find(b => this.service.brands.includes(b.idBrand)) || null;
         }
-
-      );
+        if (this.service.models?.length) {
+          this.modelSelected = this.modelList.find(m => this.service.models.includes(m.idModel)) || null;
+        }
+      });
     }
   }
+
+  // =================== IMAGEM (input + preview 1:1) ===================
+  onImageChange(ev: Event) {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files?.[0] || null;
+
+    this.selectedFile = null;
+    this.selectedFileName = null;
+    this.previewUrl = this.service?.imageUrl || null;
+
+    if (!file) return;
+
+    const valid = ['image/jpeg', 'image/png'];
+    if (!valid.includes(file.type)) {
+      this.createAlert('danger', '', 'A imagem deve ser JPG ou PNG.');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      this.createAlert('danger', '', 'Tamanho máximo de 5MB.');
+      return;
+    }
+
+    this.selectedFile = file;
+    this.selectedFileName = file.name;
+
+    const reader = new FileReader();
+    reader.onload = () => (this.previewUrl = reader.result as string); // 1:1 no CSS
+    reader.readAsDataURL(file);
+  }
+
+  private callImageUpload(file: File): Observable<any> {
+    const img: any = this.imageService as any;
+    if (typeof img.uploadImage === 'function') return img.uploadImage(file);
+    if (typeof img.upload      === 'function') return img.upload(file);
+    if (typeof img.enviar      === 'function') return img.enviar(file);
+    if (typeof img.send        === 'function') return img.send(file);
+    return of({ url: '' });
+  }
+
+  private extractUrl(resp: any): string {
+    if (!resp) return '';
+    if (typeof resp === 'string') return resp;
+    return resp.url || resp.link || resp.secure_url || resp?.data?.url || '';
+  }
+
+  getFileNameFromUrl(url: string): string {
+    try {
+      const noQuery = url.split('?')[0].split('#')[0];
+      const name = noQuery.substring(noQuery.lastIndexOf('/') + 1);
+      return decodeURIComponent(name || 'imagem.jpg');
+    } catch {
+      return 'imagem.jpg';
+    }
+  }
+  // ====================================================================
 
   toggleCompanyType(id: number) {
     this.selectedCompanyTypeIds = id;
@@ -155,136 +208,116 @@ export class NewServicesComponent implements OnInit {
   isCompanyTypeSelected(id: number): boolean {
     return this.selectedCompanyTypeIds === id;
   }
+
   selectPriceType(priceType: PriceTypeOption) {
     this.priceTypeSelected = priceType;
   }
 
-  onBrandSearchChange(): void {
-    this.filterBrands();
-  }
+  onBrandSearchChange(): void { this.filterBrands(); }
 
   filterBrands(): void {
-    if (!this.searchBrandTerm || this.searchBrandTerm.trim() === '') {
-      // Se o campo de pesquisa estiver vazio, exibe a lista original completa
-      this.filteredBrandList = this.brandList;
-    } else {
-      // Filtra a lista original com base no termo de pesquisa (case-insensitive)
-      const lowerCaseSearchTerm = this.searchBrandTerm.toLowerCase();
-      this.filteredBrandList = this.brandList.filter(brand =>
-        brand.name.toLowerCase().includes(lowerCaseSearchTerm)
-      );
-    }
+    if (!this.searchBrandTerm?.trim()) { this.filteredBrandList = this.brandList; return; }
+    const q = this.searchBrandTerm.toLowerCase();
+    this.filteredBrandList = this.brandList.filter(b => b.name.toLowerCase().includes(q));
   }
 
   setBrandSelected(brand: Brand): void {
-    console.log('Marca selecionada:', brand);
     this.brandSelected = brand;
     this.searchModelByBrand();
   }
 
   searchModelByBrand(): void {
     if (this.brandSelected) {
-      this.modelService.getModelByBrand(this.brandSelected.idBrand).subscribe(
-        (data) => {
-          this.modelList = data;
-          this.filteredModelList = this.modelList;
-        },
-        (error) => {
-        }
-      );
+      this.modelService.getModelByBrand(this.brandSelected.idBrand).subscribe({
+        next: (data) => { this.modelList = data; this.filteredModelList = this.modelList; },
+        error: () => {}
+      });
     }
   }
 
-  onModelSearchChange(): void {
-    this.filterModels();
-  }
+  onModelSearchChange(): void { this.filterModels(); }
 
   filterModels(): void {
-    if (!this.searchModelTerm || this.searchModelTerm.trim() === '') {
-      // Se o campo de pesquisa estiver vazio, exibe a lista original completa
-      this.filteredModelList = this.modelList;
-    } else {
-      // Filtra a lista original com base no termo de pesquisa (case-insensitive)
-      const lowerCaseSearchTerm = this.searchModelTerm.toLowerCase();
-      this.filteredModelList = this.modelList.filter(model =>
-        model.name.toLowerCase().includes(lowerCaseSearchTerm)
-      );
-    }
+    if (!this.searchModelTerm?.trim()) { this.filteredModelList = this.modelList; return; }
+    const q = this.searchModelTerm.toLowerCase();
+    this.filteredModelList = this.modelList.filter(m => m.name.toLowerCase().includes(q));
   }
 
   setModelSelected(model: Model): void {
-    console.log('Modelo selecionado:', model);
     this.modelSelected = model;
   }
 
   addBrandModelToList(): void {
     if (this.brandSelected || this.modelSelected) {
-      const brandModel: brandModelSelected = {
-        brand: this.brandSelected,
-        model: this.modelSelected
-      };
-      this.listBrandModelSelected.push(brandModel);
-      console.log('Marca e modelo selecionados:', brandModel);
-      // Limpa as seleções após adicionar
+      const item: brandModelSelected = { brand: this.brandSelected, model: this.modelSelected };
+      this.listBrandModelSelected.push(item);
       this.brandSelected = null;
       this.modelSelected = null;
       this.searchBrandTerm = '';
       this.searchModelTerm = '';
-    } else {
-      console.error('Selecione uma marca e um modelo antes de adicionar.');
     }
   }
 
   removeBrandModelSelected(index: number): void {
     if (index > -1 && index < this.listBrandModelSelected.length) {
       this.listBrandModelSelected.splice(index, 1);
-      console.log('Marca e modelo removidos do índice:', index);
-    } else {
-      console.error('Índice inválido para remoção.', index);
     }
   }
 
-  saveService() {
+  async saveService() {
     this.service.companyTypeId = this.selectedCompanyTypeIds;
-    this.service.priceType = this.priceTypeSelected.value;
+    this.service.priceType = this.priceTypeSelected?.value;
+
     if (this.validateService()) {
       if (this.service.appliesToAllVehicles) {
         this.service.brands = [];
         this.service.models = [];
       } else {
-        this.service.brands = this.listBrandModelSelected.map(item => item.brand ? item.brand.idBrand : null).filter(id => id !== null);
-        this.service.models = this.listBrandModelSelected.map(item => item.model ? item.model.idModel : null).filter(id => id !== null);
+        this.service.brands = this.listBrandModelSelected
+          .map(item => (item.brand ? item.brand.idBrand : null))
+          .filter((id): id is number => id !== null);
+        this.service.models = this.listBrandModelSelected
+          .map(item => (item.model ? item.model.idModel : null))
+          .filter((id): id is number => id !== null);
       }
 
-      if (this.serviceId === null || this.serviceId === 0) {
+      try {
+        // Upload somente se o usuário escolheu novo arquivo
+        if (this.selectedFile) {
+          const uploadResp = await firstValueFrom(this.callImageUpload(this.selectedFile));
+          const imageUrl = this.extractUrl(uploadResp);
+          if (!imageUrl) {
+            this.createAlert('danger', '', 'Falha ao enviar a imagem.');
+            return;
+          }
+          this.service.imageUrl = imageUrl;
+        } else {
+          // Em criação, exige imagem
+          if (!this.serviceId || this.serviceId === 0) {
+            this.createAlert('danger', '', 'Selecione uma imagem para o serviço.');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+          // Em edição sem novo arquivo, mantém a URL existente
+        }
 
-        this.servicesService.createService(this.service).subscribe(
-          (response) => {
-            this.createAlert('success', '', 'Serviço salvo com sucesso!');
-            this.clearInputs();
-          },
-          (error) => {
-            console.error('Erro ao salvar serviço:', error);
-            this.createAlert('danger', '', 'Erro ao salvar serviço. Tente novamente mais tarde.');
-          }
-        );
-      } else {
-        this.servicesService.updateService(this.serviceId, this.service).subscribe(
-          (response) => {
-            this.createAlert('success', '', 'Serviço atualizado com sucesso!');
-            this.clearInputs();
-          },
-          (error) => {
-            console.error('Erro ao atualizar serviço:', error);
-            this.createAlert('danger', '', 'Erro ao atualizar serviço. Tente novamente mais tarde.');
-          }
-        );
+        if (this.serviceId === null || this.serviceId === 0) {
+          await firstValueFrom(this.servicesService.createService(this.service));
+          this.createAlert('success', '', 'Serviço salvo com sucesso!');
+          this.clearInputs();
+        } else {
+          await firstValueFrom(this.servicesService.updateService(this.serviceId, this.service));
+          this.createAlert('success', '', 'Serviço atualizado com sucesso!');
+          this.clearInputs();
+        }
+      } catch (error) {
+        console.error('Erro ao salvar/atualizar serviço:', error);
+        this.createAlert('danger', '', 'Erro ao salvar serviço. Tente novamente mais tarde.');
       }
-
-
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
   clearInputs() {
     this.service = {} as Service;
     this.ngOnInit();
@@ -297,6 +330,11 @@ export class NewServicesComponent implements OnInit {
     this.searchModelTerm = '';
     this.filteredBrandList = this.brandList;
     this.filteredModelList = this.modelList;
+
+    // limpa upload/preview
+    this.selectedFile = null;
+    this.selectedFileName = null;
+    this.previewUrl = null;
   }
 
   validateService(): boolean {
@@ -306,7 +344,6 @@ export class NewServicesComponent implements OnInit {
     }
     if (!this.service.title || this.service.title.trim() === '') {
       this.createAlert('danger', '', 'Titulo deve ser informado.');
-
       return false;
     }
     if (!this.service.description || this.service.description.trim() === '') {
@@ -330,28 +367,16 @@ export class NewServicesComponent implements OnInit {
 
   createAlert(type: string, strong: string, message: string) {
     let icon = '';
-    if (type === 'success') {
-      icon = 'ui-2_like';
-    } else if (type === 'danger') {
-      icon = 'objects_support-17';
-    }
+    if (type === 'success') icon = 'ui-2_like';
+    else if (type === 'danger') icon = 'objects_support-17';
 
-    const newAlert: IAlert = {
-      id: this.alerts.length + 1,
-      type,
-      strong,
-      message,
-      icon
-    };
+    const newAlert: IAlert = { id: this.alerts.length + 1, type, strong, message, icon };
     this.alerts.push(newAlert);
-    setTimeout(() => {
-      this.closeAlert(newAlert);
-    }, 6000);
+    setTimeout(() => this.closeAlert(newAlert), 6000);
   }
+
   public closeAlert(alert: IAlert) {
     const index: number = this.alerts.indexOf(alert);
     this.alerts.splice(index, 1);
   }
-
-
 }

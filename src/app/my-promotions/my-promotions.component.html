@@ -3,7 +3,7 @@
     <br/>
     <div class="container">
         <div id="inputs">
-            <h4>Minhas Promoções</h4>
+            <h4>Minhas promoçoes</h4>
             <br />
             <div class="row">
                 <div class="col-sm-6 col-lg-8">
@@ -17,33 +17,46 @@
                         
                     </div>
                 </div>
-
-      <div class="col-12 col-md-4 col-lg-3 d-flex justify-content-md-end mt-3 mt-md-0">
-        <button class="btn btn-primary btn-round btn-lg" (click)="openCreate()">
-          <i class="now-ui-icons ui-1_simple-add mr-1"></i>
-          Nova Promoção
-        </button>
-      </div>
+   
+      <button
+        class="btn btn-primary btn-round new-promotion-btn"
+        [routerLink]="['/app/new-promotions']"
+      >
+        <i class="now-ui-icons ui-1_simple-add mr-1"></i>
+        Nova Promoção
+      </button>
     </div>
 
     <!-- Estados -->
     <div *ngIf="loading" class="mt-3">Carregando...</div>
     <div *ngIf="errorMsg" class="text-danger mt-3">{{ errorMsg }}</div>
 
-    <!-- Grid -->
+    <!-- GRID (classe certa!) -->
     <div class="cards-grid">
-      <div class="promo-card" *ngFor="let p of filtered">
-        <div class="cover">
-          <img [src]="p.imageUrl" alt="{{ p.title }}" />
+      <div
+        class="promo-card clickable"
+        *ngFor="let p of filtered"
+        tabindex="0"
+        role="button"
+        (click)="openEdit(p)"
+        (keydown.enter)="openEdit(p)"
+        (keydown.space)="openEdit(p)"
+        [attr.aria-label]="'Abrir edição da promoção ' + (p.title || '')"
+      >
+        <div class="cover" (click)="openEdit(p)">
+          <img [src]="p.imageUrl" [alt]="p.title || 'Promoção'" />
           <div class="overlay">
             <div class="title">{{ p.title }}</div>
-            <button class="btn btn-warning btn-sm" (click)="openAction(p)">
+            <button
+              class="btn btn-warning btn-sm"
+              (click)="$event.stopPropagation(); openAction(p)"
+            >
               {{ ctaLabel(p.ctaButtonType) }}
             </button>
           </div>
         </div>
 
-        <div class="meta">
+        <div class="meta" (click)="openEdit(p)">
           <div class="desc">{{ p.description }}</div>
           <span class="badge" [class.active]="isActive(p)" [class.inactive]="!isActive(p)">
             {{ isActive(p) ? 'ATIVA' : 'INATIVA' }}

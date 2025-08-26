@@ -3,9 +3,10 @@
   <br />
   <div class="container">
 
-    <!-- Título -->
+    <!-- Título dinâmico -->
     <div id="inputs">
-      <h4>Nova Promoção</h4>
+      <h4 *ngIf="!isEdit">Nova Promoção</h4>
+      <h4 *ngIf="isEdit">Alterar Promoção</h4>
       <br />
 
       <!-- Alerts -->
@@ -14,15 +15,11 @@
           <div class="container">
             <div class="alert-wrapper">
               <button type="button" name="button" class="close" (click)="closeAlert(alert)">
-                <span aria-hidden="true">
-                  <i class="now-ui-icons ui-1_simple-remove"></i>
-                </span>
+                <span aria-hidden="true"><i class="now-ui-icons ui-1_simple-remove"></i></span>
               </button>
               <div class="message">
                 <ng-container *ngIf="alert.icon">
-                  <div class="alert-icon">
-                    <i class="now-ui-icons {{alert.icon}}"></i>
-                  </div>
+                  <div class="alert-icon"><i class="now-ui-icons {{alert.icon}}"></i></div>
                 </ng-container>
                 <strong>{{alert.strong}} </strong>{{ alert.message }}
               </div>
@@ -33,10 +30,9 @@
     </div>
 
     <div class="autosafe-card">
-      <!-- FORM REACTIVE -->
       <form [formGroup]="form" (ngSubmit)="savePromotion()">
         <div class="row">
-          <!-- COL1: Campos principais -->
+          <!-- COL1 -->
           <div class="col-lg-5">
 
             <div class="form-group">
@@ -50,7 +46,6 @@
               </small>
             </div>
 
-            <!-- Descrição (obrigatória no DTO) -->
             <div class="form-group">
               <label>Descrição *</label>
               <textarea class="form-control" formControlName="description" rows="3" placeholder="Descrição da promoção"></textarea>
@@ -62,13 +57,12 @@
               </small>
             </div>
 
-            <!-- CTA do backend -->
             <div class="form-group">
               <label>Tipo do Botão (CTA) *</label>
               <select class="form-control" formControlName="ctaButtonType">
-                <option value="SEE_MORE">SEE_MORE</option>
-                <option value="BOOK_NOW">BOOK_NOW</option>
-                <option value="CONTACT_US">CONTACT_US</option>
+                <option value="SEE_MORE">VER MAIS</option>
+                <option value="BOOK_NOW">RESERVE AGORA</option>
+                <option value="CONTACT_US">CONTATE NOS</option>
               </select>
               <small class="text-muted">Valores aceitos pelo backend.</small>
               <small class="text-danger d-block" *ngIf="form.get('ctaButtonType')?.touched && form.get('ctaButtonType')?.hasError('required')">
@@ -109,15 +103,11 @@
               />
               <div class="list-group mt-1" *ngIf="serviceOptions.length || searching" style="max-height: 220px; overflow-y:auto;">
                 <div class="list-group-item" *ngIf="searching">Buscando...</div>
-                <button
-                  type="button"
-                  class="list-group-item list-group-item-action"
-                  *ngFor="let s of serviceOptions"
-                  (click)="pickService(s)">
+                <button type="button" class="list-group-item list-group-item-action"
+                        *ngFor="let s of serviceOptions" (click)="pickService(s)">
                   {{ s.title }}
                 </button>
               </div>
-              <!-- mantém o valor selecionado -->
               <input type="number" formControlName="serviceId" hidden />
               <div class="mt-2" *ngIf="form.get('serviceId')?.value">
                 <span class="badge badge-pill badge-info p-2">
@@ -150,33 +140,18 @@
             </div>
 
             <!-- Erros de faixa de data -->
-            <div *ngIf="form.errors?.endBeforeStart" class="text-danger font-weight-bold mt-1">
-              Data fim não pode ser antes do início.
-            </div>
-            <div *ngIf="form.errors?.rangeMax30" class="text-danger font-weight-bold mt-1">
-              Promoção pode durar no máximo 30 dias.
-            </div>
-            <div *ngIf="form.errors?.startInPast" class="text-danger font-weight-bold mt-1">
-              A data de início deve ser hoje ou futura.
-            </div>
-            <div *ngIf="form.errors?.endNotFuture" class="text-danger font-weight-bold mt-1">
-              A data de fim deve ser futura.
-            </div>
+            <div *ngIf="form.errors?.endBeforeStart" class="text-danger font-weight-bold mt-1">Data fim não pode ser antes do início.</div>
+            <div *ngIf="form.errors?.rangeMax30" class="text-danger font-weight-bold mt-1">Promoção pode durar no máximo 30 dias.</div>
+            <div *ngIf="form.errors?.startInPast" class="text-danger font-weight-bold mt-1">A data de início deve ser hoje ou futura.</div>
+            <div *ngIf="form.errors?.endNotFuture" class="text-danger font-weight-bold mt-1">A data de fim deve ser futura.</div>
 
             <div class="form-group">
               <label>Imagem *</label>
-              <input
-                type="file"
-                class="form-control"
-                accept="image/png,image/jpeg"
-                (change)="onFileChange($event)" />
+              <input type="file" class="form-control" accept="image/png,image/jpeg" (change)="onFileChange($event)" />
               <small class="text-muted d-block">PNG ou JPG até 5MB</small>
-              <small class="text-muted d-block">
-                Tamanho recomendado: <strong>3:4</strong> — <strong>709 × 945 px</strong>
-              </small>
-              <small class="text-info d-block" *ngIf="selectedFile">
-                Arquivo selecionado: {{ selectedFile?.name }}
-              </small>
+              <small class="text-muted d-block">Tamanho recomendado: <strong>3:4</strong> — <strong>709 × 945 px</strong></small>
+              <small class="text-info d-block" *ngIf="selectedFile">Arquivo selecionado: {{ selectedFile?.name }}</small>
+              <small class="text-info d-block" *ngIf="!selectedFile && existingImageUrl">Arquivo atual: {{ fileNameFromUrl(existingImageUrl) }}</small>
               <small class="text-danger d-block" *ngIf="form.get('imageFile')?.touched && form.get('imageFile')?.hasError('required')">
                 Selecione uma imagem.
               </small>
@@ -187,16 +162,17 @@
           <div class="col-lg-4">
             <h4>Pré-visualização</h4>
             <div class="autosafe-card-promotion" style="position:relative;">
-              <!-- imagem -->
-              <img *ngIf="previewUrl" [src]="previewUrl" alt="Prévia"
+              <img *ngIf="previewUrl; else existing" [src]="previewUrl" alt="Prévia"
                    style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:12px;" />
-              <!-- fallback -->
-              <div *ngIf="!previewUrl"
-                   style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb;">
-                Sem imagem
-              </div>
+              <ng-template #existing>
+                <img *ngIf="existingImageUrl" [src]="existingImageUrl" alt="Imagem atual"
+                     style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:12px;" />
+                <div *ngIf="!existingImageUrl"
+                     style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#bbb;">
+                  Sem imagem
+                </div>
+              </ng-template>
 
-              <!-- overlay: título + botão -->
               <div style="position:absolute; inset:0; display:flex; flex-direction:column; justify-content:flex-end;
                           padding:16px; background:linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,0) 40%);">
                 <p style="color:#fff; margin:0 0 8px 0; font-weight:700;">
@@ -214,10 +190,12 @@
             <div class="ml-auto mr-auto w-100 text-center">
               <button class="btn btn-success btn-round btn-lg" type="submit" [disabled]="saving">
                 <span *ngIf="saving" class="spinner-border spinner-border-sm mr-1" role="status" aria-hidden="true"></span>
-                <i class="now-ui-icons ui-1_check" *ngIf="!saving"></i> Salvar Promoção
+                <i class="now-ui-icons ui-1_check" *ngIf="!saving"></i>
+                {{ isEdit ? 'Atualizar Promoção' : 'Salvar Promoção' }}
               </button>
             </div>
           </div>
+
         </div>
       </form>
     </div>

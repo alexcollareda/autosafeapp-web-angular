@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, takeUntil, of, Observable, firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 import { ImageService } from '../services/image.service';
 import { ServicesService } from '../services/services.service';
@@ -20,24 +21,37 @@ export interface IAlert {
   icon?: string;
 }
 
+/** Converte 'YYYY-MM-DD' em Date local 00:00 sem deslocamento de timezone */
+function parseLocalDate(isoDate: string): Date {
+  const [y, m, d] = isoDate.split('-').map(Number);
+  const dt = new Date(y, (m ?? 1) - 1, d ?? 1);
+  dt.setHours(0, 0, 0, 0);
+  return dt;
+}
+
 /** Regra: fim >= início; duração <= 30d; start >= hoje; end > hoje */
 function dateRangeValidator(ctrl: AbstractControl): ValidationErrors | null {
-  const start = ctrl.get('startDate')?.value;
-  const end = ctrl.get('endDate')?.value;
+  const start = ctrl.get('startDate')?.value as string | undefined;
+  const end   = ctrl.get('endDate')?.value as string | undefined;
   if (!start || !end) return null;
 
-  const s = new Date(start);
-  const e = new Date(end);
-  const today = new Date(); today.setHours(0,0,0,0);
+  // IMPORTANTÍSSIMO: parse local, não UTC
+  const s = parseLocalDate(start);
+  const e = parseLocalDate(end);
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // hoje local 00:00
 
   const errors: any = {};
+
   if (e < s) errors.endBeforeStart = true;
 
-  const diff = Math.floor((e.getTime() - s.getTime()) / (24 * 3600 * 1000)) + 1;
-  if (diff > 30) errors.rangeMax30 = true;
+  const oneDay = 24 * 3600 * 1000;
+  const diffDays = Math.floor((e.getTime() - s.getTime()) / oneDay) + 1;
+  if (diffDays > 30) errors.rangeMax30 = true;
 
-  if (s < today) errors.startInPast = true;
-  if (e <= today) errors.endNotFuture = true;
+  if (s < today) errors.startInPast = true; // "A data de início deve ser hoje ou futura."
+  if (e <= today) errors.endNotFuture = true; // se quiser permitir "hoje", troque para (e < today)
 
   return Object.keys(errors).length ? errors : null;
 }
@@ -49,47 +63,50 @@ function dateRangeValidator(ctrl: AbstractControl): ValidationErrors | null {
 })
 export class NewPromotionsComponent implements OnInit, OnDestroy {
 
-  public alerts: Array<IAlert> = [];
+  alerts: Array<IAlert> = [];
   saving = false;
   searching = false;
 
-  /** Form para UI + DTO */
+  isEdit = false;
+  promotionId: number | null = null;
+
   form: FormGroup = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(80)]],
     description: ['', [Validators.required, Validators.maxLength(500)]],
-
-    // CTA do DTO
     ctaButtonType: ['SEE_MORE' as CtaButtonTypeEnum, [Validators.required]],
-
-    // controla campos condicionais na UI (vira promotionType no payload)
     type: ['PROFILE_REDIRECT' as UiActionType, Validators.required],
-    externalLink: [''],                 // -> targetUrl (se EXTERNAL_LINK)
-    serviceId: [null as number | null], // -> serviceId (se SERVICE_LINK)
-
+    externalLink: [''],
+    serviceId: [null as number | null],
     startDate: ['', Validators.required],
     endDate: ['', Validators.required],
-
-    imageFile: [null as File | null, Validators.required], // só no FE
+    imageFile: [null as File | null, Validators.required], // em edição removo esse required
   }, { validators: [dateRangeValidator] });
 
   previewUrl: string | null = null;
   selectedFile: File | null = null;
+  existingImageUrl: string | null = null;
 
   serviceQuery = '';
   serviceOptions: ServiceOption[] = [];
   private serviceSearch$ = new Subject<string>();
 
   private destroy$ = new Subject<void>();
-  private API_ROOT = environment.backendApiUrl; // ex.: http://localhost:8082
+  private API_ROOT = environment.backendApiUrl;
 
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
+    private route: ActivatedRoute,
     private imageService: ImageService,
     private servicesService: ServicesService
   ) {}
 
   ngOnInit(): void {
+    // modo edição?
+    const idStr = this.route.snapshot.queryParamMap.get('promotionId');
+    this.isEdit = !!idStr;
+    this.promotionId = idStr ? Number(idStr) : null;
+
     // validações condicionais
     this.form.get('type')!.valueChanges
       .pipe(takeUntil(this.destroy$))
@@ -98,13 +115,8 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
         const svc  = this.form.get('serviceId')!;
         link.clearValidators();
         svc.clearValidators();
-
         if (type === 'EXTERNAL_LINK') {
-          link.setValidators([
-            Validators.required,
-            Validators.maxLength(500),
-            Validators.pattern(/^https?:\/\/.+/i),
-          ]);
+          link.setValidators([Validators.required, Validators.maxLength(500), Validators.pattern(/^https?:\/\/.+/i)]);
         } else if (type === 'SERVICE_LINK') {
           svc.setValidators([Validators.required]);
         }
@@ -128,11 +140,46 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
           this.serviceOptions = (opts || []).map((x: any) => ({
             id: x.id ?? x.idService ?? x.serviceId,
             title: x.title ?? x.name ?? x.serviceName ?? x.descricao ?? 'Serviço'
-          } as ServiceOption));
+          }));
           this.searching = false;
         },
         error: () => { this.serviceOptions = []; this.searching = false; }
       });
+
+    // se for edição, carrega a promoção
+    if (this.isEdit && this.promotionId) {
+      this.loadPromotion(this.promotionId);
+      // imagem não é obrigatória em edição
+      this.form.get('imageFile')!.clearValidators();
+      this.form.get('imageFile')!.updateValueAndValidity();
+    }
+  }
+
+  /** Carrega a promoção do backend e preenche o formulário */
+  private loadPromotion(id: number) {
+    // ajuste a rota se o seu back usar outra:
+    this.http.get<any>(`${this.API_ROOT}/api/promotions/company/${id}`).subscribe({
+      next: (p) => {
+        // mapeia para o form
+        this.form.patchValue({
+          title: p.title ?? '',
+          description: p.description ?? '',
+          ctaButtonType: p.ctaButtonType ?? 'SEE_MORE',
+          type: p.promotionType ?? 'PROFILE_REDIRECT',
+          externalLink: p.targetUrl ?? '',
+          serviceId: p.serviceId ?? null,
+          startDate: p.startDate ?? '',
+          endDate: p.endDate ?? ''
+        });
+        if (p.serviceId && p.serviceName) this.serviceQuery = p.serviceName;
+
+        this.existingImageUrl = p.imageUrl ?? null;
+        this.previewUrl = null; // só mostra prévia se trocar o arquivo
+      },
+      error: (e) => {
+        this.pushAlert('danger', 'Falha', e?.error?.message || 'Não foi possível carregar a promoção.');
+      }
+    });
   }
 
   /** Compat: diferentes assinaturas do ServicesService */
@@ -187,7 +234,6 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
     this.serviceSearch$.next(q);
   }
 
-  /** texto do botão na prévia para os 3 CTAs do back */
   labelForCta(t: string | null | undefined): string {
     switch (t) {
       case 'SEE_MORE':   return 'Ver mais';
@@ -200,7 +246,13 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
   async savePromotion() {
     this.clearAlerts();
 
-    if (this.form.invalid || !this.selectedFile) {
+    // em criação precisa de imagem; em edição, não (se já existir uma)
+    if (!this.isEdit && (this.form.invalid || !this.selectedFile)) {
+      this.form.markAllAsTouched();
+      this.pushAlert('warning', 'Campos obrigatórios', 'Verifique o formulário.');
+      return;
+    }
+    if (this.isEdit && this.form.invalid) {
       this.form.markAllAsTouched();
       this.pushAlert('warning', 'Campos obrigatórios', 'Verifique o formulário.');
       return;
@@ -209,41 +261,45 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
     try {
       this.saving = true;
 
-      // 1) upload da imagem
-      const uploadResp: any = await firstValueFrom(this.callImageUpload(this.selectedFile!));
-      const imageUrl = this.extractUrl(uploadResp);
-      if (!imageUrl) throw new Error('Falha ao obter URL da imagem do upload.');
+      let imageUrlToSend: string | null = this.existingImageUrl || null;
 
-      // 2) payload EXATO do DTO
+      // upload se usuário escolheu nova imagem
+      if (this.selectedFile) {
+        const uploadResp: any = await firstValueFrom(this.callImageUpload(this.selectedFile));
+        const imageUrl = this.extractUrl(uploadResp);
+        if (!imageUrl) throw new Error('Falha ao obter URL da imagem do upload.');
+        imageUrlToSend = imageUrl;
+      }
+
       const v = this.form.value;
       const payload: any = {
         title: (v.title || '').trim(),
         description: (v.description || '').trim(),
-        promotionType: v.type as UiActionType,            // enum do back
-        ctaButtonType: v.ctaButtonType as CtaButtonTypeEnum, // enum do back
-        imageUrl,
+        promotionType: v.type as UiActionType,
+        ctaButtonType: v.ctaButtonType as CtaButtonTypeEnum,
+        imageUrl: imageUrlToSend,
         startDate: v.startDate,
         endDate: v.endDate
-        // opcional:
-        // imageAspectRatio: '3:4'
       };
 
-      if (v.type === 'EXTERNAL_LINK') {
-        payload.targetUrl = (v.externalLink || '').trim();
+      if (v.type === 'EXTERNAL_LINK') payload.targetUrl = (v.externalLink || '').trim();
+      if (v.type === 'SERVICE_LINK')  payload.serviceId = Number(v.serviceId);
+
+      if (!payload.imageUrl) {
+        // último “paraquedas” para o DTO que exige imageUrl
+        this.pushAlert('danger', 'Imagem obrigatória', 'Selecione uma imagem.');
+        this.saving = false;
+        return;
       }
-      if (v.type === 'SERVICE_LINK') {
-        payload.serviceId = Number(v.serviceId);
+
+      if (this.isEdit && this.promotionId) {
+        // ajuste se o seu backend usa outro verbo/rota
+        await firstValueFrom(this.http.put(`${this.API_ROOT}/api/promotions/company/${this.promotionId}`, payload));
+        this.pushAlert('success', 'Sucesso', 'Promoção atualizada com sucesso!');
+      } else {
+        await firstValueFrom(this.http.post(`${this.API_ROOT}/api/promotions/company`, payload));
+        this.pushAlert('success', 'Sucesso', 'Promoção criada com sucesso!');
       }
-
-      console.log('POST payload ->', payload);
-
-      // 3) POST para o back
-      await firstValueFrom(this.http.post(
-        `${this.API_ROOT}/api/promotions/company`,
-        payload
-      ));
-
-      this.pushAlert('success', 'Sucesso', 'Promoção criada com sucesso!');
     } catch (e: any) {
       console.error('Erro backend:', e?.error || e);
       const be = e?.error;
@@ -271,6 +327,13 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
     if (!resp) return '';
     if (typeof resp === 'string') return resp;
     return resp.url || resp.link || resp.secure_url || resp?.data?.url || '';
+  }
+
+  fileNameFromUrl(url: string): string {
+    try {
+      const clean = url.split('?')[0].split('#')[0];
+      return decodeURIComponent(clean.substring(clean.lastIndexOf('/') + 1));
+    } catch { return 'imagem.jpg'; }
   }
 
   private pushAlert(type: IAlert['type'], strong: string, message: string) {

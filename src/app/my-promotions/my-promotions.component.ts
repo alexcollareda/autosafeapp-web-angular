@@ -15,9 +15,7 @@ export class MyPromotionsComponent implements OnInit {
 
   constructor(private promos: PromotionsService, private router: Router) {}
 
-  ngOnInit(): void {
-    this.fetch();
-  }
+  ngOnInit(): void { this.fetch(); }
 
   fetch() {
     this.loading = true;
@@ -34,9 +32,7 @@ export class MyPromotionsComponent implements OnInit {
   get filtered(): Promotion[] {
     const q = (this.search || '').toLowerCase();
     return this.items.filter(p =>
-      !q ||
-      p.title?.toLowerCase().includes(q) ||
-      p.description?.toLowerCase().includes(q)
+      !q || p.title?.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
     );
   }
 
@@ -57,15 +53,18 @@ export class MyPromotionsComponent implements OnInit {
   }
 
   openCreate() {
-    this.router.navigate(['app/new-promotions']);
+    // mantido por compatibilidade, mas o botão usa routerLink
+    this.router.navigateByUrl('/app/new-promotions');
   }
 
-  // se quiser “Abrir” a ação:
+  openEdit(p: Promotion) {
+    // edição no MESMO componente, via query param
+    this.router.navigateByUrl(`app/new-promotions?promotionId=${p.id}`);
+  }
+
   openAction(p: Promotion) {
     if (p.promotionType === 'EXTERNAL_LINK' && p.targetUrl) {
       window.open(p.targetUrl, '_blank');
     }
-    // PROFILE_REDIRECT: não fazer nada (conforme requisito)
-    // SERVICE_LINK: se tiver rota de serviço, pode navegar pra ela
   }
 }
