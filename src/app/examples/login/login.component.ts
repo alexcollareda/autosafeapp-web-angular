@@ -50,6 +50,9 @@ export class LoginComponent implements OnInit {
                 } else {
                     alert('CNPJ ou senha inválidos!');
                 }
+            },
+            error: (err) => {
+                alert('CNPJ ou senha inválidos!');
             }
         });
     }

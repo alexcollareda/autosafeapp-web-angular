@@ -340,7 +340,6 @@ export class RegisterComponent implements OnInit {
         const loginPayload = {
             cnpj: this.cnpj,
             password: this.password,
-            companyId: this.companyId
         };
 
         this.loginCompanyService.createLoginCompany(loginPayload)
