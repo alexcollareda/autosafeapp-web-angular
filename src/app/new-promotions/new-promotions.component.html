@@ -18,9 +18,6 @@
                 <span aria-hidden="true"><i class="now-ui-icons ui-1_simple-remove"></i></span>
               </button>
               <div class="message">
-                <ng-container *ngIf="alert.icon">
-                  <div class="alert-icon"><i class="now-ui-icons {{alert.icon}}"></i></div>
-                </ng-container>
                 <strong>{{alert.strong}} </strong>{{ alert.message }}
               </div>
             </div>
@@ -38,23 +35,11 @@
             <div class="form-group">
               <label>Título *</label>
               <input class="form-control" formControlName="title" placeholder="Título" maxlength="80" />
-              <small class="text-danger" *ngIf="form.get('title')?.touched && form.get('title')?.hasError('required')">
-                Informe o título.
-              </small>
-              <small class="text-danger" *ngIf="form.get('title')?.hasError('maxlength')">
-                Máximo de 80 caracteres.
-              </small>
             </div>
 
             <div class="form-group">
               <label>Descrição *</label>
               <textarea class="form-control" formControlName="description" rows="3" placeholder="Descrição da promoção"></textarea>
-              <small class="text-danger" *ngIf="form.get('description')?.touched && form.get('description')?.hasError('required')">
-                Informe a descrição.
-              </small>
-              <small class="text-danger" *ngIf="form.get('description')?.hasError('maxlength')">
-                Máximo de 500 caracteres.
-              </small>
             </div>
 
             <div class="form-group">
@@ -62,12 +47,8 @@
               <select class="form-control" formControlName="ctaButtonType">
                 <option value="SEE_MORE">VER MAIS</option>
                 <option value="BOOK_NOW">RESERVE AGORA</option>
-                <option value="CONTACT_US">CONTATE NOS</option>
+                <option value="CONTACT_US">CONTATE-NOS</option>
               </select>
-              <small class="text-muted">Valores aceitos pelo backend.</small>
-              <small class="text-danger d-block" *ngIf="form.get('ctaButtonType')?.touched && form.get('ctaButtonType')?.hasError('required')">
-                Selecione o tipo do botão.
-              </small>
             </div>
 
             <div class="form-group">
@@ -84,12 +65,6 @@
               <label>Link Externo *</label>
               <input class="form-control" formControlName="externalLink" placeholder="https://..." />
               <small class="text-muted">Use o formato completo com http(s).</small>
-              <small class="text-danger d-block" *ngIf="form.get('externalLink')?.touched && form.get('externalLink')?.hasError('required')">
-                O link é obrigatório para esse tipo.
-              </small>
-              <small class="text-danger d-block" *ngIf="form.get('externalLink')?.hasError('pattern')">
-                URL inválida. Ex.: https://minha-loja.com
-              </small>
             </div>
 
             <!-- Condicional: Serviço -->
@@ -101,8 +76,7 @@
                 (input)="searchServices($any($event.target).value)"
                 placeholder="Pesquisar serviço..."
               />
-              <div class="list-group mt-1" *ngIf="serviceOptions.length || searching" style="max-height: 220px; overflow-y:auto;">
-                <div class="list-group-item" *ngIf="searching">Buscando...</div>
+              <div class="list-group mt-1" *ngIf="serviceOptions.length" style="max-height: 220px; overflow-y:auto;">
                 <button type="button" class="list-group-item list-group-item-action"
                         *ngFor="let s of serviceOptions" (click)="pickService(s)">
                   {{ s.title }}
@@ -113,37 +87,23 @@
                 <span class="badge badge-pill badge-info p-2">
                   Serviço selecionado: {{ serviceQuery }}
                 </span>
-                <button type="button" class="btn btn-link btn-sm" (click)="form.get('serviceId')!.setValue(null); serviceQuery = ''">
+                <button type="button" class="btn btn-link btn-sm"
+                        (click)="form.get('serviceId')!.setValue(null); serviceQuery = ''">
                   limpar
                 </button>
               </div>
-              <small class="text-danger d-block" *ngIf="form.get('serviceId')?.touched && form.get('serviceId')?.hasError('required')">
-                Selecione um serviço.
-              </small>
             </div>
 
             <div class="form-row">
               <div class="form-group col">
                 <label>Data Início *</label>
                 <input type="date" class="form-control" formControlName="startDate" />
-                <small class="text-danger" *ngIf="form.get('startDate')?.touched && form.get('startDate')?.hasError('required')">
-                  Informe a data de início.
-                </small>
               </div>
               <div class="form-group col">
                 <label>Data Fim *</label>
                 <input type="date" class="form-control" formControlName="endDate" />
-                <small class="text-danger" *ngIf="form.get('endDate')?.touched && form.get('endDate')?.hasError('required')">
-                  Informe a data de fim.
-                </small>
               </div>
             </div>
-
-            <!-- Erros de faixa de data -->
-            <div *ngIf="form.errors?.endBeforeStart" class="text-danger font-weight-bold mt-1">Data fim não pode ser antes do início.</div>
-            <div *ngIf="form.errors?.rangeMax30" class="text-danger font-weight-bold mt-1">Promoção pode durar no máximo 30 dias.</div>
-            <div *ngIf="form.errors?.startInPast" class="text-danger font-weight-bold mt-1">A data de início deve ser hoje ou futura.</div>
-            <div *ngIf="form.errors?.endNotFuture" class="text-danger font-weight-bold mt-1">A data de fim deve ser futura.</div>
 
             <div class="form-group">
               <label>Imagem *</label>
@@ -152,9 +112,6 @@
               <small class="text-muted d-block">Tamanho recomendado: <strong>3:4</strong> — <strong>709 × 945 px</strong></small>
               <small class="text-info d-block" *ngIf="selectedFile">Arquivo selecionado: {{ selectedFile?.name }}</small>
               <small class="text-info d-block" *ngIf="!selectedFile && existingImageUrl">Arquivo atual: {{ fileNameFromUrl(existingImageUrl) }}</small>
-              <small class="text-danger d-block" *ngIf="form.get('imageFile')?.touched && form.get('imageFile')?.hasError('required')">
-                Selecione uma imagem.
-              </small>
             </div>
           </div>
 
