@@ -540,3 +540,17 @@
         display: none !important;
     }
 }
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.app-bg {
+  min-height: 100vh;           /* ocupa a altura inteira da janela */
+  /* Para mobile moderno evitar problemas com barra do navegador: */
+  min-height: 100dvh;
+
+  background: url('assets/img/appbackground.png') center center / cover no-repeat;
+  width: 100%;
+}

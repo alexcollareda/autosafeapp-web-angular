@@ -3,7 +3,25 @@
     <br />
     <div class="container">
         <div id="inputs">
-            <h4>Minha Empresa</h4>
+            <div class="header-tabs" role="tablist" aria-label="Seções">
+                <button type="button" class="tab-btn" [class.active]="activeTab === 'empresa'" role="tab"
+                    [attr.aria-selected]="activeTab === 'empresa'" (click)="setTab('empresa')">
+                    <i class="now-ui-icons users_circle-08"></i>
+                    <h4>Minha Empresa</h4>
+                </button>
+
+                <button type="button" class="tab-btn" [class.active]="activeTab === 'tipo'" role="tab"
+                    [attr.aria-selected]="activeTab === 'tipo'" (click)="setTab('tipo')">
+                    <i class="now-ui-icons users_circle-08"></i>
+                    <h4>Tipo da empresa</h4>
+                </button>
+
+                <button type="button" class="tab-btn" [class.active]="activeTab === 'horario'" role="tab"
+                    [attr.aria-selected]="activeTab === 'horario'" (click)="setTab('horario')">
+                    <i class="now-ui-icons users_circle-08"></i>
+                    <h4>Horário Funcionamento</h4>
+                </button>
+            </div>
             <br />
             <div *ngFor="let alert of alerts">
                 <ngb-alert [type]="alert.type" [dismissible]="false">
@@ -27,172 +45,277 @@
                 </ngb-alert>
             </div>
             <div class="autosafe-card">
-                <p class="category">Dados da Empresa</p>
-                <div class="row">
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="form-group">
-                            <label>CNPJ</label>
-                            <input type="text" [(ngModel)]="cnpj" placeholder="CNPJ" class="form-control"
-                                [disabled]="true" />
+                <ng-container [ngSwitch]="activeTab">
+
+                    <ng-container *ngSwitchCase="'empresa'">
+
+
+                        <p class="category">Dados da Empresa</p>
+                        <div class="row">
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>CNPJ</label>
+                                    <input type="text" [(ngModel)]="cnpj" placeholder="CNPJ" class="form-control"
+                                        [disabled]="true" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>Nome da Empresa</label>
+                                    <input type="text" [(ngModel)]="companyName" placeholder="Nome"
+                                        class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-5">
+                                <div class="form-group">
+                                    <label>Descricao</label>
+                                    <input type="text" [(ngModel)]="description" placeholder="Descricao"
+                                        class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Telefone</label>
+                                    <input type="text" [(ngModel)]="phone" placeholder="Telefone" class="form-control"
+                                        mask="(00) 00000-0000" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>E-mail</label>
+                                    <input type="text" [(ngModel)]="email" placeholder="E-Mail" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="form-group">
+                                    <label>Imagem da Empresa</label>
+                                    <input *ngIf="!logoUrl && !preview" (change)="selectFile($event)"
+                                        class="form-control" type="file" />
+                                    <p *ngIf="!logoUrl && !preview">Dimesao Sugerida: 1200x675 px Proporcao:16:9</p>
+
+                                    <a *ngIf="logoUrl || preview" class="btn btn-primary btn-round" type="button"
+                                        (click)="open(classic,'' , '')">
+                                        <ng-container>
+                                            <i class="now-ui-icons ui-1_zoom-bold"></i>
+                                        </ng-container>
+                                        Ver Imagem
+                                    </a>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
+                        <br />
+                        <div class="row">
 
-                    <div class="col-sm-6 col-lg-4">
-                        <div class="form-group">
-                            <label>Nome da Empresa</label>
-                            <input type="text" [(ngModel)]="companyName" placeholder="Nome" class="form-control" />
+                            <div class="col-sm-6 col-lg-12">
+                                <div class="form-group">
+                                    <p class="category">Seu Endereco</p>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-2">
+                                <div class="form-group">
+                                    <label>CEP</label>
+                                    <input type="text" [(ngModel)]="address.zipCode" placeholder="CEP" maxlength="8"
+                                        (blur)="buscarCep()" class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-5">
+                                <div class="form-group">
+                                    <label>Rua</label>
+                                    <input type="text" [(ngModel)]="address.street" placeholder="Rua"
+                                        class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Bairro</label>
+                                    <input type="text" [(ngModel)]="address.neighborhood" placeholder="Bairro"
+                                        class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-2">
+                                <div class="form-group">
+                                    <label>Numero</label>
+                                    <input type="text" [(ngModel)]="address.number" placeholder="Bairro"
+                                        class="form-control" />
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Cidade</label>
+                                    <input type="text" [(ngModel)]="address.city" placeholder="Cidade"
+                                        class="form-control" />
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-6 col-lg-2">
+                                <div class="form-group">
+                                    <label>Estado</label>
+                                    <input type="text" [(ngModel)]="address.state"
+                                        (ngModelChange)="address.state = $event.toUpperCase()" placeholder="Estado"
+                                        maxlength="2" class="form-control" />
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                        <br />
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'tipo'">
 
-                    <div class="col-sm-6 col-lg-5">
-                        <div class="form-group">
-                            <label>Descricao</label>
-                            <input type="text" [(ngModel)]="description" placeholder="Descricao" class="form-control" />
+
+                        <div class="row">
+
+                            <div class="col-sm-6 col-lg-3" *ngIf="types.length > 0 && !updateTypes">
+                                <div class="form-group">
+                                    <p class="category" *ngIf="types.length > 0">Tipos da sua Empresa:</p>
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-2" *ngIf="types.length > 0 && !updateTypes">
+                                <div class="form-group">
+                                    <a class="btn btn-primary btn-round" type="button"
+                                        [ngbTooltip]="'Clique para atualizar os tipos da sua empresa'"
+                                        (click)="clickToUpdateType()">
+                                        <ng-container>
+                                            <i class="now-ui-icons ui-1_settings-gear-63"></i>
+                                        </ng-container>
+                                        Alterar Tipos
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-6 col-lg-12" *ngIf="types.length > 0 && !updateTypes">
+                                <div class="form-group">
+                                    <button *ngFor="let type of types" class="btn btn-primary btn-round" type="button"
+                                        [ngbTooltip]="type.description" [ngClass]="{'active': true}">
+                                        <ng-container>
+                                            <i class="now-ui-icons ui-1_check"></i>
+                                        </ng-container>
+                                        {{ type.name }}
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
+                        <br />
 
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="form-group">
-                            <label>Telefone</label>
-                            <input type="text" [(ngModel)]="phone" placeholder="Telefone" class="form-control"
-                                mask="(00) 00000-0000" />
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-4">
-                        <div class="form-group">
-                            <label>E-mail</label>
-                            <input type="text" [(ngModel)]="email" placeholder="E-Mail" class="form-control" />
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-4">
-                        <div class="form-group">
-                            <label>Imagem da Empresa</label>
-                            <input *ngIf="!logoUrl && !preview" (change)="selectFile($event)" class="form-control"
-                                type="file" />
-                            <p *ngIf="!logoUrl && !preview">Dimesao Sugerida: 1200x675 px Proporcao:16:9</p>
-
-                            <a *ngIf="logoUrl || preview" class="btn btn-primary btn-round" type="button"
-                                (click)="open(classic,'' , '')">
-                                <ng-container>
-                                    <i class="now-ui-icons ui-1_zoom-bold"></i>
-                                </ng-container>
-                                Ver Imagem
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-                <br />
-                <div class="row">
-
-                    <div class="col-sm-6 col-lg-12">
-                        <div class="form-group">
-                            <p class="category">Seu Endereco</p>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-2">
-                        <div class="form-group">
-                            <label>CEP</label>
-                            <input type="text" [(ngModel)]="address.zipCode" placeholder="CEP" maxlength="8"
-                                (blur)="buscarCep()" class="form-control" />
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-5">
-                        <div class="form-group">
-                            <label>Rua</label>
-                            <input type="text" [(ngModel)]="address.street" placeholder="Rua" class="form-control" />
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="form-group">
-                            <label>Bairro</label>
-                            <input type="text" [(ngModel)]="address.neighborhood" placeholder="Bairro"
-                                class="form-control" />
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-2">
-                        <div class="form-group">
-                            <label>Numero</label>
-                            <input type="text" [(ngModel)]="address.number" placeholder="Bairro" class="form-control" />
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-3">
-                        <div class="form-group">
-                            <label>Cidade</label>
-                            <input type="text" [(ngModel)]="address.city" placeholder="Cidade" class="form-control" />
-                        </div>
-                    </div>
-
-
-                    <div class="col-sm-6 col-lg-2">
-                        <div class="form-group">
-                            <label>Estado</label>
-                            <input type="text" [(ngModel)]="address.state"
-                                (ngModelChange)="address.state = $event.toUpperCase()" placeholder="Estado"
-                                maxlength="2" class="form-control" />
-                        </div>
-                    </div>
-                </div>
-                <br />
-
-                <div class="row">
-
-                    <div class="col-sm-6 col-lg-3" *ngIf="types.length > 0 && !updateTypes">
-                        <div class="form-group">
-                            <p class="category" *ngIf="types.length > 0">Tipos da sua Empresa:</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-lg-2" *ngIf="types.length > 0 && !updateTypes">
-                        <div class="form-group">
-                            <a class="btn btn-primary btn-round" type="button"
-                                [ngbTooltip]="'Clique para atualizar os tipos da sua empresa'"
-                                (click)="clickToUpdateType()">
-                                <ng-container>
-                                    <i class="now-ui-icons ui-1_settings-gear-63"></i>
-                                </ng-container>
-                                Alterar Tipos
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-sm-6 col-lg-12" *ngIf="types.length > 0 && !updateTypes">
-                        <div class="form-group">
-                            <button *ngFor="let type of types" class="btn btn-primary btn-round" type="button"
-                                [ngbTooltip]="type.description" [ngClass]="{'active': true}">
-                                <ng-container>
-                                    <i class="now-ui-icons ui-1_check"></i>
-                                </ng-container>
-                                {{ type.name }}
-                            </button>
-                        </div>
-                    </div>
-
-                </div>
-                <br />
-
-                <div class="row mb-3" *ngIf="companyTypes.length > 0 && updateTypes">
-                    <div class="col-12">
-                        <p class="category">Selecione os tipos da sua Empresa:</p>
-                        <div class="d-flex flex-wrap gap-2">
-                            <button *ngFor="let type of companyTypes" class="btn btn-primary btn-round" type="button"
-                                [ngbTooltip]="type.description" [ngClass]="{'active': isCompanyTypeSelected(type.id),
+                        <div class="row mb-3" *ngIf="companyTypes.length > 0 && updateTypes">
+                            <div class="col-12">
+                                <p class="category">Selecione os tipos da sua Empresa:</p>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button *ngFor="let type of companyTypes" class="btn btn-primary btn-round"
+                                        type="button" [ngbTooltip]="type.description" [ngClass]="{'active': isCompanyTypeSelected(type.id),
                                                             'btn-simple': !isCompanyTypeSelected(type.id)
                                                           }" (click)="toggleCompanyType(type.id)">
-                                <ng-container *ngIf="isCompanyTypeSelected(type.id)">
-                                    <i class="now-ui-icons ui-1_check"></i>
-                                </ng-container>
-                                {{ type.name }}
-                            </button>
+                                        <ng-container *ngIf="isCompanyTypeSelected(type.id)">
+                                            <i class="now-ui-icons ui-1_check"></i>
+                                        </ng-container>
+                                        {{ type.name }}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'horario'">
+
+
+                        <div class="row">
+                            <div class="col-12">
+                                <p class="category">Horários de Funcionamento</p>
+                                <form [formGroup]="ohForm" class="oh-form">
+                                    <div formArrayName="days" class="oh-days">
+                                        <div class="oh-day card mb-3"
+                                            *ngFor="let dayGroup of daysArray.controls; let i = index"
+                                            [formGroupName]="i">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <div class="h5 m-0">{{ days[i].label }}</div>
+                                                    <div class="d-flex align-items-center flex-wrap gap-3">
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="closed-{{ i }}" formControlName="closed"
+                                                                (change)="onDayFlagChange(i)" />
+                                                            <label class="form-check-label"
+                                                                [attr.for]="'closed-' + i">Fechado</label>
+                                                        </div>
+
+                                                        <div class="form-check form-check-inline">
+                                                            <input class="form-check-input" type="checkbox"
+                                                                id="open24h-{{ i }}" formControlName="open24h"
+                                                                (change)="onDayFlagChange(i)" />
+                                                            <label class="form-check-label"
+                                                                [attr.for]="'open24h-' + i">24h</label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="oh-ranges"
+                                                    [class.opacity-50]="daysArray.at(i).value.closed || daysArray.at(i).value.open24h">
+                                                    <div class="row fw-semibold mb-2"
+                                                        *ngIf="!(daysArray.at(i).value.closed || daysArray.at(i).value.open24h)">
+                                                        <div class="col-4">Início</div>
+                                                        <div class="col-4">Fim</div>
+                                                        <div class="col-2 text-end">Ações</div>
+                                                    </div>
+
+                                                    <div formArrayName="ranges"
+                                                        *ngIf="!(daysArray.at(i).value.closed || daysArray.at(i).value.open24h)">
+                                                        <div class="row align-items-center mb-2"
+                                                            *ngFor="let range of rangesAt(i).controls; let j = index"
+                                                            [formGroupName]="j">
+                                                            <div class="col-4">
+                                                                <input type="time" class="form-control"
+                                                                    formControlName="start"
+                                                                    [disabled]="daysArray.at(i).value.closed || daysArray.at(i).value.open24h" />
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <input type="time" class="form-control"
+                                                                    formControlName="end"
+                                                                    [disabled]="daysArray.at(i).value.closed || daysArray.at(i).value.open24h" />
+                                                            </div>
+                                                            <div class="col-2 text-end">
+                                                                <button type="button"
+                                                                    class="btn btn-outline-danger btn-sm"
+                                                                    (click)="removeRange(i, j)"
+                                                                    [disabled]="rangesAt(i).length <= 1">Remover</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-danger small mt-2" *ngIf="showDayError(i)">
+                                                        Informe ao menos um intervalo válido e com início antes do
+                                                        fim
+                                                    </div>
+                                                </div>
+
+                                                <div class="mt-3 d-flex justify-content-between">
+                                                    <!-- <button type="button" class="btn btn-outline-primary btn-sm"
+                                                        (click)="addRange(i)"
+                                                        [disabled]="daysArray.at(i).value.closed || daysArray.at(i).value.open24h">Adicionar
+                                                        intervalo</button> -->
+                                                    <div class="small text-muted" *ngIf="daysArray.at(i).value.closed">
+                                                        Este dia
+                                                        está marcado como fechado</div>
+                                                    <div class="small text-muted"
+                                                        *ngIf="!daysArray.at(i).value.closed && daysArray.at(i).value.open24h">
+                                                        Este dia funciona 24h</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
                 <div class="row">
 
                     <div class="ml-auto mr-auto">

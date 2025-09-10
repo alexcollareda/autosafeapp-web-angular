@@ -1,35 +1,118 @@
-<!--
-
-=========================================================
-* Now UI Kit Angular - v1.4.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/now-ui-kit-angular
-* Copyright 2020 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/now-ui-kit-angular/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
--->
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
-    <meta charset="UTF-8" />
-    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="assets/img/favicon.png">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-    <title>Autosafe APP</title>
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no' name='viewport' />
-    <base href="/">
-    <!--     Fonts and icons     -->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200" rel="stylesheet" />
-    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <base href="/" />
+  <!-- Google Tag Manager -->
+  <script>(function (w, d, s, l, i) {
+      w[l] = w[l] || []; w[l].push({
+        'gtm.start':
+          new Date().getTime(), event: 'gtm.js'
+      }); var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+          'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-MP3PH2MV');</script>
+  <!-- End Google Tag Manager -->
+  <title>Autosafe App — Manutenção, revisões e serviços automotivos</title>
+  <meta name="description"
+    content="O Autosafe App é seu assistente de manutenção e cuidados com o veículo. Conecte-se a prestadores de serviços como guincho, estética automotiva, mecânicos, pneus e acessórios. Organize revisões e mantenha seu carro sempre em dia." />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no" />
+  <meta name="robots" content="index, follow" />
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+  <link rel="canonical" href="https://autosafeapp.com.br/" />
+
+  <!-- Branding e ícones -->
+  <link rel="icon" type="image/png" href="assets/img/isotipo_branco.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/isotipo_branco.png" />
+  <meta name="theme-color" content="#0F172A" />
+  <meta name="application-name" content="Autosafe App" />
+  <meta name="author" content="Autosafe App" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:site_name" content="Autosafe App" />
+  <meta property="og:title" content="Autosafe App — Manutenção, revisões e serviços automotivos" />
+  <meta property="og:description"
+    content="Conecte proprietários de veículos a prestadores: guincho, estética, mecânico, pneus e acessórios. Agende revisões e cuide do seu carro com o Autosafe." />
+  <meta property="og:url" content="https://autosafeapp.com.br/" />
+  <meta property="og:image" content="https://autosafeapp.com.br/assets/img/logo-as.png" />
+  <meta property="og:image:alt" content="Logo do Autosafe App" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@autosafeapp" />
+  <meta name="twitter:creator" content="@autosafeapp" />
+  <meta name="twitter:title" content="Autosafe App — Manutenção, revisões e serviços automotivos" />
+  <meta name="twitter:description"
+    content="Assistente de manutenção e cuidados com o veículo. Integração com guincho, estética, mecânico, pneus e acessórios." />
+  <meta name="twitter:image" content="https://autosafeapp.com.br/assets/img/logo-as.png" />
+  <meta name="twitter:image:alt" content="Logo do Autosafe App" />
+
+  <!-- Fonts e ícones -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,200&display=swap" rel="stylesheet" />
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+
+  <!-- Dados estruturados (Organization + WebSite + MobileApplication) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "name": "Autosafe App",
+        "url": "https://autosafeapp.com.br/",
+        "logo": "https://autosafeapp.com.br/assets/img/logo-as.png",
+        "sameAs": [
+          "https://www.instagram.com/autosafeapp/"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "name": "Autosafe App",
+        "url": "https://autosafeapp.com.br/",
+        "inLanguage": "pt-BR",
+        "potentialAction": {
+          "@type": "ViewAction",
+          "target": "https://autosafeapp.com.br/"
+        }
+      },
+      {
+        "@type": "MobileApplication",
+        "name": "Autosafe App",
+        "operatingSystem": "Android, iOS",
+        "applicationCategory": "UtilitiesApplication",
+        "url": "https://autosafeapp.com.br/",
+        "description": "Assistente para manutenção e cuidados com veículos, conectando proprietários a prestadores (guincho, estética, mecânicos, pneus e acessórios) e organizando revisões.",
+        "publisher": {
+          "@type": "Organization",
+          "name": "Autosafe App"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "BRL"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- Opcional: verificação do Google Search Console (substitua o content pelo seu token) -->
+  <!-- <meta name="google-site-verification" content="COLE_A_CHAVE_AQUI" /> -->
 </head>
+
 <body class="sidebar-collapse">
-    <app-root></app-root>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MP3PH2MV" height="0" width="0"
+      style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <app-root></app-root>
 </body>
+
 </html>

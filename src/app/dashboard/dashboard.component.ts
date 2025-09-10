@@ -2,6 +2,7 @@ import { ReviewService } from './../services/review.service';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'app/services/auth.service';
 import { ServicesService } from 'app/services/services.service';
+import { MetricsService } from 'app/services/metrics.service';
 
 export interface Review{
   rate:number;
@@ -19,8 +20,10 @@ export class DashboardComponent implements OnInit {
     reviews : Review[] = [];
     countReviews: number = 0;
     averageRate: number = 0;
+    callCount: number = 0;
+    viewCount: number = 0;
 
-    constructor(private authService: AuthService, private servicesService: ServicesService, private reviewService: ReviewService) {   
+    constructor(private authService: AuthService, private servicesService: ServicesService, private reviewService: ReviewService, private metricsService:MetricsService) {   
     }
 
   ngOnInit(): void {
@@ -33,6 +36,13 @@ export class DashboardComponent implements OnInit {
         console.error('Erro ao contar serviços ativos:', error);
       }
     );
+
+    this.metricsService.getMetricsToday().subscribe(
+      (data) => {
+        this.viewCount = data.companyView;
+        this.callCount = data.clickPhoneCompany;
+      });
+    
 
     this.reviewService.findMyReviews().subscribe(
       (data) => {
