@@ -7,6 +7,9 @@ import { Observable } from 'rxjs';
 @Injectable({ providedIn: 'root' })
 export class CompaniesService {
     constructor(private authService: AuthService, private http: HttpClient) { }
+     getCompanyByEmail(email: string) {
+        return this.http.get<any>(environment.backendApiUrl + '/public/companies/email/' + email)  
+    }
 
     getCompanyByCNPJ(cnpj: String): Observable<any> { 
         return this.http.get<any>(environment.backendApiUrl + '/public/companies/cnpj/' + cnpj)      

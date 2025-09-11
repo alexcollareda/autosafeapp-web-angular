@@ -97,6 +97,11 @@ p{
     font-weight: $font-weight-bold;
     color: $dark-gray;
 }
+.category-white{
+    text-transform: uppercase;
+    font-weight: $font-weight-bold;
+    color: $white-color;
+}
 .text-primary {
   color: $brand-primary !important;
 }
