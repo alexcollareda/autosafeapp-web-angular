@@ -90,17 +90,45 @@ export class RegisterComponent implements OnInit {
           if (data && data.idCompany) {
             this.createAlert('danger', 'Atenção!', 'Empresa já cadastrada.');
             this.isCnpjExiste = true;
+            return;
           }
         },
         error: () => {
           this.isCnpjExiste = false;
+          this.http
+            .get<any>(`https://open.cnpja.com/office/${this.cnpj}`)
+            .subscribe({
+              next: (data) => {
+                this.razaoSocial = data.company?.name || '';
+                this.nomeFantasia = data.alias || '';
+                this.cep = data.address?.zip || '';
+                this.numero = data.address?.number || '';
+                if (this.cep) {
+                  this.buscarCep();
+                } else {
+                  this.rua = '';
+                  this.bairro = '';
+                  this.cidade = '';
+                  this.estado = '';
+                }
+              },
+              error: () => {
+                this.razaoSocial = '';
+                this.nomeFantasia = '';
+                this.cep = '';
+                this.rua = '';
+                this.bairro = '';
+                this.cidade = '';
+                this.estado = '';
+                this.createAlert('danger', 'Erro!', 'Erro ao verificar CNPJ.');
+              }
+            });
         }
       });
     } else {
-      this.createAlert('danger', 'Atenção!', 'CNPJ inválido.');
+      this.createAlert('danger', 'Atenção!', 'CNPJ Invalido.');
     }
   }
-
   onEmailBlur() {
     if (this.email) {
       this.isEmailExiste = false;
@@ -112,7 +140,7 @@ export class RegisterComponent implements OnInit {
           }
         },
         error: () => {
-          this.isEmailExiste = false; // 404 → email não existe → ok
+          this.isEmailExiste = false;
         }
       });
     }
