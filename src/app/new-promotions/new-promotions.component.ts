@@ -27,27 +27,57 @@ function parseLocalDate(iso: string): Date {
   dt.setHours(0, 0, 0, 0);
   return dt;
 }
-/** Regra: fim >= início; duração <= 30d; start >= hoje; end > hoje */
+
+/** Validador de faixa de datas (propaga erros para os campos também) */
 function dateRangeValidator(ctrl: AbstractControl): ValidationErrors | null {
-  const start = ctrl.get('startDate')?.value as string | undefined;
-  const end   = ctrl.get('endDate')?.value as string | undefined;
+  const startCtrl = ctrl.get('startDate');
+  const endCtrl   = ctrl.get('endDate');
+
+  const start = startCtrl?.value as string | undefined;
+  const end   = endCtrl?.value as string | undefined;
+
+  // limpa apenas os erros que este validador controla
+  const clean = (errors: ValidationErrors | null | undefined, keys: string[]) => {
+    if (!errors) return null;
+    const copy: any = { ...errors };
+    keys.forEach(k => delete copy[k]);
+    return Object.keys(copy).length ? copy : null;
+  };
+  startCtrl?.setErrors(clean(startCtrl?.errors, ['startInPast']));
+  endCtrl?.setErrors(clean(endCtrl?.errors, ['endBeforeStart', 'rangeMax30', 'endNotFuture']));
+
   if (!start || !end) return null;
 
   const s = parseLocalDate(start);
   const e = parseLocalDate(end);
-
   const today = new Date(); today.setHours(0, 0, 0, 0);
-  const errors: any = {};
 
-  if (e < s) errors.endBeforeStart = true;
+  const formErrors: any = {};
+
+  if (e < s) formErrors.endBeforeStart = true;
+
   const oneDay = 24 * 3600 * 1000;
   const diffDays = Math.floor((e.getTime() - s.getTime()) / oneDay) + 1;
-  if (diffDays > 30) errors.rangeMax30 = true;
+  if (diffDays > 30) formErrors.rangeMax30 = true;
 
-  if (s < today) errors.startInPast = true;
-  if (e <= today) errors.endNotFuture = true;
+  if (s < today)  formErrors.startInPast = true;
+  if (e <= today) formErrors.endNotFuture = true;
 
-  return Object.keys(errors).length ? errors : null;
+  if (formErrors.startInPast && startCtrl) {
+    const prev = startCtrl.errors || {};
+    startCtrl.setErrors({ ...prev, startInPast: true });
+  }
+  if ((formErrors.endBeforeStart || formErrors.rangeMax30 || formErrors.endNotFuture) && endCtrl) {
+    const prev = endCtrl.errors || {};
+    endCtrl.setErrors({
+      ...prev,
+      ...(formErrors.endBeforeStart ? { endBeforeStart: true } : {}),
+      ...(formErrors.rangeMax30 ? { rangeMax30: true } : {}),
+      ...(formErrors.endNotFuture ? { endNotFuture: true } : {}),
+    });
+  }
+
+  return Object.keys(formErrors).length ? formErrors : null;
 }
 
 @Component({
@@ -79,7 +109,6 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
   selectedFile: File | null = null;
   existingImageUrl: string | null = null;
 
-  // ---- serviços do usuário (para SERVICE_LINK) ----
   allMyServices: ServiceOption[] = [];
   serviceOptions: ServiceOption[] = [];
   serviceQuery = '';
@@ -95,7 +124,6 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
     private imageService: ImageService
   ) {}
 
-  // ====== AUTH HELPERS (sem interceptor) ======
   private getToken(): string | null {
     return (
       localStorage.getItem('access_token') ||
@@ -109,15 +137,12 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
     if (token) h = h.set('Authorization', `Bearer ${token}`);
     return h;
   }
-  // ============================================
 
   ngOnInit(): void {
-    // modo edição?
     const idStr = this.route.snapshot.queryParamMap.get('promotionId');
     this.isEdit = !!idStr;
     this.promotionId = idStr ? Number(idStr) : null;
 
-    // validações condicionais
     this.form.get('type')!.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe((type: UiActionType) => {
@@ -130,31 +155,25 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
           link.setValidators([Validators.required, Validators.maxLength(500), Validators.pattern(/^https?:\/\/.+/i)]);
         } else if (type === 'SERVICE_LINK') {
           svc.setValidators([Validators.required]);
-          // quando muda para SERVICE_LINK, popular lista inicial
           this.computeServiceOptions(this.serviceQuery);
         }
         link.updateValueAndValidity();
         svc.updateValueAndValidity();
       });
 
-    // busca incremental no input de serviço
     this.serviceSearch$
       .pipe(takeUntil(this.destroy$), debounceTime(250), distinctUntilChanged())
       .subscribe(q => this.computeServiceOptions(q));
 
-    // carrega serviços do usuário (precisa de JWT — agora vai no header por requisição)
     this.loadMyServices();
 
-    // edição carrega promoção
     if (this.isEdit && this.promotionId) {
       this.loadPromotion(this.promotionId);
-      // imagem não obrigatória em edição
       this.form.get('imageFile')!.clearValidators();
       this.form.get('imageFile')!.updateValueAndValidity();
     }
   }
 
-  /** Tenta /public/services com JWT; se 403 e você tiver companyId salvo, tenta /public/services/{companyId} */
   private async loadMyServices(): Promise<void> {
     try {
       const list: any[] = await firstValueFrom(
@@ -162,7 +181,6 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
       );
       this.allMyServices = (list || []).map(this.mapService);
     } catch (e: any) {
-      // fallback opcional (sem header)
       const cid = localStorage.getItem('companyId');
       if (cid) {
         try {
@@ -188,7 +206,6 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
     title: s.title ?? s.name ?? s.serviceName ?? s.descricao ?? 'Serviço'
   });
 
-  /** Filtra localmente os serviços por título */
   private computeServiceOptions(query: string): void {
     const q = (query || '').trim().toLowerCase();
     const base = this.allMyServices || [];
@@ -198,7 +215,6 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
     this.serviceOptions = filtered.slice(0, 40);
   }
 
-  /** Carrega a promoção (edição) */
   private loadPromotion(id: number) {
     this.http.get<any>(`${this.API_ROOT}/api/promotions/company/${id}`, { headers: this.authHeaders() }).subscribe({
       next: (p) => {
@@ -280,17 +296,64 @@ export class NewPromotionsComponent implements OnInit, OnDestroy {
     }
   }
 
+  /** Monta mensagens específicas do que está faltando/errado para o alerta de topo */
+  private collectValidationErrors(): string[] {
+    const msgs: string[] = [];
+    const f = this.form;
+
+    if (f.get('title')?.hasError('required')) msgs.push('Título é obrigatório');
+    if (f.get('title')?.hasError('maxlength')) msgs.push('Título: máximo 80 caracteres');
+
+    if (f.get('description')?.hasError('required')) msgs.push('Descrição é obrigatória');
+    if (f.get('description')?.hasError('maxlength')) msgs.push('Descrição: máximo 500 caracteres');
+
+    if (f.get('ctaButtonType')?.hasError('required')) msgs.push('Selecione o tipo do botão (CTA)');
+    if (f.get('type')?.hasError('required')) msgs.push('Selecione o tipo');
+
+    if (f.get('type')?.value === 'EXTERNAL_LINK') {
+      const linkCtrl = f.get('externalLink');
+      if (linkCtrl?.hasError('required')) msgs.push('Link externo é obrigatório');
+      if (linkCtrl?.hasError('pattern')) msgs.push('URL do link externo é inválida (use http/https)');
+      if (linkCtrl?.hasError('maxlength')) msgs.push('Link externo muito longo (máx. 500)');
+    }
+
+    if (f.get('type')?.value === 'SERVICE_LINK') {
+      if (f.get('serviceId')?.hasError('required')) msgs.push('Selecione um serviço');
+    }
+
+    const sCtrl = f.get('startDate');
+    const eCtrl = f.get('endDate');
+    if (sCtrl?.hasError('required')) msgs.push('Data de início é obrigatória');
+    if (eCtrl?.hasError('required')) msgs.push('Data de término é obrigatória');
+
+    const fe = f.errors || {};
+    if (fe['startInPast'] || sCtrl?.hasError('startInPast')) msgs.push('Data de início não pode ser no passado');
+    if (fe['endNotFuture'] || eCtrl?.hasError('endNotFuture')) msgs.push('Data de término deve ser futura');
+    if (fe['endBeforeStart'] || eCtrl?.hasError('endBeforeStart')) msgs.push('Data de término deve ser igual ou posterior à data de início');
+    if (fe['rangeMax30'] || eCtrl?.hasError('rangeMax30')) msgs.push('Período máximo permitido é de 30 dias');
+
+    if (!this.isEdit && f.get('imageFile')?.hasError('required')) msgs.push('Selecione uma imagem (JPG/PNG até 5MB)');
+
+    if (msgs.length === 0) msgs.push('Verifique os campos destacados.');
+    return msgs;
+  }
+
   async savePromotion() {
     this.clearAlerts();
 
+    // força cálculo das validações antes do submit
+    this.form.updateValueAndValidity({ emitEvent: true });
+
     if (!this.isEdit && (this.form.invalid || !this.selectedFile)) {
       this.form.markAllAsTouched();
-      this.pushAlert('warning', 'Campos obrigatórios', 'Verifique o formulário.');
+      const msgs = this.collectValidationErrors();
+      this.pushAlert('warning', 'Campos obrigatórios', msgs.join(' | '));
       return;
     }
     if (this.isEdit && this.form.invalid) {
       this.form.markAllAsTouched();
-      this.pushAlert('warning', 'Campos obrigatórios', 'Verifique o formulário.');
+      const msgs = this.collectValidationErrors();
+      this.pushAlert('warning', 'Campos obrigatórios', msgs.join(' | '));
       return;
     }
 
