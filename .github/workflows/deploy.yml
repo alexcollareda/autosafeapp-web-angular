@@ -3,7 +3,7 @@ name: Deploy AutosafeAngular App to EC2
 on:
   push:
     branches:
-      - main # O workflow será acionado quando houver um push para a branch 'main'
+      - master # O workflow será acionado quando houver um push para a branch 'main'
 
 jobs:
   deploy:
