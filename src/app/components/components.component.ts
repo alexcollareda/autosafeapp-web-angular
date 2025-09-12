@@ -26,6 +26,8 @@ export class ComponentsComponent implements OnInit, OnDestroy {
     date: { year: number, month: number };
     model: NgbDateStruct;
 
+
+    
     public isCollapsed = true;
     public isCollapsed1 = true;
     public isCollapsed2 = true;
