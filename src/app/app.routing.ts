@@ -7,7 +7,6 @@ import { ComponentsComponent } from './components/components.component';
 import { LandingComponent } from './examples/landing/landing.component';
 import { LoginComponent } from './examples/login/login.component';
 import { ProfileComponent } from './examples/profile/profile.component';
-import { NucleoiconsComponent } from './components/nucleoicons/nucleoicons.component';
 import { RegisterComponent } from './examples/register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './services/auth.guard';
@@ -19,7 +18,12 @@ import { RecoverPasswordComponent } from './examples/recover-password/recover-pa
 import { MyCompanyComponent } from './my-company/my-company.component';
 import { NewPromotionsComponent } from './new-promotions/new-promotions.component';
 import { MyPromotionsComponent } from './my-promotions/my-promotions.component';
-
+import { WorkingComponent } from './examples/working/working.component';
+import { environment } from '../environments/environment';
+var canregister = null;
+if(environment){
+  canregister = environment.canRegister
+}
 const routes: Routes = [
   // Rotas para a área pública (sem autenticação)
   {
@@ -28,11 +32,10 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'index', pathMatch: 'full' },
       { path: 'index', component: ComponentsComponent },
-      { path: 'nucleoicons', component: NucleoiconsComponent },
       { path: 'examples/landing', component: LandingComponent },
-      { path: 'examples/login', component: LoginComponent },
+      { path: 'examples/login',  component: canregister ? LoginComponent : WorkingComponent },
       { path: 'examples/profile', component: ProfileComponent },
-      { path: 'examples/register', component: RegisterComponent },
+      { path: 'examples/register', component: canregister ? RegisterComponent : WorkingComponent},
       { path: 'examples/recover-password', component: RecoverPasswordComponent },
     ]
   },

@@ -1,9 +1,12 @@
 import { CepService } from 'app/services/cep.service';
 import { CompanyTypesService } from './../services/company-types.service';
 import { CompaniesService } from 'app/services/companies.service';
+import { OperatingHoursService } from 'app/services/operating-hours.service';
 import { Component, OnInit } from '@angular/core';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImageService } from 'app/services/image.service';
+import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 interface CompanyType {
   id: number;
@@ -31,6 +34,20 @@ export interface IAlert {
   message: string;
   icon?: string;
 }
+
+interface TimeRangeDto {
+  start: string;
+  end: string;
+}
+
+interface DayConfigDto {
+  dayOfWeek: number;
+  closed: boolean;
+  open24h: boolean;
+  ranges: TimeRangeDto[];
+}
+
+type HeaderTab = 'empresa' | 'tipo' | 'horario';
 
 @Component({
   selector: 'app-my-company',
@@ -64,26 +81,41 @@ export class MyCompanyComponent implements OnInit {
   rate: number = 0;
   companyTypes: CompanyType[] = [];
   selectedCompanyTypeIds: number[] = [];
-  updateTypes: boolean = false;
+  updateTypes: boolean = true;
   closeResult: string;
   public alerts: Array<IAlert> = [];
   oldUrlImage: string = '';
   preview: string;
   currentFile: File;
   selectedFiles: any;
-   private readonly VALID_UFS = [
+  private readonly VALID_UFS = [
     'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA',
     'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
   ];
 
+  ohForm!: FormGroup;
+  days = [
+    { label: 'Segunda-feira', value: 1 },
+    { label: 'Terça-feira', value: 2 },
+    { label: 'Quarta-feira', value: 3 },
+    { label: 'Quinta-feira', value: 4 },
+    { label: 'Sexta-feira', value: 5 },
+    { label: 'Sábado', value: 6 },
+    { label: 'Domingo', value: 7 }
+  ];
+  loading = false;
+  saving = false;
+  lastSavedOk: boolean | null = null;
+  readonly baseUrl = '/api/day-config';
 
-  constructor(private companiesService: CompaniesService, private companyTypesService: CompanyTypesService, private modalService: NgbModal, private cepService: CepService, private imageService: ImageService) { }
+  activeTab: HeaderTab = 'empresa';
+  constructor(private operatingHoursService: OperatingHoursService, private fb: FormBuilder, private companiesService: CompaniesService, private companyTypesService: CompanyTypesService, private modalService: NgbModal, private cepService: CepService, private imageService: ImageService) { }
 
   ngOnInit(): void {
-    
+    this.initForm();
+    this.loadConfig();
     this.companiesService.getCompanyById().subscribe(
       (data) => {
-        console.log('Dados da empresa:', data);
         this.loadCompanyTypes();
         this.cnpj = data.cnpj;
         this.companyName = data.name;
@@ -93,20 +125,228 @@ export class MyCompanyComponent implements OnInit {
         this.logoUrl = data.logoUrl;
         this.address = data.address;
         this.types = data.types;
-        console.log('Tipos de empresa:', this.types);
         this.active = data.active;
         this.createdAt = data.createdAt;
         this.updatedAt = data.updatedAt;
         this.distance = data.distance;
         this.rate = data.rate;
 
+        this.selectedCompanyTypeIds =[];
         this.types.forEach(type => {
+          
           this.toggleCompanyType(type.id);
         });
       }
     );
 
   }
+
+  setTab(tab: HeaderTab) {
+    this.activeTab = tab;
+  }
+
+  initForm(): void {
+    this.ohForm = this.fb.group({
+      days: this.fb.array(this.days.map(d => this.buildDayGroup(d.value)))
+    });
+  }
+
+  buildDayGroup(dayOfWeek: number): FormGroup {
+    return this.fb.group({
+      dayOfWeek: new FormControl(dayOfWeek, { nonNullable: true, validators: [Validators.required] }),
+      closed: new FormControl(false, { nonNullable: true }),
+      open24h: new FormControl(false, { nonNullable: true }),
+      ranges: this.fb.array([this.buildRangeGroup()])
+    });
+  }
+  buildRangeGroup(start: string = '08:00', end: string = '18:00'): FormGroup {
+    return this.fb.group({
+      start: new FormControl(start, { nonNullable: true, validators: [Validators.required] }),
+      end: new FormControl(end, { nonNullable: true, validators: [Validators.required] })
+    });
+  }
+
+  get daysArray(): FormArray<FormGroup> {
+    return this.ohForm.get('days') as FormArray<FormGroup>;
+  }
+
+  rangesAt(dayIndex: number): FormArray<FormGroup> {
+    return this.daysArray.at(dayIndex).get('ranges') as FormArray<FormGroup>;
+  }
+
+  addRange(dayIndex: number): void {
+    this.rangesAt(dayIndex).push(this.buildRangeGroup());
+  }
+
+  removeRange(dayIndex: number, rangeIndex: number): void {
+    const arr = this.rangesAt(dayIndex);
+    if (arr.length > 1) {
+      arr.removeAt(rangeIndex);
+    }
+  }
+
+  onDayFlagChange(dayIndex: number): void {
+    this.updateRangesDisabled(dayIndex);
+  }
+
+  updateRangesDisabled(dayIndex: number): void {
+    const dayGroup = this.daysArray.at(dayIndex);
+    const closed = dayGroup.get('closed')?.value;
+    const open24h = dayGroup.get('open24h')?.value;
+    const disable = closed || open24h;
+    const arr = this.rangesAt(dayIndex);
+    for (let i = 0; i < arr.length; i++) {
+      const g = arr.at(i);
+      if (disable) {
+        g.get('start')?.disable({ emitEvent: false });
+        g.get('end')?.disable({ emitEvent: false });
+      } else {
+        g.get('start')?.enable({ emitEvent: false });
+        g.get('end')?.enable({ emitEvent: false });
+      }
+    }
+  }
+
+  showDayError(dayIndex: number): boolean {
+    const dayGroup = this.daysArray.at(dayIndex);
+    const closed = dayGroup.get('closed')?.value;
+    const open24h = dayGroup.get('open24h')?.value;
+    if (closed || open24h) {
+      return false;
+    }
+    const arr = this.rangesAt(dayIndex);
+    if (arr.length === 0) {
+      return true;
+    }
+    for (let i = 0; i < arr.length; i++) {
+      const g = arr.at(i);
+      const s = g.get('start')?.value;
+      const e = g.get('end')?.value;
+      if (!s || !e) {
+        return true;
+      }
+      if (this.toMinutes(s) >= this.toMinutes(e)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  toMinutes(hhmm: string): number {
+    const [h, m] = hhmm.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  buildPayload(): DayConfigDto[] | null {
+    const payload: DayConfigDto[] = [];
+    for (let i = 0; i < this.daysArray.length; i++) {
+      const dg = this.daysArray.at(i);
+      const dayOfWeek = dg.get('dayOfWeek')?.value as number;
+      const closed = dg.get('closed')?.value as boolean;
+      const open24h = dg.get('open24h')?.value as boolean;
+      let ranges: TimeRangeDto[] = [];
+      if (!closed && !open24h) {
+        const arr = this.rangesAt(i);
+        if (arr.length === 0) {
+          return null;
+        }
+        ranges = arr.controls.map(c => {
+          const start = c.get('start')?.value as string;
+          const end = c.get('end')?.value as string;
+          return { start, end };
+        });
+        for (const r of ranges) {
+          if (!r.start || !r.end) {
+            return null;
+          }
+          if (this.toMinutes(r.start) >= this.toMinutes(r.end)) {
+            return null;
+          }
+        }
+      }
+      payload.push({ dayOfWeek, closed, open24h, ranges });
+    }
+    return payload;
+  }
+
+  loadConfig(): void {
+    this.loading = true;
+    this.lastSavedOk = null;
+    this.operatingHoursService.getOperatingHours().subscribe({
+      next: data => {
+        for (let i = 0; i < this.daysArray.length; i++) {
+          const dayValue = this.daysArray.at(i).get('dayOfWeek')?.value as number;
+          const found = data?.find(d => d.dayOfWeek === dayValue);
+          const closed = !!found?.closed;
+          const open24h = !!found?.open24h;
+          const arr = this.rangesAt(i);
+          while (arr.length > 0) {
+            arr.removeAt(0);
+          }
+          if (found && found.ranges && found.ranges.length > 0) {
+            for (const r of found.ranges) {
+              arr.push(this.buildRangeGroup(r.start, r.end));
+            }
+          } else {
+            arr.push(this.buildRangeGroup());
+          }
+          this.daysArray.at(i).patchValue({ closed, open24h }, { emitEvent: false });
+          this.updateRangesDisabled(i);
+        }
+        this.loading = false;
+      },
+      error: () => {
+        this.loading = false;
+      }
+    });
+  }
+
+  save(): void {
+    const payload = this.buildPayload();
+    if (!payload) {
+      for (let i = 0; i < this.daysArray.length; i++) {
+        const arr = this.rangesAt(i);
+        for (let j = 0; j < arr.length; j++) {
+          arr.at(j).markAllAsTouched();
+        }
+      }
+      this.createAlert('error', '', 'Erro ao salvar horários.');
+      this.lastSavedOk = false;
+      return;
+    }
+    this.saving = true;
+    this.lastSavedOk = null;
+    this.operatingHoursService.putOperatingHours(payload).subscribe({
+      next: () => {
+        this.saving = false;
+        this.createAlert('success', 'Sucesso!', 'Horários salvos com sucesso!.');
+        this.lastSavedOk = true;
+      },
+      error: () => {
+        this.saving = false;
+        this.createAlert('error', '', 'Erro ao salvar horários.');
+        this.lastSavedOk = false;
+      }
+    });
+  }
+
+  setSelectedFiles(event: any): void {
+    this.preview = '';
+    this.selectedFiles = event.target.files;
+    if (this.selectedFiles) {
+      const file: File | null = this.selectedFiles.item(0);
+      if (file) {
+        this.preview = '';
+        this.currentFile = file;
+        const reader = new FileReader();
+        reader.onload = (e: any) => {
+          this.preview = e.target.result;
+        };
+        reader.readAsDataURL(this.currentFile);
+      }
+    }
+  }
+
 
   clickToUpdateType() {
     this.updateTypes = true;
@@ -145,7 +385,6 @@ export class MyCompanyComponent implements OnInit {
   }
 
   open(content, type, modalDimension) {
-    console.log('abrindo modal com tipo:', type, 'e dimensão:', modalDimension);
     if (modalDimension === 'sm' && type === 'modal_mini') {
       this.modalService.open(content, { windowClass: 'modal-mini modal-primary', size: 'sm' }).result.then((result) => {
         this.closeResult = `Closed with: ${result}`;
@@ -225,11 +464,15 @@ export class MyCompanyComponent implements OnInit {
   }
 
   saveCompany() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (this.activeTab === 'horario') {
+      this.save();
+      return;
+    }
     if (this.validateCompany()) {
       if (this.currentFile) {
         this.imageService.uploadImage(this.currentFile).subscribe({
           next: (response: string) => {
-            console.log('Imagem enviada com sucesso:', response);
             this.logoUrl = response;
             this.updateCompany();
           },
@@ -241,7 +484,6 @@ export class MyCompanyComponent implements OnInit {
         if (this.oldUrlImage) {
           this.imageService.deleteImageByUrl(this.oldUrlImage).subscribe({
             next: (response) => {
-              console.log('Imagem excluída com sucesso:', response);
             },
             error: (error) => {
               console.error('Erro ao excluir imagem:', error);
@@ -249,12 +491,12 @@ export class MyCompanyComponent implements OnInit {
             }
           });
         }
-      }else{
+      } else {
         this.updateCompany();
       }
-
+this.loadCompanyTypes();
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
   }
 
   private updateCompany() {
@@ -270,7 +512,6 @@ export class MyCompanyComponent implements OnInit {
       active: this.active
     }).subscribe({
       next: (response) => {
-        console.log('Empresa atualizada com sucesso:', response);
         this.createAlert('success', 'Sucesso!', 'Empresa atualizada com sucesso.');
         this.ngOnInit();
       }
@@ -332,7 +573,7 @@ export class MyCompanyComponent implements OnInit {
     return true;
   }
 
-    private isValidUF(uf: string): boolean {
+  private isValidUF(uf: string): boolean {
     return this.VALID_UFS.includes(uf);
   }
 
@@ -350,7 +591,6 @@ export class MyCompanyComponent implements OnInit {
         const reader = new FileReader();
 
         reader.onload = (e: any) => {
-          console.log(e.target.result);
           this.preview = e.target.result;
         };
 

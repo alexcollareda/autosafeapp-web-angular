@@ -15,6 +15,7 @@ import { RegisterComponent } from './register/register.component';
 import { NgxMaskModule } from 'ngx-mask';
 import { RecoverPasswordComponent } from './recover-password/recover-password.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { WorkingComponent } from './working/working.component';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { ReactiveFormsModule } from '@angular/forms';
         ExamplesComponent,
         ProfileComponent,
         RegisterComponent,
-        RecoverPasswordComponent
+        RecoverPasswordComponent,
+        WorkingComponent
     ]
 })
 export class ExamplesModule { }

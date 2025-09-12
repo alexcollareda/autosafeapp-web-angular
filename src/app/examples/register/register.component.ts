@@ -205,20 +205,25 @@ export class RegisterComponent implements OnInit {
       return false;
     }
 
-    if (this.step === 4) {
-      const senhaValida = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(this.password);
-      if (!senhaValida) {
-        this.createAlert('danger', 'Atenção!', 'A senha deve ter pelo menos 6 caracteres, incluindo letras e números.');
-        return false;
-      }
-      if (this.password !== this.password2) {
-        this.createAlert('danger', 'Atenção!', 'As senhas não coincidem.');
-        return false;
-      }
-      return true;
+        if (this.step === 4) {
+            // Validação de senha: ao menos 6 caracteres, pelo menos uma letra e um número
+            const senhaValida = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(this.password);
+            if (!senhaValida) {
+                this.createAlert(
+                    'danger',
+                    'Atenção!',
+                    'A senha deve ter pelo menos 6 caracteres, incluindo letras e números.'
+                );
+                return false;
+            }
+            if (this.password !== this.password2) {
+                this.createAlert('danger', 'Atenção!', 'As senhas não coincidem.');
+                return false;
+            }
+
+            return true;
+        }
     }
-    return true;
-  }
 
   createAlert(type: string, strong: string, message: string) {
     let icon = type === 'success' ? 'ui-2_like' : type === 'danger' ? 'objects_support-17' : '';
