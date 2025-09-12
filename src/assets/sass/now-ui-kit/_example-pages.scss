@@ -279,14 +279,24 @@
             margin-bottom: 40px;
         }
 
-        &.card-plain {
-            @include input-coloured-bg($opacity-5, $white-color, $white-color, $transparent-bg, $opacity-1, $opacity-2);
+            &.card-plain {
+        @include input-coloured-bg($opacity-5, $white-color, $white-color, $transparent-bg, $opacity-1, $opacity-2);
 
-            .input-group-text,
-            .form-group.form-group-no-border .input-group-text,
-            .input-group.form-group-no-border .input-group-text {
-                color: $opacity-8;
-            }
+        .input-group-text,
+        .form-group.form-group-no-border .input-group-text,
+        .input-group.form-group-no-border .input-group-text {
+            color: $opacity-8;
+        }
+
+       
+        .form-control {
+            border: 1px solid #fff !important;
+            color: #ffffff; 
+        }
+
+        .form-control::placeholder {
+            color: rgb(255, 255, 255); 
+        }
         }
     }
 
