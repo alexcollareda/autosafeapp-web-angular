@@ -1,0 +1,55 @@
+name: Deploy AutosafeAngular App to EC2
+
+on:
+  push:
+    branches:
+      - main # O workflow será acionado quando houver um push para a branch 'main'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # O ambiente onde o job será executado
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Baixa o código do seu repositório
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Use a versão do Node.js compatível com seu projeto Angular
+
+      - name: Install dependencies
+        run: npm ci # Instala as dependências de forma limpa, baseada no package-lock.json
+
+      - name: Build Angular production app
+        run: npm run build -- --configuration=production # Compila o projeto Angular para produção
+        # Certifique-se de que este comando gera os arquivos diretamente em 'dist/'
+        # Ex: dist/index.html, dist/assets/, dist/main.js, etc.
+
+      - name: Deploy to EC2 via SSH
+        uses: easingthemes/ssh-deploy@main # Ação para copiar arquivos via SCP/RSync
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.EC2_HOST }}
+          REMOTE_USER: ${{ secrets.EC2_USER }}
+          SOURCE: 'dist/' # Aponta diretamente para a pasta dist/, que contém index.html e assets/
+          TARGET: /var/www/autosafeapp.com.br/html # O destino no EC2
+          EXCLUDE: '.git/, .github/' # Itens a serem excluídos (opcional)
+          ARGS: '-avz --delete' # Argumentos para rsync: -a (archive), -v (verbose), -z (compress), --delete (deleta arquivos no target que não existem no source)
+          # O --delete é importante para garantir que arquivos antigos sejam removidos.
+
+      - name: Reload Nginx on EC2
+        uses: appleboy/ssh-action@v1.0.0 # Ação para executar comandos SSH remotos
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            sudo nginx -t # Testa a configuração do Nginx
+            if [ $? -eq 0 ]; then # Verifica se o teste foi bem-sucedido
+              sudo systemctl reload ${{ secrets.NGINX_SERVICE_NAME || 'nginx' }} # Recarrega o Nginx
+              echo "Nginx reloaded successfully!"
+            else
+              echo "Nginx configuration test failed! Please check logs on EC2."
+              exit 1 # Falha o workflow se o Nginx não puder ser recarregado
+            fi
