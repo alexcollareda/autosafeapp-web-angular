@@ -35,7 +35,7 @@ jobs:
           SOURCE: 'dist/' # Aponta diretamente para a pasta dist/, que contém index.html e assets/
           TARGET: /var/www/autosafeapp.com.br/html # O destino no EC2
           EXCLUDE: '.git/, .github/' # Itens a serem excluídos (opcional)
-          ARGS: '-avz --delete' # Argumentos para rsync: -a (archive), -v (verbose), -z (compress), --delete (deleta arquivos no target que não existem no source)
+          ARGS: '-avz --delete --no-o --no-g --no-t' # Argumentos para rsync: -a (archive), -v (verbose), -z (compress), --delete (deleta arquivos no target que não existem no source)
           # O --delete é importante para garantir que arquivos antigos sejam removidos.
 
       - name: Reload Nginx on EC2
