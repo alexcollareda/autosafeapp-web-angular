@@ -1,0 +1,195 @@
+/* Variáveis e Cores (opcional, mas recomendado) */
+$dark-bg: #1a1a1a;
+$card-bg: #2a2a2a;
+$primary-color: #007bff; // Cor de destaque, como o azul do Bootstrap
+$text-color: #f0f0f0;
+$light-gray: #b0b0b0;
+
+.company-profile-wrapper {
+  background-color: $dark-bg;
+  color: $text-color;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Seção de Cabeçalho/Hero */
+.profile-hero-section {
+  position: relative;
+  height: 400px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+
+.profile-hero-section .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+}
+
+.company-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  border: 4px solid white;
+}
+
+.company-name {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.rating-stars {
+  font-size: 1.5rem;
+  color: $light-gray;
+  span {
+    color: #ffd700;
+    &.filled {
+      color: #ffd700;
+    }
+  }
+}
+
+.company-description {
+  font-size: 1.2rem;
+  color: $light-gray;
+  max-width: 600px;
+  margin: 10px auto 0;
+}
+
+/* Seção Principal de Conteúdo */
+.profile-main-content {
+  padding: 40px 0;
+}
+
+.section {
+  padding: 40px 0;
+}
+
+.section h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+.company-details-section .info-container {
+  padding-right: 30px;
+}
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+  li {
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    i {
+      width: 20px;
+      color: $primary-color;
+      text-align: center;
+    }
+  }
+}
+
+.working-hours h3 {
+  margin-top: 30px;
+  font-size: 1.5rem;
+}
+
+.map-container {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.map-image {
+  width: 100%;
+  display: block;
+}
+
+.separator {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 50px 0;
+}
+
+/* Seção de Cards de Serviço */
+.services-section h2 {
+  font-size: 2rem;
+  text-align: left;
+}
+
+.service-card {
+  background-color: $card-bg;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.card-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: $light-gray;
+  margin-bottom: 10px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.service-price {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: $primary-color;
+}
+
+.btn {
+  border-radius: 20px;
+}
+
+/* Responsividade */
+@media (max-width: 767px) {
+  .company-details-section .info-container {
+    padding-right: 15px;
+    margin-bottom: 20px;
+  }
+  .company-name {
+    font-size: 2rem;
+  }
+}

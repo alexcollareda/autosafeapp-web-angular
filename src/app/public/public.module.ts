@@ -16,6 +16,7 @@ import { NgxMaskModule } from 'ngx-mask';
 import { RecoverPasswordComponent } from './recover-password/recover-password.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WorkingComponent } from './working/working.component';
+import { CompanyProfileComponent } from './company-profile/company-profile.component';
 
 
 @NgModule({
@@ -37,7 +38,8 @@ import { WorkingComponent } from './working/working.component';
         ProfileComponent,
         RegisterComponent,
         RecoverPasswordComponent,
-        WorkingComponent
+        WorkingComponent,
+        CompanyProfileComponent
     ]
 })
 export class PublicModule { }

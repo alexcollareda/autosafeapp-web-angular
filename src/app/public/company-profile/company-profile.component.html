@@ -1,0 +1,63 @@
+<div class="company-profile-wrapper">
+    <div class="profile-hero-section" [style.background-image]="'url(' + company.headerImageUrl + ')'">
+        <div class="overlay"></div>
+        <div class="hero-content">
+            <img [src]="company.logoUrl" alt="Logo da Empresa" class="company-logo" />
+            <h1 class="company-name">{{ company.name }}</h1>
+            <div class="rating-stars">
+                <span *ngFor="let star of [1, 2, 3, 4, 5]" [class.filled]="company.rating >= star">★</span>
+            </div>
+            <p class="company-description">{{ company.description }}</p>
+        </div>
+    </div>
+
+    <div class="profile-main-content">
+        <div class="container">
+            <div class="section company-details-section">
+                <div class="row">
+                    <div class="col-md-6 info-container">
+                        <h2>Detalhes da Empresa</h2>
+                        <p>{{ company.longDescription }}</p>
+                        <ul class="contact-list">
+                            <li><i class="fas fa-map-marker-alt"></i> {{ company.address }}</li>
+                            <li><i class="fas fa-phone"></i> {{ company.phone }}</li>
+                            <li><i class="fas fa-envelope"></i> {{ company.email }}</li>
+                        </ul>
+                        <div class="working-hours">
+                            <h3>Horário de Funcionamento</h3>
+                            <ul>
+                                <li><strong>Segunda a Sexta:</strong> {{ company.workingHours.weekdays }}</li>
+                                <li><strong>Sábado:</strong> {{ company.workingHours.saturday }}</li>
+                                <li><strong>Domingo:</strong> {{ company.workingHours.sunday }}</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6 map-container">
+                        <img src="https://via.placeholder.com/600x400?text=Mapa+do+Google" alt="Localização no Mapa" class="map-image" />
+                    </div>
+                </div>
+            </div>
+            
+            <hr class="separator" />
+
+            <div class="section services-section">
+                <h2>Serviços e Promoções</h2>
+                <div class="row">
+                    <div class="col-lg-4 col-md-6 mb-4" *ngFor="let service of company.services">
+                        <div class="service-card">
+                            <div class="card-image" [style.background-image]="'url(' + service.imageUrl + ')'"></div>
+                            <div class="card-body">
+                                <h4 class="card-title">{{ service.name }}</h4>
+                                <p class="card-text">{{ service.description }}</p>
+                                <div class="card-footer">
+                                    <span class="service-price">R$ {{ service.price | number:'1.2-2' }}</span>
+                                    <button class="btn btn-primary btn-sm">Agendar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
