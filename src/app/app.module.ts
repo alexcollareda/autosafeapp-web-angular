@@ -4,7 +4,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app.routing';
 import { ComponentsModule } from './components/components.module';
-import { ExamplesModule } from './examples/examples.module';
+import { PublicModule } from './public/public.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './shared/navbar/navbar.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -50,7 +50,7 @@ import { MyPromotionsComponent } from './my-promotions/my-promotions.component';
         RouterModule,
         AppRoutingModule,
         ComponentsModule,
-        ExamplesModule,
+        PublicModule,
         HttpClientModule,
         JwBootstrapSwitchNg2Module,
         NgxMaskModule.forRoot()

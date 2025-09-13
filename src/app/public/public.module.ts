@@ -10,7 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { LandingComponent } from './landing/landing.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
-import { ExamplesComponent } from './examples.component';
+import { PublicComponent } from './public.component';
 import { RegisterComponent } from './register/register.component';
 import { NgxMaskModule } from 'ngx-mask';
 import { RecoverPasswordComponent } from './recover-password/recover-password.component';
@@ -33,11 +33,11 @@ import { WorkingComponent } from './working/working.component';
     declarations: [
         LandingComponent,
         LoginComponent,
-        ExamplesComponent,
+        PublicComponent,
         ProfileComponent,
         RegisterComponent,
         RecoverPasswordComponent,
         WorkingComponent
     ]
 })
-export class ExamplesModule { }
+export class PublicModule { }

@@ -19,7 +19,7 @@ export class NavbarLoggedComponent implements OnInit {
 
   logout() {
     this.authService.logout();
-    window.location.href = '/examples/login';
+    window.location.href = '/public/login';
   }
 
   sidebarOpen() {

@@ -40,7 +40,7 @@ export class AuthInterceptor implements HttpInterceptor {
           if (!request.url.includes('/public/login-company/login')) {
             console.warn('Sessão expirada ou acesso não autorizado. Redirecionando para a tela de login.');
             this.authService.logout();
-            this.router.navigate(['/examples/login']);
+            this.router.navigate(['/public/login']);
           }
         }
         return throwError(error);

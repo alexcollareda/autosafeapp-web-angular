@@ -124,7 +124,7 @@ export class RecoverPasswordComponent {
           this.contador--;
           if (this.contador === 0) {
             clearInterval(interval);
-            this.router.navigate(['/examples/login']);
+            this.router.navigate(['/public/login']);
           }
         }, 1000);
       },

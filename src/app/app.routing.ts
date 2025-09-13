@@ -4,21 +4,21 @@ import { BrowserModule } from '@angular/platform-browser';
 import { Routes, RouterModule } from '@angular/router';
 
 import { ComponentsComponent } from './components/components.component';
-import { LandingComponent } from './examples/landing/landing.component';
-import { LoginComponent } from './examples/login/login.component';
-import { ProfileComponent } from './examples/profile/profile.component';
-import { RegisterComponent } from './examples/register/register.component';
+import { LandingComponent } from './public/landing/landing.component';
+import { LoginComponent } from './public/login/login.component';
+import { ProfileComponent } from './public/profile/profile.component';
+import { RegisterComponent } from './public/register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './services/auth.guard';
 import { LoggedInLayoutComponent } from './layouts/logged-in-layout/logged-in-layout.component';
 import { PublicLayoutComponent } from './layouts/public-layout/public-layout.component';
 import { MyServicesComponent } from './my-services/my-services.component';
 import { NewServicesComponent } from './new-services/new-services.component';
-import { RecoverPasswordComponent } from './examples/recover-password/recover-password.component';
+import { RecoverPasswordComponent } from './public/recover-password/recover-password.component';
 import { MyCompanyComponent } from './my-company/my-company.component';
 import { NewPromotionsComponent } from './new-promotions/new-promotions.component';
 import { MyPromotionsComponent } from './my-promotions/my-promotions.component';
-import { WorkingComponent } from './examples/working/working.component';
+import { WorkingComponent } from './public/working/working.component';
 import { environment } from '../environments/environment';
 var canregister = null;
 if(environment){
@@ -32,11 +32,11 @@ const routes: Routes = [
     children: [
       { path: '', redirectTo: 'index', pathMatch: 'full' },
       { path: 'index', component: ComponentsComponent },
-      { path: 'examples/landing', component: LandingComponent },
-      { path: 'examples/login',  component: canregister ? LoginComponent : WorkingComponent },
-      { path: 'examples/profile', component: ProfileComponent },
-      { path: 'examples/register', component: canregister ? RegisterComponent : WorkingComponent},
-      { path: 'examples/recover-password', component: RecoverPasswordComponent },
+      { path: 'public/landing', component: LandingComponent },
+      { path: 'public/login',  component: canregister ? LoginComponent : WorkingComponent },
+      { path: 'public/profile', component: ProfileComponent },
+      { path: 'public/register', component: canregister ? RegisterComponent : WorkingComponent},
+      { path: 'public/recover-password', component: RecoverPasswordComponent },
     ]
   },
 
