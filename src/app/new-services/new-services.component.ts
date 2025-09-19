@@ -27,8 +27,20 @@ interface Service {
   updatedAt: Date;
   companyId: number;
   companyTypeId: number;
-  brands: number[];
-  models: number[];
+  brands: Brand[];
+  models: Model[];
+}
+interface serviceRequest {
+  title: string;
+  description: string;
+  price: any;
+  priceType: string;
+  imageUrl: string;
+  appliesToAllVehicles: boolean;
+  isActive: boolean;
+  companyTypeId: number;
+  brandIds: number[];
+  modelIds: number[];
 }
 
 interface PriceTypeOption {
@@ -44,6 +56,7 @@ interface Brand {
 interface Model {
   idModel: number;
   name: string;
+  brand: Brand;
 }
 
 interface brandModelSelected {
@@ -70,6 +83,7 @@ export class NewServicesComponent implements OnInit {
   serviceId$: Observable<number | null>;
   companyTypes: CompanyType[] = [];
   service: Service = {} as Service;
+  serviceRequest: serviceRequest = {} as serviceRequest;
   selectedCompanyTypeIds: number;
   priceTypes: PriceTypeOption[] = [];
   priceTypeSelected: PriceTypeOption;
@@ -137,10 +151,17 @@ export class NewServicesComponent implements OnInit {
         this.previewUrl = this.service?.imageUrl || null;
 
         if (this.service.brands?.length) {
-          this.brandSelected = this.brandList.find(b => this.service.brands.includes(b.idBrand)) || null;
+          this.service.brands.forEach(b => {
+            const item: brandModelSelected = { brand: b, model: null };
+            this.listBrandModelSelected.push(item);
+          });
         }
+        
         if (this.service.models?.length) {
-          this.modelSelected = this.modelList.find(m => this.service.models.includes(m.idModel)) || null;
+          this.service.models.forEach(m => {
+            const item: brandModelSelected = { brand: m.brand, model: m };
+            this.listBrandModelSelected.push(item);
+          });
         }
       });
     }
@@ -263,24 +284,37 @@ export class NewServicesComponent implements OnInit {
       this.listBrandModelSelected.splice(index, 1);
     }
   }
+  createRequestObject() {
+    this.serviceRequest.title = this.service.title;
+    this.serviceRequest.description = this.service.description; 
+    this.serviceRequest.price = this.service.price;
+    this.serviceRequest.priceType = this.service.priceType;
+    this.serviceRequest.imageUrl = this.service.imageUrl;
+    this.serviceRequest.appliesToAllVehicles = this.service.appliesToAllVehicles;
+    this.serviceRequest.isActive = this.service.isActive;
+    this.serviceRequest.companyTypeId = this.selectedCompanyTypeIds;
+  }
 
   async saveService() {
     this.service.companyTypeId = this.selectedCompanyTypeIds;
     this.service.priceType = this.priceTypeSelected?.value;
-
+    this.createRequestObject();
     if (this.validateService()) {
       if (this.service.appliesToAllVehicles) {
+        this.serviceRequest.brandIds = [];
+        this.serviceRequest.modelIds = [];
         this.service.brands = [];
         this.service.models = [];
       } else {
-        this.service.brands = this.listBrandModelSelected
+        console.log(this.listBrandModelSelected);
+        this.serviceRequest.brandIds = this.listBrandModelSelected
           .map(item => (item.brand ? item.brand.idBrand : null))
           .filter((id): id is number => id !== null);
-        this.service.models = this.listBrandModelSelected
+        this.serviceRequest.modelIds = this.listBrandModelSelected
           .map(item => (item.model ? item.model.idModel : null))
           .filter((id): id is number => id !== null);
       }
-
+ console.log(this.service.brands);
       try {
         // Upload somente se o usuário escolheu novo arquivo
         if (this.selectedFile) {
@@ -291,6 +325,7 @@ export class NewServicesComponent implements OnInit {
             return;
           }
           this.service.imageUrl = imageUrl;
+          this.serviceRequest.imageUrl = imageUrl;
         } else {
           // Em criação, exige imagem
           if (!this.serviceId || this.serviceId === 0) {
@@ -302,11 +337,11 @@ export class NewServicesComponent implements OnInit {
         }
 
         if (this.serviceId === null || this.serviceId === 0) {
-          await firstValueFrom(this.servicesService.createService(this.service));
+          await firstValueFrom(this.servicesService.createService(this.serviceRequest));
           this.createAlert('success', '', 'Serviço salvo com sucesso!');
           this.clearInputs();
         } else {
-          await firstValueFrom(this.servicesService.updateService(this.serviceId, this.service));
+          await firstValueFrom(this.servicesService.updateService(this.serviceId, this.serviceRequest));
           this.createAlert('success', '', 'Serviço atualizado com sucesso!');
           this.clearInputs();
         }
