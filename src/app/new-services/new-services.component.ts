@@ -276,6 +276,7 @@ export class NewServicesComponent implements OnInit {
       this.modelSelected = null;
       this.searchBrandTerm = '';
       this.searchModelTerm = '';
+      this.filteredModelList = [];
     }
   }
 

@@ -44,13 +44,15 @@
                     </div>
                 </ngb-alert>
             </div>
-            <div class="autosafe-card">
-                <ng-container [ngSwitch]="activeTab">
 
-                    <ng-container *ngSwitchCase="'empresa'">
+            <ng-container [ngSwitch]="activeTab">
 
+                <ng-container *ngSwitchCase="'empresa'">
+
+                    <div class="autosafe-card">
 
                         <p class="category">Dados da Empresa</p>
+
                         <div class="row">
                             <div class="col-sm-6 col-lg-3">
                                 <div class="form-group">
@@ -70,8 +72,8 @@
 
                             <div class="col-sm-6 col-lg-5">
                                 <div class="form-group">
-                                    <label>Descricao</label>
-                                    <input type="text" [(ngModel)]="description" placeholder="Descricao"
+                                    <label>Descrição</label>
+                                    <input type="text" [(ngModel)]="description" placeholder="Conte um pouco sobre sua empresa"
                                         class="form-control" />
                                 </div>
                             </div>
@@ -109,12 +111,16 @@
                             </div>
 
                         </div>
-                        <br />
+                    </div>
+
+                    <div class="autosafe-card">
+
+
                         <div class="row">
 
                             <div class="col-sm-6 col-lg-12">
                                 <div class="form-group">
-                                    <p class="category">Seu Endereco</p>
+                                    <p class="category">Seu Endereço</p>
                                 </div>
                             </div>
 
@@ -144,7 +150,7 @@
 
                             <div class="col-sm-6 col-lg-2">
                                 <div class="form-group">
-                                    <label>Numero</label>
+                                    <label>Número</label>
                                     <input type="text" [(ngModel)]="address.number" placeholder="Bairro"
                                         class="form-control" />
                                 </div>
@@ -168,11 +174,11 @@
                                 </div>
                             </div>
                         </div>
-                        <br />
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'tipo'">
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'tipo'">
 
-
+                    <div class="autosafe-card">
                         <div class="row">
 
                             <div class="col-sm-6 col-lg-3" *ngIf="types.length > 0 && !updateTypes">
@@ -224,8 +230,11 @@
                                 </div>
                             </div>
                         </div>
-                    </ng-container>
-                    <ng-container *ngSwitchCase="'horario'">
+                    </div>
+                </ng-container>
+                <ng-container *ngSwitchCase="'horario'">
+
+                    <div class="autosafe-card">
 
 
                         <div class="row">
@@ -314,36 +323,36 @@
                                 </form>
                             </div>
                         </div>
-                    </ng-container>
-                </ng-container>
-                <div class="row">
-
-                    <div class="ml-auto mr-auto">
-
-                        <button class="btn btn-success btn-round btn-lg" type="button" (click)="saveCompany()">
-                            <i class="now-ui-icons ui-1_check"></i> Salvar Empresa
-                        </button>
                     </div>
+                </ng-container>
+            </ng-container>
+            <div class="row">
+
+                <div class="ml-auto mr-auto">
+
+                    <button class="btn btn-success btn-round btn-lg" type="button" (click)="saveCompany()">
+                        <i class="now-ui-icons ui-1_check"></i> Salvar Empresa
+                    </button>
                 </div>
             </div>
         </div>
-        <ng-template #classic let-c="close" let-d="dismiss">
-            <div class="modal-header justify-content-center">
-                <button type="button" class="close" (click)="d('Cross click')">
-                    <i class="now-ui-icons ui-1_simple-remove"></i>
-                </button>
-                <h4 class="title title-up">Imagem</h4>
-            </div>
-            <div class="modal-body">
-                <img *ngIf="logoUrl" [src]="logoUrl" alt="Imagem da Empresa" class="img-fluid"
-                    style="max-width: 60%; max-height: 60%;" />
-                <img *ngIf="preview && !logoUrl" [src]="preview" class="img-fluid"
-                    style="max-width: 60%; max-height: 60%;" />
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" (click)="excluirImagem()">Excluir Imagem</button>
-                <button type="button" class="btn btn-danger" (click)="c('Close click')">Fechar</button>
-            </div>
-        </ng-template>
     </div>
+    <ng-template #classic let-c="close" let-d="dismiss">
+        <div class="modal-header justify-content-center">
+            <button type="button" class="close" (click)="d('Cross click')">
+                <i class="now-ui-icons ui-1_simple-remove"></i>
+            </button>
+            <h4 class="title title-up">Imagem</h4>
+        </div>
+        <div class="modal-body">
+            <img *ngIf="logoUrl" [src]="logoUrl" alt="Imagem da Empresa" class="img-fluid"
+                style="max-width: 60%; max-height: 60%;" />
+            <img *ngIf="preview && !logoUrl" [src]="preview" class="img-fluid"
+                style="max-width: 60%; max-height: 60%;" />
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" (click)="excluirImagem()">Excluir Imagem</button>
+            <button type="button" class="btn btn-danger" (click)="c('Close click')">Fechar</button>
+        </div>
+    </ng-template>
