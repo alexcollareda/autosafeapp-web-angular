@@ -46,22 +46,20 @@
                                         <div class="content">
                                             <div style="display: grid;place-items: center;">
                                                 <button class="btn btn-primary btn-simple btn-round" type="button"  (click)="openNewService(service.id)"> <!-- no lugar do 1, seria o id do item --><i 
-                                                        class="now-ui-icons gestures_tap-01"></i>Abrir</button>
+                                                        class="now-ui-icons gestures_tap-01"></i>Editar</button>
                                             </div>
                                         </div>
                                         <br/>
                                         <div>
 
-                                            <b>Título</b>
-                                            <p>{{service.title}}</p>
-                                            <b>Descrição</b>
-                                            <p>{{service.title}}</p>
+                                            <b>{{service.title}}</b>
+                                            <p>{{service.description}}</p>
                                             <div class="row">
-                                                <div class="col-md-6">
-                                                    <b>Preço</b>
-                                                    <p>{{ service.price | currency:'BRL':'symbol':'1.2-2' }}</p>
+                                                <div class="col-6">
+                                                    <p>Preço</p>
+                                                    <b>{{ service.price | currency:'BRL':'symbol':'1.2-2' }}</b>
                                                 </div>
-                                                <div class="col-md-6">
+                                                <div class="col-6">
                                                     <span *ngIf="service.isActive" class="badge badge-success">Ativo</span>
                                                     <span *ngIf="!service.isActive" class="badge badge-danger">Inativo</span>
                                                 </div>

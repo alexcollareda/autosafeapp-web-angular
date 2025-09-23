@@ -2,7 +2,7 @@
 <div class="page-header" filter-color="black">
     <div class="page-header-image" style="background-image:url(assets/img/backgroundlogin.png)"></div>
     <div class="container">
-        <div class="col-md-4 content-center">
+        <div class="col-md-6 content-center">
             <div class="card card-login card-plain">
                 <form class="form" method="" action="">
                     <div class="header header-primary text-center">
@@ -27,7 +27,7 @@
                         </div>
                         <input type="password" placeholder="Senha" class="form-control"
                                [(ngModel)]="password"
-                               (focus)="focus1=true" (blur)="focus1=false" name="password" />
+                               (focus)="focus1=true" (blur)="focus1=false" name="password" (keyup.enter)="login()"/>
                       </div>
                     </div>
                     <div class="footer text-center">
@@ -53,34 +53,30 @@
     </div>
     <footer class="footer">
         <div class="container">
-            <nav>
+             <nav>
                 <ul>
                     <li>
-                        <a href="https://www.creative-tim.com">
-                            Creative Tim
+                        <a [routerLink]="['/index']">
+                            Início
                         </a>
                     </li>
                     <li>
-                        <a href="https://www.creative-tim.com/about-us">
-                            About Us
+                        <a [routerLink]="['/public/landing']">
+                            Sobre nós
                         </a>
                     </li>
                     <li>
-                        <a href="http://blog.creative-tim.com">
-                            Blog
-                        </a>
-                    </li>
-                    <li>
-                        <a href="https://github.com/creativetimofficial/now-ui-kit/blob/master/LICENSE.md">
-                            MIT License
+                        <a target="_blank" href="https://wwww.instagram.com/autosafeapp">
+                            Instagram
                         </a>
                     </li>
                 </ul>
             </nav>
             <div class="copyright">
                 &copy;
-                {{data | date: 'yyyy'}}, Criado e Desenvolvido por
-                <a href="https://www.invisionapp.com" target="_blank">Collareda Servicos de Tecnologia LTDA</a>.
+                {{data | date: 'yyyy'}},
+                <a href="mailto:contato@exemplo.com" target="_blank">contato@autosafeapp.com.br</a>. Desenvolvido por
+                <a href="">Collareda Serviços de Tecnologia LTDA</a>.
             </div>
         </div>
     </footer>

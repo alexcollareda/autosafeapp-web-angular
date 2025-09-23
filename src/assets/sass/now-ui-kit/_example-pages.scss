@@ -217,7 +217,8 @@
     .card-login {
         border-radius: $border-radius-large;
         padding-bottom: $padding-base-horizontal;
-        max-width: 50%;
+        max-width: 80%;
+        padding-top: 60px;
 
         .btn-wd {
             min-width: 180px;
