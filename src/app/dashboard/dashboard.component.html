@@ -85,24 +85,33 @@
                             <!-- Aqui se inicia um novo card, deve ser feito o ngFor aqui-->
                             <div class="autosafe-card">
                                 <div class="nav-tabs-navigation">
-                                    <div class="nav-tabs-wrapper">
-                                        <div class="content">
-                                            <p class="dashboard-title"><i class="now-ui-icons design_bullet-list-67"></i> Informativos</p>
-                                        </div>
-                                         <div>
-                                            <a class="category">sem novidades por enquanto.</a>
-                                        </div>
-                                        
+                                <div class="nav-tabs-wrapper">
+                                    <div class="content">
+                                    <p class="dashboard-title">
+                                        <i class="now-ui-icons design_bullet-list-67"></i> Informativos
                                     </div>
-                                </div>
+                                    <div *ngIf="informatives.length > 0; else noNews">
+                                    <ul>
+                                    <li *ngFor="let info of informatives">
+                                        <a *ngIf="info.action"
+                                            (click)="info.action()"
+                                            style="cursor:pointer; text-decoration:underline; color:#f96332; font-weight:bold;">
+                                            {{ info.message }}
+                                        </a>
+                                        <span *ngIf="!info.action">{{ info.message }}</span>
+                                        </li>
+                                    </ul>
+                                    </div>
+                                <ng-template #noNews>
+                                <a class="category">SEM NOVIDADES POR ENQUANTO.</a>
+                                </ng-template>
+                            </div>
                             </div>
                         </div>
-
-
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
     </div>
-</div>
