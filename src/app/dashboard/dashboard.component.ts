@@ -1,3 +1,4 @@
+import { CompaniesService } from 'app/services/companies.service';
 import { ReviewService } from './../services/review.service';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'app/services/auth.service';
@@ -31,7 +32,7 @@ export class DashboardComponent implements OnInit {
     informatives: Informative[] = [];
 
     constructor(private authService: AuthService, private servicesService: ServicesService, private reviewService: ReviewService, private metricsService:MetricsService, private operatingHoursService: OperatingHoursService,
-    private router: Router) {   
+    private router: Router, private companiesService: CompaniesService,) {   
     }
 
   ngOnInit(): void {
@@ -81,7 +82,21 @@ export class DashboardComponent implements OnInit {
     });
   }
 });
-  }
+
+  this.companiesService.getCompanyById().subscribe({
+    next: (company) => {
+      if (!company.logoUrl || company.logoUrl.trim() === '') {
+        this.informatives.push({
+          message: "Sua empresa não possui imagem cadastrada, Atualize!",
+          action: () => this.goToMyCompanyTab('empresa')
+        });
+      }
+    },
+    error: (err) => {
+      console.error('Erro ao buscar dados da empresa:', err);
+    }
+  });
+}
 
   goToMyCompanyTab(tab: string) {
   this.router.navigate(['/app/my-company'], { queryParams: { tab } });
