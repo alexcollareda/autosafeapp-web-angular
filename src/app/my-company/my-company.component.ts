@@ -7,6 +7,7 @@ import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ImageService } from 'app/services/image.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 interface CompanyType {
   id: number;
@@ -109,9 +110,15 @@ export class MyCompanyComponent implements OnInit {
   readonly baseUrl = '/api/day-config';
 
   activeTab: HeaderTab = 'empresa';
-  constructor(private operatingHoursService: OperatingHoursService, private fb: FormBuilder, private companiesService: CompaniesService, private companyTypesService: CompanyTypesService, private modalService: NgbModal, private cepService: CepService, private imageService: ImageService) { }
+  constructor(private operatingHoursService: OperatingHoursService, private fb: FormBuilder, private companiesService: CompaniesService, private companyTypesService: CompanyTypesService, private modalService: NgbModal, private cepService: CepService, private imageService: ImageService, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
+     this.route.queryParams.subscribe(params => {
+    const tab = params['tab'] as HeaderTab;
+    if (tab) {
+      this.setTab(tab);
+    }
+  });
     this.initForm();
     this.loadConfig();
     this.companiesService.getCompanyById().subscribe(
