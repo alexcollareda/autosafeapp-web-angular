@@ -298,7 +298,7 @@
   box-shadow: 0px 1px 10px 0px rgba(0, 0, 0, 0.2);
 }
 .bootstrap-datetimepicker-widget table td.active.today:before > div {
-  border-bottom-color: #FFFFFF;
+  border-bottom-color: #f7f9fc;
 }
 .bootstrap-datetimepicker-widget table td.disabled > div, .bootstrap-datetimepicker-widget table td.disabled:hover > div {
   background: none;
@@ -320,7 +320,7 @@
 }
 .bootstrap-datetimepicker-widget table td span.active {
   background-color: $primary-color;
-  color: #FFFFFF;
+  color: #f7f9fc;
 }
 .bootstrap-datetimepicker-widget table td span.old {
   color: #cfcfca;
@@ -586,7 +586,7 @@ ngb-datepicker{
       background: 0 0!important;
       border: none;
       .ngb-dp-weekday{
-        color: #fff;
+        color: #f7f9fc;
         font-style: normal!important;
         font-size: 14px;
         opacity: .8;

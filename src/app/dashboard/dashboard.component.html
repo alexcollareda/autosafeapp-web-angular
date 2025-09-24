@@ -95,7 +95,7 @@
                                     <li *ngFor="let info of informatives">
                                         <a *ngIf="info.action"
                                             (click)="info.action()"
-                                            style="cursor:pointer; text-decoration:underline; color:#f96332; font-weight:bold;">
+                                            style="cursor:pointer; text-decoration:underline; color:#FF7800; font-weight:bold;">
                                             {{ info.message }}
                                         </a>
                                         <span *ngIf="!info.action">{{ info.message }}</span>

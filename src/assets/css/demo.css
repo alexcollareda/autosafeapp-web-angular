@@ -111,7 +111,7 @@
 }
 
 #notifications {
-    background-color: #FFFFFF;
+    background-color: #f7f9fc;
     display: block;
     width: 100%;
     position: relative;
@@ -134,7 +134,7 @@
 }
 
 .txt-white {
-    color: #FFFFFF;
+    color: #f7f9fc;
 }
 
 .txt-gray {
@@ -161,7 +161,7 @@
 
 .logo-container .brand {
     font-size: 16px;
-    color: #FFFFFF;
+    color: #f7f9fc;
     line-height: 18px;
     float: left;
     margin-left: 10px;
@@ -245,7 +245,7 @@
 
 /*.separator{
     content: "Separator";
-    color: #FFFFFF;
+    color: #f7f9fc;
     display: block;
     width: 100%;
     padding: 20px;
@@ -368,7 +368,7 @@
 }
 
 .navbar-transparent.navbar-small .logo-container .brand {
-    color: #FFFFFF;
+    color: #f7f9fc;
 }
 
 .navbar-default.navbar-small .logo-container .brand {
@@ -443,7 +443,7 @@
 
 .components-page .title,
 .tutorial-page .title {
-    color: #FFFFFF;
+    color: #f7f9fc;
 }
 
 .brand .h1-seo {
@@ -500,8 +500,8 @@
 .autosafe-card {
     border-radius: 12px;
     box-shadow: 0 6px 10px -4px rgba(0, 0, 0, .15);
-    background-color: #fff;
-    color: #575757;
+    background-color: #f7f9fc;
+    color: #333333;
     margin-bottom: 20px;
     position: relative;
     border: 0;
@@ -515,7 +515,7 @@
     border-radius: 12px;
     box-shadow: 0 6px 10px -4px rgba(0, 0, 0, .15);
     background-color: #000000;
-    color: #575757;
+    color: #333333;
     margin-bottom: 20px;
     position: relative;
     border: 0;

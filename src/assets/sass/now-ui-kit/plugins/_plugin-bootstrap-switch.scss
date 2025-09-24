@@ -88,7 +88,7 @@
   cursor: pointer;
   display: inline-block !important;
   height: 100%;
-  color: #fff;
+  color: #f7f9fc;
   padding: 6px 10px;
   font-size: 11px;
   text-indent: -5px;
@@ -107,38 +107,38 @@
 }
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-brown,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-brown {
-  color: #fff;
+  color: #f7f9fc;
   background: $brand-primary;
 }
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-blue,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-blue {
-  color: #fff;
+  color: #f7f9fc;
   background: $brand-info;
 }
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-green,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-green {
-  color: #fff;
+  color: #f7f9fc;
   background: $brand-success;
 }
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-orange,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-orange {
   background: $brand-warning;
-  color: #fff;
+  color: #f7f9fc;
 }
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-red,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-red {
-  color: #fff;
+  color: #f7f9fc;
   background: $brand-danger;
 }
 .bootstrap-switch .bootstrap-switch-handle-on.bootstrap-switch-default,
 .bootstrap-switch .bootstrap-switch-handle-off.bootstrap-switch-default {
-  color: #fff;
+  color: #f7f9fc;
 }
 .bootstrap-switch .bootstrap-switch-label {
   text-align: center;
   z-index: 100;
   color: #333333;
-  background: #ffffff;
+  background: #f7f9fc;
   width: 22px !important;
   height: 22px !important;
   margin: 0px -11px;
@@ -264,7 +264,7 @@
 
 .bootstrap-switch.bootstrap-switch-on .bootstrap-switch-label{
     &:before{
-        background-color: #FFFFFF;
+        background-color: #f7f9fc;
     }
 }
 
