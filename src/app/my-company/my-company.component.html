@@ -214,6 +214,54 @@
                         </div>
                         <br />
 
+                        <div class="row mb-3">
+                        <div class="col-12">
+                            <p class="category">Tipo de Veículo Atendido:</p>
+                            <div class="d-flex flex-wrap gap-2">
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-round"
+                                [ngClass]="{
+                                'active': vehicleType === 'CAR',
+                                'btn-simple': vehicleType !== 'CAR'
+                                }"
+                                (click)="vehicleType = 'CAR'">
+                                <ng-container *ngIf="vehicleType === 'CAR'">
+                                <i class="now-ui-icons ui-1_check"></i>
+                                </ng-container>
+                                Carro
+                            </button>
+
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-round"
+                                [ngClass]="{
+                                'active': vehicleType === 'MOTORCYCLE',
+                                'btn-simple': vehicleType !== 'MOTORCYCLE'
+                                }"
+                                (click)="vehicleType = 'MOTORCYCLE'">
+                                <ng-container *ngIf="vehicleType === 'MOTORCYCLE'">
+                                <i class="now-ui-icons ui-1_check"></i>
+                                </ng-container>
+                                Moto
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-round"
+                                [ngClass]="{
+                                'active': vehicleType === 'ALL',
+                                'btn-simple': vehicleType !== 'ALL'
+                                }"
+                                (click)="vehicleType = 'ALL'">
+                                <ng-container *ngIf="vehicleType === 'ALL'">
+                                <i class="now-ui-icons ui-1_check"></i>
+                                </ng-container>
+                                Todos
+                            </button>
+                            </div>
+                        </div>
+                        </div>
+
                         <div class="row mb-3" *ngIf="companyTypes.length > 0 && updateTypes">
                             <div class="col-12">
                                 <p class="category">Selecione os tipos da sua Empresa:</p>

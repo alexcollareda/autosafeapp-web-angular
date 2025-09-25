@@ -80,6 +80,7 @@ export class MyCompanyComponent implements OnInit {
   updatedAt: Date = new Date();
   distance: number = 0;
   rate: number = 0;
+  vehicleType: 'CAR' | 'MOTORCYCLE' | 'TRUCK' | 'ALL' = 'ALL';
   companyTypes: CompanyType[] = [];
   selectedCompanyTypeIds: number[] = [];
   updateTypes: boolean = true;
@@ -137,6 +138,7 @@ export class MyCompanyComponent implements OnInit {
         this.updatedAt = data.updatedAt;
         this.distance = data.distance;
         this.rate = data.rate;
+        this.vehicleType = data.vehicleType || 'ALL';
 
         this.selectedCompanyTypeIds =[];
         this.types.forEach(type => {
@@ -516,7 +518,8 @@ this.loadCompanyTypes();
       logoUrl: this.logoUrl,
       address: this.address,
       types: this.selectedCompanyTypeIds,
-      active: this.active
+      active: this.active,
+      vehicleType: this.vehicleType 
     }).subscribe({
       next: (response) => {
         this.createAlert('success', 'Sucesso!', 'Empresa atualizada com sucesso.');
@@ -574,6 +577,10 @@ this.loadCompanyTypes();
 
     if (!this.selectedCompanyTypeIds || this.selectedCompanyTypeIds.length === 0) {
       this.createAlert('danger', '', 'Pelo menos um tipo de empresa deve ser selecionado.');
+      return false;
+    }
+    if (!this.vehicleType) {
+      this.createAlert('danger', '', 'Selecione o tipo de veículo atendido.');
       return false;
     }
 
