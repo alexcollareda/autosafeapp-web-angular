@@ -38,6 +38,7 @@ export class RegisterComponent implements OnInit {
     celular: string = '';
     isWatsApp: boolean = false;
     email: string = '';
+    vehicleType: 'CAR' | 'MOTORCYCLE' | 'TRUCK' | 'ALL' = 'ALL';
     focus;
     focus1;
     companyId: number | null = null;
@@ -233,6 +234,10 @@ export class RegisterComponent implements OnInit {
                 this.createAlert('danger', 'Atenção!', 'Selecione pelo menos um tipo de empresa.');
                 return false;
             }
+            if (!this.vehicleType) {
+            this.createAlert('danger', 'Atenção!', 'Selecione o tipo de veículo atendido.');
+            return false;
+            }
             return true;
         }
 
@@ -278,6 +283,7 @@ export class RegisterComponent implements OnInit {
             description: '',
             logoUrl: '',
             typeIds: this.selectedCompanyTypeIds,
+            vehicleType: this.vehicleType,
             address: {
                 street: this.rua,
                 number: this.numero,
