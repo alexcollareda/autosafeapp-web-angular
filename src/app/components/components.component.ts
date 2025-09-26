@@ -2,6 +2,8 @@ import { Component, OnInit, Renderer2, OnDestroy } from '@angular/core';
 import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { NgbAccordionConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as Rellax from 'rellax';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { filter } from 'rxjs/operators';
 
 @Component({
     selector: 'app-components',
@@ -27,14 +29,15 @@ export class ComponentsComponent implements OnInit, OnDestroy {
     model: NgbDateStruct;
 
 
-    
+
     public isCollapsed = true;
     public isCollapsed1 = true;
     public isCollapsed2 = true;
 
     state_icon_primary = true;
 
-    constructor(private renderer: Renderer2, config: NgbAccordionConfig) {
+    constructor(private renderer: Renderer2, config: NgbAccordionConfig, private route: ActivatedRoute,
+        private router: Router) {
         config.closeOthers = true;
         config.type = 'info';
     }
@@ -61,6 +64,30 @@ export class ComponentsComponent implements OnInit, OnDestroy {
         navbar.classList.add('navbar-transparent');
         var body = document.getElementsByTagName('body')[0];
         body.classList.add('index-page');
+
+        this.router.events
+            .pipe(filter(event => event instanceof NavigationEnd))
+            .subscribe(() => {
+                // 2. Tenta pegar o fragmento da URL (Ex: 'minha-div-x')
+                const fragment = this.route.snapshot.fragment;
+
+                if (fragment) {
+                    // 3. Usa o setTimeout para garantir que a renderização do DOM esteja completa
+                    setTimeout(() => {
+                        const element = document.getElementById(fragment);
+                        if (element) {
+                            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }, 100); // 100ms é um bom valor para a maioria dos casos
+                }
+                 this.router.navigate(
+                        [],
+                        {
+                            relativeTo: this.route,
+                            fragment: null,
+                            replaceUrl: true
+                        });
+            });
     }
     ngOnDestroy() {
         var navbar = document.getElementsByTagName('nav')[0];

@@ -35,16 +35,8 @@
             <div class="row">
               <div class="col-sm-6 col-lg-4">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="cnpj" 
-                    [(ngModel)]="cnpj" 
-                    (blur)="onCnpjBlur()" 
-                    maxlength="14" 
-                    placeholder="Digite seu CNPJ" 
-                    mask="00000000000000" 
-                  />
+                  <input type="text" class="form-control" name="cnpj" [(ngModel)]="cnpj" (blur)="onCnpjBlur()"
+                    maxlength="14" placeholder="Digite seu CNPJ" mask="00000000000000" />
                 </div>
               </div>
             </div>
@@ -52,24 +44,14 @@
             <div class="row">
               <div class="col-sm-6 col-lg-6">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="razaoSocial" 
-                    [(ngModel)]="razaoSocial" 
-                    placeholder="Razao Social" 
-                  />
+                  <input type="text" class="form-control" name="razaoSocial" [(ngModel)]="razaoSocial"
+                    placeholder="Razao Social" />
                 </div>
               </div>
               <div class="col-sm-6 col-lg-6">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="nomeFantasia" 
-                    [(ngModel)]="nomeFantasia" 
-                    placeholder="Nome Fantasia" 
-                  />
+                  <input type="text" class="form-control" name="nomeFantasia" [(ngModel)]="nomeFantasia"
+                    placeholder="Nome Fantasia" />
                 </div>
               </div>
             </div>
@@ -77,37 +59,19 @@
             <div class="row">
               <div class="col-sm-6 col-lg-6">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="email" 
-                    [(ngModel)]="email" 
-                    (blur)="onEmailBlur()" 
-                    placeholder="E-Mail" 
-                  />
+                  <input type="text" class="form-control" name="email" [(ngModel)]="email" (blur)="onEmailBlur()"
+                    placeholder="E-Mail" />
                 </div>
               </div>
               <div class="col-sm-6 col-lg-3">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="telefone" 
-                    [(ngModel)]="telefone" 
-                    placeholder="Telefone" 
-                    mask="(00) 00000-0000"
-                  />
+                  <input type="text" class="form-control" name="telefone" [(ngModel)]="telefone" placeholder="Telefone"
+                    mask="(00) 00000-0000" />
                 </div>
               </div>
               <div class="col-sm-6 col-lg-3">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="celular" 
-                    [(ngModel)]="celular" 
-                    placeholder="Celular"
-                  />
+                  <input type="text" class="form-control" name="celular" [(ngModel)]="celular" placeholder="Celular" />
                 </div>
               </div>
             </div>
@@ -117,75 +81,38 @@
           <div class="content" id="step2" *ngIf="step === 2">
             <h4>Sua visibilidade cresce a partir daqui.</h4>
             <br />
-            <p class="category-white">Endereco</p>
+            <p class="category-white">Endereço</p>
 
             <div class="row">
               <div class="col-sm-6 col-lg-3">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="cep" 
-                    [(ngModel)]="cep" 
-                    maxlength="8" 
-                    (blur)="buscarCep()" 
-                    placeholder="CEP" 
-                  />
+                  <input type="text" class="form-control" name="cep" [(ngModel)]="cep" maxlength="8"
+                    (blur)="buscarCep()" placeholder="CEP" />
                 </div>
               </div>
-              <div class="col-sm-6 col-lg-4">
+              <div class="col-sm-6 col-lg-7">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="rua" 
-                    [(ngModel)]="rua" 
-                    placeholder="Rua" 
-                  />
+                  <input type="text" class="form-control" name="rua" [(ngModel)]="rua" placeholder="Rua" />
                 </div>
               </div>
               <div class="col-sm-6 col-lg-2">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="numero" 
-                    [(ngModel)]="numero" 
-                    placeholder="Numero" 
-                  />
-                </div>
-              </div>
-              <div class="col-sm-6 col-lg-3">
-                <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="bairro" 
-                    [(ngModel)]="bairro" 
-                    placeholder="Bairro" 
-                  />
+                  <input type="text" class="form-control" name="numero" [(ngModel)]="numero" placeholder="Numero" />
                 </div>
               </div>
               <div class="col-sm-6 col-lg-4">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="cidade" 
-                    [(ngModel)]="cidade" 
-                    placeholder="Cidade" 
-                  />
+                  <input type="text" class="form-control" name="bairro" [(ngModel)]="bairro" placeholder="Bairro" />
+                </div>
+              </div>
+              <div class="col-sm-6 col-lg-4">
+                <div class="form-group">
+                  <input type="text" class="form-control" name="cidade" [(ngModel)]="cidade" placeholder="Cidade" />
                 </div>
               </div>
               <div class="col-sm-6 col-lg-2">
                 <div class="form-group">
-                  <input 
-                    type="text" 
-                    class="form-control" 
-                    name="estado" 
-                    [(ngModel)]="estado" 
-                    placeholder="Estado" 
-                  />
+                  <input type="text" class="form-control" name="estado" [(ngModel)]="estado" placeholder="Estado" />
                 </div>
               </div>
             </div>
@@ -195,45 +122,33 @@
           <div class="content" id="step2" *ngIf="step === 3">
             <h4>Selecione aqui suas especialidades e serviços oferecidos.</h4>
             <br />
-            <p class="category-white">Servicos</p>
+            <p class="category-white">Serviços</p>
             <div class="row mb-3" *ngIf="step === 3">
               <div class="col-12">
                 <p class="category-white">Selecione o tipo de veículo atendido:</p>
-                <div class="d-flex flex-wrap gap-2">
-                  <button
-                    type="button"
-                    class="btn btn-primary btn-round"
-                    [ngClass]="{
+                <div class="d-flex flex-wrap gap-2" style="justify-content: center;">
+                  <button type="button" class="btn btn-primary btn-round" [ngClass]="{
                       'active': vehicleType === 'CAR',
                       'btn-simple': vehicleType !== 'CAR'
-                    }"
-                    (click)="vehicleType = 'CAR'">
+                    }" (click)="vehicleType = 'CAR'">
                     <ng-container *ngIf="vehicleType === 'CAR'">
                       <i class="now-ui-icons ui-1_check"></i>
                     </ng-container>
                     Carro
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-primary btn-round"
-                    [ngClass]="{
+                  <button type="button" class="btn btn-primary btn-round" [ngClass]="{
                       'active': vehicleType === 'MOTORCYCLE',
                       'btn-simple': vehicleType !== 'MOTORCYCLE'
-                    }"
-                    (click)="vehicleType = 'MOTORCYCLE'">
+                    }" (click)="vehicleType = 'MOTORCYCLE'">
                     <ng-container *ngIf="vehicleType === 'MOTORCYCLE'">
                       <i class="now-ui-icons ui-1_check"></i>
                     </ng-container>
                     Moto
                   </button>
-                  <button
-                    type="button"
-                    class="btn btn-primary btn-round"
-                    [ngClass]="{
+                  <button type="button" class="btn btn-primary btn-round" [ngClass]="{
                       'active': vehicleType === 'ALL',
                       'btn-simple': vehicleType !== 'ALL'
-                    }"
-                    (click)="vehicleType = 'ALL'">
+                    }" (click)="vehicleType = 'ALL'">
                     <ng-container *ngIf="vehicleType === 'ALL'">
                       <i class="now-ui-icons ui-1_check"></i>
                     </ng-container>
@@ -247,12 +162,10 @@
               <div class="col-12">
                 <p class="category-white">Selecione o(s) tipo(s) de empresa:</p>
                 <div class="d-flex flex-wrap gap-2">
-                  <button *ngFor="let type of companyTypes"
-                          class="btn btn-primary btn-round"
-                          type="button"
-                          [ngbTooltip]="type.description"
-                          [ngClass]="{'active': isCompanyTypeSelected(type.id), 'btn-simple': !isCompanyTypeSelected(type.id)}"
-                          (click)="toggleCompanyType(type.id)">
+                  <button *ngFor="let type of companyTypes" class="btn btn-primary btn-round" type="button"
+                    [ngbTooltip]="type.description"
+                    [ngClass]="{'active': isCompanyTypeSelected(type.id), 'btn-simple': !isCompanyTypeSelected(type.id)}"
+                    (click)="toggleCompanyType(type.id)">
                     <ng-container *ngIf="isCompanyTypeSelected(type.id)">
                       <i class="now-ui-icons ui-1_check"></i>
                     </ng-container>
@@ -271,30 +184,18 @@
             <div class="row justify-content-center">
               <div class="col-md-6">
                 <div class="form-group">
-                  <input 
-                    type="password" 
-                    class="form-control" 
-                    name="password" 
-                    [(ngModel)]="password" 
-                    maxlength="14" 
-                    placeholder="Digite sua senha" 
-                  />
+                  <input type="password" class="form-control" name="password" [(ngModel)]="password" maxlength="14"
+                    placeholder="Digite sua senha" />
                 </div>
                 <div class="form-group">
-                  <input 
-                    type="password" 
-                    class="form-control" 
-                    name="password2" 
-                    [(ngModel)]="password2" 
-                    maxlength="14" 
-                    placeholder="Confirme sua senha" 
-                  />
+                  <input type="password" class="form-control" name="password2" [(ngModel)]="password2" maxlength="14"
+                    placeholder="Confirme sua senha" />
                 </div>
               </div>
             </div>
 
-            <h6>Inclua letras e numeros</h6>
-            <h6>Deve conter no minimo 6 caracteres</h6>
+            <h6>Inclua letras e números</h6>
+            <h6>Deve conter no mínimo 6 caracteres</h6>
           </div>
 
           <!-- STEP 5 -->
@@ -308,22 +209,15 @@
           <!-- FOOTER -->
           <div class="footer">
             <div class="col-md-12">
-              <button *ngIf="step > 1 && step < 5"
-                      type="button"
-                      class="btn btn-primary btn-simple btn-round btn-lg"
-                      (click)="backStep()">
+              <button *ngIf="step > 1 && step < 5" type="button" class="btn btn-primary btn-simple btn-round btn-lg"
+                (click)="backStep()">
                 Voltar
               </button>
-              <button *ngIf="step <= 4" 
-                      type="button"
-                      class="btn btn-primary btn-round btn-lg"
-                      (click)="nextStep()">
+              <button *ngIf="step <= 4" type="button" class="btn btn-primary btn-round btn-lg" (click)="nextStep()">
                 {{ buttonDescription }}
               </button>
-              <button *ngIf="step === 5"
-                      type="button"
-                      class="btn btn-primary btn-round btn-lg"
-                      [routerLink]="['/public/login']">
+              <button *ngIf="step === 5" type="button" class="btn btn-primary btn-round btn-lg"
+                [routerLink]="['/public/login']">
                 Acessar Minha Conta
               </button>
             </div>
