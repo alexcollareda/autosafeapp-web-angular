@@ -1,0 +1,287 @@
+// agenda.component.scss
+.calendar-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  padding-top: 100px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+
+  .nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .current-month {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+  }
+
+  .btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    &.btn-nav {
+      background: rgba(255,255,255,0.2);
+      color: white;
+      
+      &:hover {
+        background: rgba(255,255,255,0.3);
+        transform: translateY(-1px);
+      }
+    }
+
+    &.btn-today {
+      background: #28a745;
+      color: white;
+      
+      &:hover {
+        background: #218838;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+.calendar-container {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+  overflow: hidden;
+
+  ::ng-deep {
+    .cal-month-view {
+      .cal-header {
+        background: #f8f9fa;
+        border-bottom: 2px solid #e9ecef;
+
+        .cal-cell {
+          padding: 15px 5px;
+          text-align: center;
+          font-weight: 600;
+          color: #495057;
+          font-size: 0.9rem;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+      }
+
+      .cal-days {
+        .cal-cell-row {
+          border-bottom: 1px solid #e9ecef;
+
+          &:last-child {
+            border-bottom: none;
+          }
+        }
+
+        .cal-day-cell {
+          min-height: 120px;
+          border-right: 1px solid #e9ecef;
+          padding: 8px;
+          position: relative;
+          transition: background-color 0.2s ease;
+
+          &:last-child {
+            border-right: none;
+          }
+
+          &:hover {
+            background-color: #f8f9fa;
+          }
+
+          &.cal-today {
+            background-color: #fff3cd;
+            
+            .cal-day-number {
+              background: #ffc107;
+              color: #212529;
+              border-radius: 50%;
+              width: 32px;
+              height: 32px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              margin: 0 auto 8px;
+            }
+          }
+
+          &.cal-weekend {
+            background-color: #f8f9fa;
+          }
+
+          &.cal-out-month {
+            background-color: #f1f3f4;
+            
+            .cal-day-number {
+              color: #9aa0a6;
+            }
+          }
+
+          &.cal-has-events {
+            .cal-day-number {
+              color: #007bff;
+              font-weight: bold;
+            }
+          }
+
+          .cal-day-number {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 4px;
+            text-align: center;
+          }
+
+          .cal-events {
+            .cal-event {
+              border-radius: 4px;
+              padding: 2px 6px;
+              margin: 2px 0;
+              font-size: 11px;
+              font-weight: 500;
+              cursor: pointer;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              transition: all 0.2s ease;
+
+              &:hover {
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+              }
+            }
+          }
+        }
+      }
+
+      .cal-open-day-events {
+        background: #f8f9fa;
+        border-top: 2px solid #dee2e6;
+        padding: 20px;
+
+        .cal-event {
+          background: white;
+          border-radius: 8px;
+          padding: 15px;
+          margin: 10px 0;
+          border-left: 4px solid #007bff;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          transition: transform 0.2s ease;
+
+          &:hover {
+            transform: translateX(5px);
+          }
+
+          .cal-event-title {
+            font-weight: 600;
+            color: #495057;
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsividade
+@media (max-width: 768px) {
+  .calendar-wrapper {
+    padding: 10px;
+  }
+
+  .calendar-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+
+    .nav-buttons {
+      .current-month {
+        font-size: 1.2rem;
+      }
+    }
+  }
+
+  .calendar-container {
+    ::ng-deep {
+      .cal-month-view {
+        .cal-days {
+          .cal-day-cell {
+            min-height: 80px;
+            padding: 4px;
+
+            .cal-day-number {
+              font-size: 0.9rem;
+            }
+
+            .cal-events {
+              .cal-event {
+                font-size: 10px;
+                padding: 1px 4px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-header {
+    .nav-buttons {
+      flex-direction: column;
+      gap: 10px;
+    }
+  }
+
+  .calendar-container {
+    ::ng-deep {
+      .cal-month-view {
+        .cal-header {
+          .cal-cell {
+            padding: 10px 2px;
+            font-size: 0.8rem;
+          }
+        }
+
+        .cal-days {
+          .cal-day-cell {
+            min-height: 60px;
+            padding: 2px;
+
+            .cal-day-number {
+              font-size: 0.8rem;
+            }
+
+            .cal-events {
+              .cal-event {
+                font-size: 9px;
+                padding: 1px 2px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

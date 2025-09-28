@@ -21,6 +21,8 @@ import { MyPromotionsComponent } from './my-promotions/my-promotions.component';
 import { WorkingComponent } from './public/working/working.component';
 import { environment } from '../environments/environment';
 import { CompanyProfileComponent } from './public/company-profile/company-profile.component';
+import { CalendarA11y } from 'angular-calendar';
+import { CalendarComponent } from './calendar/calendar.component';
 
 var canregister = null;
 if(environment){
@@ -55,7 +57,8 @@ const routes: Routes = [
       { path: 'new-services', component: NewServicesComponent },
       { path: 'my-company', component: MyCompanyComponent },
       { path: 'my-promotions', component: MyPromotionsComponent, canActivate: [AuthGuard] },
-      { path: 'new-promotions', component: NewPromotionsComponent }
+      { path: 'new-promotions', component: NewPromotionsComponent },
+      { path: 'calendar', component: CalendarComponent }
     ]
   },
 

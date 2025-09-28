@@ -1,0 +1,46 @@
+<!-- agenda.component.html -->
+<div class="calendar-wrapper">
+  <!-- Header com navegação -->
+  <div class="calendar-header">
+    <div class="nav-buttons">
+      <button 
+        class="btn btn-nav" 
+        mwlCalendarPreviousView
+        [view]="view"
+        [(viewDate)]="viewDate">
+        ← Anterior
+      </button>
+      
+      <h2 class="current-month">
+        {{ viewDate | date:'MMMM yyyy':'pt-BR' }}
+      </h2>
+      
+      <button 
+        class="btn btn-nav"
+        mwlCalendarNextView
+        [view]="view"
+        [(viewDate)]="viewDate">
+        Próximo →
+      </button>
+    </div>
+    
+    <button 
+      class="btn btn-today"
+      mwlCalendarToday
+      [(viewDate)]="viewDate">
+      Hoje
+    </button>
+  </div>
+
+  <!-- Calendário -->
+  <div class="calendar-container">
+    <mwl-calendar-month-view
+      [viewDate]="viewDate"
+      [events]="events"
+      [activeDayIsOpen]="activeDayIsOpen"
+      [locale]="locale"
+      (dayClicked)="onDayClicked($event)"
+      (eventClicked)="onEventClicked($event)">
+    </mwl-calendar-month-view>
+  </div>
+</div>
