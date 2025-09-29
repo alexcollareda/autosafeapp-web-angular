@@ -88,9 +88,6 @@
                             <div class="appointment-hour">
                                 {{ agendamento.data | date:'HH:mm' }}
                             </div>
-                            <div class="appointment-duration">
-                                {{ getDuracaoFormatada(agendamento.duracao) }}
-                            </div>
                         </div>
 
                         <!-- Informações do Serviço -->
@@ -186,7 +183,8 @@
             <div class="col-sm-6 col-lg-4">
                 <div class="form-group">
                     <label>Telefone</label>
-                    <input type="text" placeholder="(11) 9 9820 0000"  [(ngModel)]="newAppointment.clienteTelefone" mask="(00) 00000-0000" class="form-control" />
+                    <input type="text" placeholder="(11) 9 9820 0000" [(ngModel)]="newAppointment.clienteTelefone"
+                        mask="(00) 00000-0000" class="form-control" />
                 </div>
             </div>
             <div class="col-sm-6 col-lg-4">
@@ -254,7 +252,7 @@
                     <label>Horário</label>
                     <div class="input-group" style="width: fit-content;">
                         <input class="form-control text-center" mask="00" placeholder="HH"
-                            style="width: 65px; flex: none;" maxlength="2"  [(ngModel)]="horaAgendamento" />
+                            style="width: 65px; flex: none;" maxlength="2" [(ngModel)]="horaAgendamento" />
                         <b>:</b>
                         <input class="form-control text-center" mask="00" placeholder="MM"
                             style="width: 65px; flex: none;" maxlength="2" [(ngModel)]="minutoAgendamento" />

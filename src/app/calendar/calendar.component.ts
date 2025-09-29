@@ -1,11 +1,10 @@
 import { AppointmentService } from './../services/appointment.service';
-// calendar.component.ts
-import { Component, LOCALE_ID, Inject } from '@angular/core';
+import { Component, LOCALE_ID, Inject, OnInit } from '@angular/core';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { NgbModal, NgbCalendar, NgbDate, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { PlateService } from 'app/services/plate.service';
 import { ServicesService } from 'app/services/services.service';
-import { or } from 'ajv/dist/compile/codegen';
+import { firstValueFrom } from 'rxjs'; 
 
 interface AgendamentoAutomotivo {
   id: number;
@@ -17,7 +16,7 @@ interface AgendamentoAutomotivo {
   data: Date;
   duracao: number; // em minutos
   valor: number;
-  status: 'confirmado' | 'pendente' | 'em_andamento' | 'concluido' | 'cancelado';
+  status: string;
   observacoes?: string;
 }
 
@@ -43,7 +42,7 @@ interface Service {
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss']
 })
-export class CalendarComponent {
+export class CalendarComponent implements OnInit{
   view: CalendarView = CalendarView.Month;
   viewDate: Date = new Date();
   activeDayIsOpen: boolean = false;
@@ -88,8 +87,32 @@ export class CalendarComponent {
     private calendar: NgbCalendar, private plateService: PlateService,
     private servicesService: ServicesService, private appointmentService: AppointmentService) {
     this.model = this.calendar.getToday();
-    this.filtrarAgendamentos();
+
+
+  }
+
+    ngOnInit(): void {
+    // Chama o método assíncrono
+    this.initData();
+  }
+
+  async initData(): Promise<void> {
+    try {
+      this.serviceList = await firstValueFrom(this.servicesService.findByCompanyLogged());
+      console.log('Lista de serviços recuperada:', this.serviceList);
+
+      this.performDependentActions();
+
+    } catch (error) {
+      console.error('Erro ao recuperar os serviços:', error);
+      // Trate o erro, talvez mostre uma mensagem para o usuário
+    } finally {
+    }
+  }
+
+   performDependentActions(): void {
     this.getAppointments();
+    
   }
 
   recoverServices() {
@@ -98,6 +121,13 @@ export class CalendarComponent {
         this.serviceList = data;
       }
     );
+  }
+
+  getNameService(idService) {
+    console.log('buscando servicos' + idService);
+    console.log(this.serviceList);
+    const service = this.serviceList.find(s => s.id === idService);
+    return service ? service.title : undefined;
   }
 
   get filteredServiceList(): Service[] {
@@ -139,7 +169,6 @@ export class CalendarComponent {
   }
 
   open(content, type, modalDimension) {
-    this.recoverServices();
     if (modalDimension === 'sm' && type === 'modal_mini') {
       this.modalService.open(content, { windowClass: 'modal-mini modal-primary', size: 'sm' }).result.then((result) => {
         this.closeResult = `Closed with: ${result}`;
@@ -192,27 +221,28 @@ export class CalendarComponent {
       (data) => {
         this.agendamentosCompletos = data.map(apiAppointment => this.mapApiToLocal(apiAppointment));
         this.events = data.map(apiAppointment => this.mapEventsApiToLocal(apiAppointment))
+        this.filtrarAgendamentos();
       })
   }
 
   private mapApiToLocal(apiData: any): AgendamentoAutomotivo {
     return {
       id: apiData.id || 0,
-      servico: apiData.serviceId || 'Serviço não informado',
+      servico: this.getNameService(apiData.serviceId) || 'Serviço não informado',
       cliente: apiData.clientName || 'Cliente não informado',
       veiculo: apiData.vehicleDescription,
       clienteTelefone: apiData.clientPhone || '',
       placa: apiData.vehiclePlate || '',
       duracao: 100,
       valor: 200,
-      data: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : undefined,
-      status: 'confirmado'
+      data: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : null,
+      status: this.mapStatus(apiData.status)
     };
   }
 
   private mapEventsApiToLocal(apiData: any): any {
     return {
-      start: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : undefined,
+      start: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : null,
       title: apiData.clientName + ' ' + apiData.vehicleDescription,
       color: { primary: '#1e90ff', secondary: '#D1E7DD' }
     };
@@ -221,9 +251,12 @@ export class CalendarComponent {
   private mapStatus(apiStatus: string): string {
     const statusMap: { [key: string]: string } = {
       'CREATED_BY_COMPANY': 'confirmado',
+      'APPROVED_BY_COMPANY': 'confirmado',
       'CONFIRMED': 'confirmado',
       'PENDING': 'pendente',
       'CANCELLED': 'cancelado',
+      'CANCELED_BY_COMPANY': 'cancelado',
+      'CANCELED_BY_CLIENT': 'cancelado',
       'COMPLETED': 'concluido',
       'IN_PROGRESS': 'em_andamento'
     };
@@ -266,7 +299,7 @@ export class CalendarComponent {
   }
 
   openModal(content: any) {
-    this.recoverServices();
+
     if (this.dataSelecionada) {
       this.dataAgendamento = new Date(this.dataSelecionada).toISOString().split('T')[0];
     } else {
@@ -298,18 +331,8 @@ export class CalendarComponent {
 
 
   onDayClicked(clickInfo: any): void {
-    console.log('=== DEBUG CLICK INFO ===');
-    console.log('Objeto completo:', clickInfo);
-    console.log('Tipo:', typeof clickInfo);
-    console.log('Keys:', Object.keys(clickInfo));
-
-    // Extrair dados de forma segura
     const date = clickInfo?.day?.date || clickInfo;
     const events = clickInfo?.sourceEvent || [];
-
-    console.log('Data extraída:', date);
-    console.log('Events extraídos:', events);
-    console.log('Events é array?', Array.isArray(events));
 
     this.dataSelecionada = date;
     this.filtroSelecionado = 'dia_especifico';
@@ -380,7 +403,7 @@ export class CalendarComponent {
     return diffHoras <= 2 && diffHoras >= 0;
   }
 
-  cancelAppointment(){
+  cancelAppointment() {
     //this.appointmentService.cancelAppointment()
   }
 
@@ -406,19 +429,6 @@ export class CalendarComponent {
     return iconMap[status] || '📋';
   }
 
-  getDuracaoFormatada(minutos: number): string {
-    const horas = Math.floor(minutos / 60);
-    const mins = minutos % 60;
-
-    if (horas > 0 && mins > 0) {
-      return `${horas}h ${mins}min`;
-    } else if (horas > 0) {
-      return `${horas}h`;
-    } else {
-      return `${mins}min`;
-    }
-  }
-
   trackByAgendamento(index: number, agendamento: AgendamentoAutomotivo): number {
     return agendamento.id;
   }
@@ -430,7 +440,7 @@ export class CalendarComponent {
 
   cancelarAgendamento(agendamento: AgendamentoAutomotivo): void {
     console.log('Cancelar agendamento:', agendamento);
-    // Implementar lógica de cancelamento
+    this.appointmentService.cancelAppointment(agendamento.id, { message: 'Cancelado pela Empresa' }).subscribe();
   }
 
   iniciarServico(agendamento: AgendamentoAutomotivo): void {
