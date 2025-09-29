@@ -366,7 +366,7 @@ export class CalendarComponent implements OnInit{
   }
 
   filtrarAgendamentos(): void {
-    const agora = new Date();
+    const agora =new Date(Date.now() - (30 * 60 * 1000));
     const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
 
     switch (this.filtroSelecionado) {
