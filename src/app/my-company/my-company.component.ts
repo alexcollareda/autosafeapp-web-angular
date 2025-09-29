@@ -60,6 +60,7 @@ export class MyCompanyComponent implements OnInit {
   cnpj: string = '';
   companyName: string = '';
   phone: string = '';
+  cellphone: string = '';
   email: string = '';
   description: string = '';
   logoUrl: string = '';
@@ -128,6 +129,7 @@ export class MyCompanyComponent implements OnInit {
         this.cnpj = data.cnpj;
         this.companyName = data.name;
         this.phone = data.phone;
+        this.cellphone = data.cellphone
         this.email = data.email;
         this.description = data.description;
         this.logoUrl = data.logoUrl;
@@ -513,6 +515,7 @@ this.loadCompanyTypes();
       cnpj: this.cnpj,
       name: this.companyName,
       phone: this.phone,
+      cellphone: this.cellphone,
       email: this.email,
       description: this.description,
       logoUrl: this.logoUrl,

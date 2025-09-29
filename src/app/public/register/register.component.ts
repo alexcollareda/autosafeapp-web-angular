@@ -278,6 +278,7 @@ export class RegisterComponent implements OnInit {
             name: this.nomeFantasia,
             cnpj: this.cnpj,
             phone: this.telefone,
+            cellphone: this.celular,
             phoneIsWpp: this.isWatsApp,
             email: this.email,
             description: '',

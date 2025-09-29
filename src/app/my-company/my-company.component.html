@@ -82,11 +82,18 @@
                                 <div class="form-group">
                                     <label>Telefone</label>
                                     <input type="text" [(ngModel)]="phone" placeholder="Telefone" class="form-control"
+                                        mask="(00) 0000-0000?0" />
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Celular</label>
+                                    <input type="text" [(ngModel)]="cellphone" placeholder="Celular" class="form-control"
                                         mask="(00) 00000-0000" />
                                 </div>
                             </div>
 
-                            <div class="col-sm-6 col-lg-4">
+                            <div class="col-sm-6 col-lg-6">
                                 <div class="form-group">
                                     <label>E-mail</label>
                                     <input type="text" [(ngModel)]="email" placeholder="E-Mail" class="form-control" />
