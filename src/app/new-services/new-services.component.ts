@@ -307,7 +307,6 @@ export class NewServicesComponent implements OnInit {
         this.service.brands = [];
         this.service.models = [];
       } else {
-        console.log(this.listBrandModelSelected);
         this.serviceRequest.brandIds = this.listBrandModelSelected
           .map(item => (item.brand ? item.brand.idBrand : null))
           .filter((id): id is number => id !== null);
@@ -315,7 +314,6 @@ export class NewServicesComponent implements OnInit {
           .map(item => (item.model ? item.model.idModel : null))
           .filter((id): id is number => id !== null);
       }
- console.log(this.service.brands);
       try {
         // Upload somente se o usuário escolheu novo arquivo
         if (this.selectedFile) {

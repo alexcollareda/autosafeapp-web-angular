@@ -101,13 +101,10 @@ export class CalendarComponent implements OnInit{
   async initData(): Promise<void> {
     try {
       this.serviceList = await firstValueFrom(this.servicesService.findByCompanyLogged());
-      console.log('Lista de serviços recuperada:', this.serviceList);
 
       this.performDependentActions();
 
     } catch (error) {
-      console.error('Erro ao recuperar os serviços:', error);
-      // Trate o erro, talvez mostre uma mensagem para o usuário
     } finally {
     }
   }
@@ -126,8 +123,6 @@ export class CalendarComponent implements OnInit{
   }
 
   getNameService(idService) {
-    console.log('buscando servicos' + idService);
-    console.log(this.serviceList);
     const service = this.serviceList.find(s => s.id === idService);
     return service ? service.title : undefined;
   }
@@ -149,7 +144,6 @@ export class CalendarComponent implements OnInit{
 
   onDateSelect(date: NgbDate): void {
     this.model = date;
-    console.log('Data selecionada:', this.getFormattedDate());
   }
 
   getFormattedDate(): string {
@@ -195,8 +189,6 @@ export class CalendarComponent implements OnInit{
       this.plateService.findPlate(this.newAppointment.placa)
         .subscribe({
           next: (data) => {
-            console.log(data)
-            console.log(new String(data.brand))
             this.newAppointment.veiculo = data.marca + ' ' + data.SUBMODELO + ' ' + data.ano + '/' + data.anoModelo;
           },
           error: () => {
@@ -214,7 +206,6 @@ export class CalendarComponent implements OnInit{
   }
 
   selectService(service) {
-    console.log(service)
     this.selectedService = service;
   }
 
@@ -397,9 +388,7 @@ export class CalendarComponent implements OnInit{
     });
 
     modalRef.result.then((result) => {
-      console.log('Modal fechado com:', result);
     }).catch((error) => {
-      console.log('Modal cancelado');
     });
   }
 
@@ -414,9 +403,7 @@ export class CalendarComponent implements OnInit{
     });
 
     modalRef.result.then((result) => {
-      console.log('Modal fechado com:', result);
     }).catch((error) => {
-      console.log('Modal cancelado');
     });
   }
 
@@ -444,7 +431,6 @@ export class CalendarComponent implements OnInit{
   }
 
   onEventClicked(event: any): void {
-    console.log('Evento clicado:', event);
   }
 
   filtrarAgendamentos(): void {
@@ -532,12 +518,9 @@ export class CalendarComponent implements OnInit{
   }
 
   editarAgendamento(agendamento: AgendamentoAutomotivo): void {
-    console.log('Editar agendamento:', agendamento);
-    // Implementar lógica de edição
   }
 
   cancelarAgendamento(agendamento: AgendamentoAutomotivo): void {
-    console.log('Cancelar agendamento:', agendamento);
     this.appointmentService.cancelAppointment(agendamento.id, { message: 'Cancelado pela Empresa' }).subscribe();
     this.initData();
   }
