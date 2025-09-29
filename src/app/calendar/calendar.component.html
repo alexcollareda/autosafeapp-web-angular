@@ -180,13 +180,13 @@
             <div class="col-sm-6 col-lg-8">
                 <div class="form-group">
                     <label>Nome do Cliente</label>
-                    <input type="text" placeholder="Nome" class="form-control" />
+                    <input type="text" placeholder="Nome" [(ngModel)]="newAppointment.cliente" class="form-control" />
                 </div>
             </div>
             <div class="col-sm-6 col-lg-4">
                 <div class="form-group">
                     <label>Telefone</label>
-                    <input type="text" placeholder="(11) 9 9820 0000" mask="(00) 00000-0000" class="form-control" />
+                    <input type="text" placeholder="(11) 9 9820 0000"  [(ngModel)]="newAppointment.clienteTelefone" mask="(00) 00000-0000" class="form-control" />
                 </div>
             </div>
             <div class="col-sm-6 col-lg-4">
@@ -203,6 +203,41 @@
                 </div>
             </div>
             <div class="col-sm-6 col-lg-12">
+                <div class="form-group">
+                    <label>Serviço</label>
+
+                    <div class="search-input-wrapper" *ngIf="!selectedService">
+                        <input type="text" placeholder="Digite para buscar serviços ..." [(ngModel)]="searchTerm"
+                            class="form-control" (focus)="showSuggestions = true" (blur)="hideSuggestions()">
+
+                        <!-- Lista de sugestões/dropdown -->
+                        <div *ngIf="searchTerm && filteredServiceList.length > 0" class="suggestions-dropdown">
+                            <ul class="suggestions-list">
+                                <li *ngFor="let service of filteredServiceList" (mousedown)="selectService(service)"
+                                    class="suggestion-item">
+                                    {{ service.title }} : <i>{{service.description}}</i> <b> R$ {{ service.price |
+                                        number:'1.2-2' }}</b>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Mensagem de "nenhum resultado" se o termo não estiver vazio mas a lista filtrada sim -->
+                        <div *ngIf="searchTerm && filteredServiceList.length === 0" class="no-results-dropdown">
+                            <p>Nenhum serviço encontrado para "{{ searchTerm }}".</p>
+                        </div>
+                    </div>
+
+                    <div *ngIf="selectedService" class="selected-service-display">
+                        <div class="selected-service-details">
+                            <div>
+                                <b>{{ selectedService.title }}</b>
+                                <i>{{ selectedService.description }}</i>
+                            </div>
+                            <button (click)="excludeService()" class="remove-service-button">Remover</button>
+                        </div>
+                    </div>
+
+                </div>
 
             </div>
 
@@ -219,10 +254,10 @@
                     <label>Horário</label>
                     <div class="input-group" style="width: fit-content;">
                         <input class="form-control text-center" mask="00" placeholder="HH"
-                            style="width: 65px; flex: none;" />
+                            style="width: 65px; flex: none;" maxlength="2"  [(ngModel)]="horaAgendamento" />
                         <b>:</b>
                         <input class="form-control text-center" mask="00" placeholder="MM"
-                            style="width: 65px; flex: none;" />
+                            style="width: 65px; flex: none;" maxlength="2" [(ngModel)]="minutoAgendamento" />
                     </div>
                 </div>
             </div>
@@ -234,6 +269,7 @@
 
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="dismiss('dismiss')">Cancelar</button>
-        <button type="button" class="btn btn-success" (click)="salvarAgendamento(); c('save')"><i class="now-ui-icons ui-1_check"></i> Salvar</button>
+        <button type="button" class="btn btn-success" (click)="createAppointment(); c('save')"><i
+                class="now-ui-icons ui-1_check"></i> Salvar</button>
     </div>
 </ng-template>

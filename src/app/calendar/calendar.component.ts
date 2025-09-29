@@ -1,14 +1,17 @@
+import { AppointmentService } from './../services/appointment.service';
 // calendar.component.ts
 import { Component, LOCALE_ID, Inject } from '@angular/core';
 import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { NgbModal, NgbCalendar, NgbDate, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { PlateService } from 'app/services/plate.service';
 import { ServicesService } from 'app/services/services.service';
+import { or } from 'ajv/dist/compile/codegen';
 
 interface AgendamentoAutomotivo {
   id: number;
   servico: string;
   cliente: string;
+  clienteTelefone: String;
   veiculo: string;
   placa: string;
   data: Date;
@@ -16,6 +19,23 @@ interface AgendamentoAutomotivo {
   valor: number;
   status: 'confirmado' | 'pendente' | 'em_andamento' | 'concluido' | 'cancelado';
   observacoes?: string;
+}
+
+interface Service {
+  id: number;
+  title: string;
+  description: string;
+  price: any;
+  priceType: string;
+  imageUrl: string;
+  appliesToAllVehicles: boolean;
+  isActive: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  companyId: number;
+  companyTypeId: number;
+  brands: number[];
+  models: number[];
 }
 
 @Component({
@@ -38,6 +58,7 @@ export class CalendarComponent {
     servico: '',
     cliente: '',
     veiculo: '',
+    clienteTelefone: '',
     placa: '',
     data: undefined,
     duracao: 0,
@@ -45,140 +66,53 @@ export class CalendarComponent {
     status: 'confirmado'
   };
   dataAgendamento: String;
-  servicesRecovered:null;
+  serviceList: Service[] = [];
+  selectedService: Service;
+  horaAgendamento: number;
+  minutoAgendamento: number;
 
   isWeekend(date: NgbDateStruct) {
     const d = new Date(date.year, date.month - 1, date.day);
     return d.getDay() === 0 || d.getDay() === 6;
   }
 
-  events: CalendarEvent[] = [
-    {
-      start: new Date(),
-      end: new Date(2025, 8, 29),
-      title: 'Troca de Óleo - Honda Civic',
-      color: { primary: '#1e90ff', secondary: '#D1E7DD' }
-    },
-    {
-      start: new Date(),
-      title: 'Revisão Completa - Toyota Corolla',
-      color: { primary: '#e3342f', secondary: '#F8D7DA' }
-    },
-    {
-      start: new Date(2025, 8, 29),
-      title: 'Alinhamento - Ford Ka',
-      color: { primary: '#28a745', secondary: '#d4edda' }
-    },
-    {
-      start: new Date(2025, 8, 29),
-      title: 'Balanceamento - Volkswagen Gol',
-      color: { primary: '#ffc107', secondary: '#fff3cd' }
-    }
-  ];
+  events: CalendarEvent[] = [];
 
-  agendamentosCompletos: AgendamentoAutomotivo[] = [
-    {
-      id: 1,
-      servico: 'Troca de Óleo e Filtros',
-      cliente: 'João Silva',
-      veiculo: 'Honda Civic 2020',
-      placa: 'ABC-1234',
-      data: new Date(),
-      duracao: 60,
-      valor: 150.00,
-      status: 'confirmado',
-      observacoes: 'Cliente solicitou óleo sintético'
-    },
-    {
-      id: 2,
-      servico: 'Revisão dos 10.000km',
-      cliente: 'Maria Santos',
-      veiculo: 'Toyota Corolla 2019',
-      placa: 'DEF-5678',
-      data: new Date(Date.now() + 2 * 60 * 60 * 1000), // 2 horas
-      duracao: 180,
-      valor: 450.00,
-      status: 'confirmado'
-    },
-    {
-      id: 3,
-      servico: 'Alinhamento e Balanceamento',
-      cliente: 'Pedro Costa',
-      veiculo: 'Ford Ka 2018',
-      placa: 'GHI-9012',
-      data: new Date(Date.now() + 24 * 60 * 60 * 1000), // amanhã
-      duracao: 90,
-      valor: 120.00,
-      status: 'pendente'
-    },
-    {
-      id: 4,
-      servico: 'Troca de Pastilhas de Freio',
-      cliente: 'Ana Lima',
-      veiculo: 'Volkswagen Gol 2017',
-      placa: 'JKL-3456',
-      data: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // depois de amanhã
-      duracao: 120,
-      valor: 280.00,
-      status: 'confirmado'
-    },
-    {
-      id: 5,
-      servico: 'Diagnóstico Eletrônico',
-      cliente: 'Carlos Mendes',
-      veiculo: 'Chevrolet Onix 2021',
-      placa: 'MNO-7890',
-      data: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-      duracao: 45,
-      valor: 80.00,
-      status: 'pendente'
-    },
-    {
-      id: 6,
-      servico: 'Lavagem Completa',
-      cliente: 'Fernanda Oliveira',
-      veiculo: 'Hyundai HB20 2020',
-      placa: 'PQR-1357',
-      data: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000),
-      duracao: 30,
-      valor: 35.00,
-      status: 'confirmado'
-    },
-    // Agendamentos para o dia 15/01
-    {
-      id: 7,
-      servico: 'Revisão Completa',
-      cliente: 'Roberto Silva',
-      veiculo: 'Toyota Corolla 2019',
-      placa: 'STU-2468',
-      data: new Date(2024, 0, 15, 9, 0), // 15/01 às 09:00
-      duracao: 180,
-      valor: 450.00,
-      status: 'confirmado'
-    },
-    {
-      id: 8,
-      servico: 'Troca de Pneus',
-      cliente: 'Lucia Pereira',
-      veiculo: 'Fiat Uno 2016',
-      placa: 'VWX-9753',
-      data: new Date(2024, 0, 15, 14, 30), // 15/01 às 14:30
-      duracao: 60,
-      valor: 320.00,
-      status: 'pendente'
-    }
-  ];
+  appointments: AgendamentoAutomotivo[] = [];
+
+  agendamentosCompletos: AgendamentoAutomotivo[] = [];
   closeResult: string;
+  searchTerm: string = '';
 
   constructor(private modalService: NgbModal,
-    private calendar: NgbCalendar, private plateService: PlateService, 
-    private servicesService: ServicesService) {
+    private calendar: NgbCalendar, private plateService: PlateService,
+    private servicesService: ServicesService, private appointmentService: AppointmentService) {
     this.model = this.calendar.getToday();
     this.filtrarAgendamentos();
+    this.getAppointments();
   }
 
-  revocerServices(){
-   
+  recoverServices() {
+    this.servicesService.findByCompanyLogged().subscribe(
+      (data) => {
+        this.serviceList = data;
+      }
+    );
+  }
+
+  get filteredServiceList(): Service[] {
+    if (!this.searchTerm) {
+      // Se o termo de busca estiver vazio, retorna a lista completa
+      return this.serviceList;
+    }
+
+    // Converte o termo de busca para minúsculas para uma comparação sem distinção de maiúsculas/minúsculas
+    const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
+
+    // Filtra a lista completa, verificando se o título do serviço inclui o termo de busca
+    return this.serviceList.filter(service =>
+      service.title.toLowerCase().includes(lowerCaseSearchTerm)
+    );
   }
 
   onDateSelect(date: NgbDate): void {
@@ -205,6 +139,7 @@ export class CalendarComponent {
   }
 
   open(content, type, modalDimension) {
+    this.recoverServices();
     if (modalDimension === 'sm' && type === 'modal_mini') {
       this.modalService.open(content, { windowClass: 'modal-mini modal-primary', size: 'sm' }).result.then((result) => {
         this.closeResult = `Closed with: ${result}`;
@@ -242,9 +177,96 @@ export class CalendarComponent {
   get dataMinima(): string {
     return new Date().toISOString().split('T')[0];
   }
+  excludeService() {
+    this.searchTerm = '';
+    this.selectedService = null;
+  }
 
+  selectService(service) {
+    console.log(service)
+    this.selectedService = service;
+  }
+
+  getAppointments() {
+    this.appointmentService.getAppointment().subscribe(
+      (data) => {
+        this.agendamentosCompletos = data.map(apiAppointment => this.mapApiToLocal(apiAppointment));
+        this.events = data.map(apiAppointment => this.mapEventsApiToLocal(apiAppointment))
+      })
+  }
+
+  private mapApiToLocal(apiData: any): AgendamentoAutomotivo {
+    return {
+      id: apiData.id || 0,
+      servico: apiData.serviceId || 'Serviço não informado',
+      cliente: apiData.clientName || 'Cliente não informado',
+      veiculo: apiData.vehicleDescription,
+      clienteTelefone: apiData.clientPhone || '',
+      placa: apiData.vehiclePlate || '',
+      duracao: 100,
+      valor: 200,
+      data: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : undefined,
+      status: 'confirmado'
+    };
+  }
+
+  private mapEventsApiToLocal(apiData: any): any {
+    return {
+      start: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : undefined,
+      title: apiData.clientName + ' ' + apiData.vehicleDescription,
+      color: { primary: '#1e90ff', secondary: '#D1E7DD' }
+    };
+  }
+
+  private mapStatus(apiStatus: string): string {
+    const statusMap: { [key: string]: string } = {
+      'CREATED_BY_COMPANY': 'confirmado',
+      'CONFIRMED': 'confirmado',
+      'PENDING': 'pendente',
+      'CANCELLED': 'cancelado',
+      'COMPLETED': 'concluido',
+      'IN_PROGRESS': 'em_andamento'
+    };
+
+    return statusMap[apiStatus] || 'confirmado';
+  }
+
+
+  createAppointment() {
+    let payload = {
+      clientName: this.newAppointment.cliente.toUpperCase(),
+      clientPhone: this.newAppointment.clienteTelefone,
+      scheduledBy: 'COMPANY',
+      requestedDatetime: this.convertToInstant(),
+      vehicleDescription: this.newAppointment.veiculo.toUpperCase(),
+      vehiclePlate: this.newAppointment.placa.toUpperCase(),
+      serviceId: this.selectedService.id
+    }
+
+    this.appointmentService.createAppointment(payload).subscribe({
+      next: (response) => {
+      },
+      error: () => ''
+    });
+  }
+
+  convertToInstant(): string {
+    // Criar data local com timezone da máquina
+    const dataLocal = new Date(
+      parseInt(this.dataAgendamento.split('-')[0]),
+      parseInt(this.dataAgendamento.split('-')[1]) - 1,
+      parseInt(this.dataAgendamento.split('-')[2]),
+      this.horaAgendamento,
+      this.minutoAgendamento,
+      0,
+      0
+    );
+
+    return dataLocal.toISOString();
+  }
 
   openModal(content: any) {
+    this.recoverServices();
     if (this.dataSelecionada) {
       this.dataAgendamento = new Date(this.dataSelecionada).toISOString().split('T')[0];
     } else {
@@ -265,21 +287,6 @@ export class CalendarComponent {
     }).catch((error) => {
       console.log('Modal cancelado');
     });
-  }
-
-  salvarAgendamento() {
-    if (this.model) {
-      const dataAgendamento = new Date(
-        this.model.year,
-        this.model.month - 1,
-        this.model.day,
-        this.selectedTime.hour,
-        this.selectedTime.minute
-      );
-      console.log(this.dataAgendamento)
-      console.log('Data do agendamento:', dataAgendamento);
-      console.log('Horário:', this.selectedTime);
-    }
   }
 
   // Função para desabilitar datas passadas
@@ -371,6 +378,10 @@ export class CalendarComponent {
     const agora = new Date();
     const diffHoras = (data.getTime() - agora.getTime()) / (1000 * 60 * 60);
     return diffHoras <= 2 && diffHoras >= 0;
+  }
+
+  cancelAppointment(){
+    //this.appointmentService.cancelAppointment()
   }
 
   getStatusText(status: string): string {

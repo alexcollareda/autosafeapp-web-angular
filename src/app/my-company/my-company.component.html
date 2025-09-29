@@ -105,7 +105,7 @@
                                     <label>Imagem da Empresa</label>
                                     <input *ngIf="!logoUrl && !preview" (change)="selectFile($event)"
                                         class="form-control" type="file" />
-                                    <p *ngIf="!logoUrl && !preview">Dimesao Sugerida: 1200x675 px Proporcao:16:9</p>
+                                    <p *ngIf="!logoUrl && !preview">Dimensão Sugerida: 1200x675 px Proporção:16:9</p>
 
                                     <a *ngIf="logoUrl || preview" class="btn btn-primary btn-round" type="button"
                                         (click)="open(classic,'' , '')">
