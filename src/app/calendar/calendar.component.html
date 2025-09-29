@@ -162,6 +162,9 @@
         </button>
         <h4 class="title title-up">Novo Agendamento</h4>
     </div>
+    <div *ngIf="alertMessage" class="alert alert-danger text-center">
+  {{ alertMessage }}
+</div>
     <div id="modal-body" class="modal-body">
         <div class="row">
             <div class="col-sm-6 col-lg-8">
@@ -238,17 +241,23 @@
 
             <div class="col-sm-6 col-lg-8">
                 <div class="form-group">
-
                     <label>Horário</label>
-                    <div class="input-group" style="width: fit-content;">
-                        <input class="form-control text-center" mask="00" placeholder="HH"
-                            style="width: 65px; flex: none;" maxlength="2" [(ngModel)]="horaAgendamento" />
-                        <b>:</b>
-                        <input class="form-control text-center" mask="00" placeholder="MM"
-                            style="width: 65px; flex: none;" maxlength="2" [(ngModel)]="minutoAgendamento" />
+                    <div class="input-group" style="width: fit-content; gap: 5px;">
+                    <!-- Dropdown de Horas -->
+                    <input class="form-control text-center" mask="00" placeholder="HH"
+                        style="width: 65px; flex: none;" maxlength="2"
+                        [(ngModel)]="horaAgendamento" />
+                    <b>:</b>
+                    <!-- Dropdown de Minutos -->
+                    <select class="form-control" style="width: 80px;"
+                            [(ngModel)]="minutoAgendamento">
+                        <option *ngFor="let m of minutosDisponiveis" [value]="m">
+                        {{ m < 10 ? '0' + m : m }}
+                        </option>
+                    </select>
                     </div>
                 </div>
-            </div>
+                </div>
 
 
 
@@ -257,8 +266,9 @@
 
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" (click)="dismiss('dismiss')">Cancelar</button>
-        <button type="button" class="btn btn-success" (click)="createAppointment(); c('save')"><i
-                class="now-ui-icons ui-1_check"></i> Salvar</button>
+        <button type="button" class="btn btn-success" (click)="createAppointment(c)">
+            <i class="now-ui-icons ui-1_check"></i> Salvar
+            </button>
     </div>
 </ng-template>
 

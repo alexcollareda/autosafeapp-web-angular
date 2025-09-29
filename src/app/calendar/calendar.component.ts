@@ -43,6 +43,9 @@ interface Service {
   styleUrls: ['./calendar.component.scss']
 })
 export class CalendarComponent implements OnInit{
+  horasDisponiveis: number[] = Array.from({ length: 23 }, (_, i) => i + 1); // 1 até 23
+  minutosDisponiveis: number[] = [0, 15, 30, 45];
+  alertMessage: string = '';
   view: CalendarView = CalendarView.Month;
   viewDate: Date = new Date();
   activeDayIsOpen: boolean = false;
@@ -264,40 +267,119 @@ export class CalendarComponent implements OnInit{
   }
 
 
-  createAppointment() {
-    let payload = {
-      clientName: this.newAppointment.cliente.toUpperCase(),
-      clientPhone: this.newAppointment.clienteTelefone,
-      scheduledBy: 'COMPANY',
-      requestedDatetime: this.convertToInstant(),
-      vehicleDescription: this.newAppointment.veiculo.toUpperCase(),
-      vehiclePlate: this.newAppointment.placa.toUpperCase(),
-      serviceId: this.selectedService.id
-    }
+  createAppointment(closeModal: any) {
+  this.alertMessage = '';
+   setTimeout(() => this.alertMessage=null, 7000);
 
-    this.appointmentService.createAppointment(payload).subscribe({
-      next: (response) => {
-      },
-      error: () => ''
-    });
+  if (!this.newAppointment.cliente || this.newAppointment.cliente.trim() === '') {
+    this.alertMessage = 'O nome do cliente é obrigatório.';
+    return;
   }
+
+  if (!this.newAppointment.clienteTelefone || this.newAppointment.clienteTelefone.trim() === '') {
+    this.alertMessage = 'O telefone do cliente é obrigatório.';
+    return;
+  }
+  if (!this.newAppointment.placa || this.newAppointment.placa.trim() === '') {
+    this.alertMessage = 'A placa do veículo é obrigatória.';
+    return;
+  }
+
+  const placaRegex = /^[A-Z]{3}[0-9][0-9A-Z][0-9]{2}$/;
+  const placaFormatada = this.newAppointment.placa.toUpperCase();
+
+  if (!placaRegex.test(placaFormatada)) {
+    this.alertMessage = 'A placa informada não é válida.';
+    return;
+  }
+
+  if (!this.newAppointment.veiculo || this.newAppointment.veiculo.trim() === '') {
+    this.alertMessage = 'Placa inválida ou não encontrada na base.';
+    return;
+  }
+
+  if (!this.selectedService) {
+    this.alertMessage = 'Selecione um serviço para o agendamento.';
+    return;
+  }
+
+  if (!this.dataAgendamento) {
+    this.alertMessage = 'A data do agendamento é obrigatória.';
+    return;
+  }
+
+  const dataSelecionada = new Date(this.dataAgendamento + 'T00:00:00');
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  if (dataSelecionada < hoje) {
+    this.alertMessage = 'A data do agendamento não pode ser anterior à data atual.';
+    return;
+  }
+
+  if (this.horaAgendamento == null || this.minutoAgendamento == null) {
+    this.alertMessage = 'O horário deve ser informado.';
+    return;
+  }
+  if (this.horaAgendamento < 0 || this.horaAgendamento > 23) {
+  this.alertMessage = 'A hora deve estar entre 00 e 23.';
+  return;
+}
+
+  let payload = {
+    clientName: this.newAppointment.cliente.toUpperCase(),
+    clientPhone: this.newAppointment.clienteTelefone,
+    scheduledBy: 'COMPANY',
+    requestedDatetime: this.convertToInstant(),
+    vehicleDescription: this.newAppointment.veiculo.toUpperCase(),
+    vehiclePlate: this.newAppointment.placa.toUpperCase(),
+    serviceId: this.selectedService.id
+  };
+
+  this.appointmentService.createAppointment(payload).subscribe({
+    next: () => {
+      this.alertMessage = '';
+      this.initData(); 
+      closeModal('save'); 
+    },
+    error: () => {
+      this.alertMessage = 'Erro ao salvar agendamento. Tente novamente.';
+    }
+  });
+}
 
   convertToInstant(): string {
-    // Criar data local com timezone da máquina
-    const dataLocal = new Date(
-      parseInt(this.dataAgendamento.split('-')[0]),
-      parseInt(this.dataAgendamento.split('-')[1]) - 1,
-      parseInt(this.dataAgendamento.split('-')[2]),
-      this.horaAgendamento,
-      this.minutoAgendamento,
-      0,
-      0
-    );
-
-    return dataLocal.toISOString();
-  }
+  const dataLocal = new Date(
+    parseInt(this.dataAgendamento.split('-')[0]),
+    parseInt(this.dataAgendamento.split('-')[1]) - 1,
+    parseInt(this.dataAgendamento.split('-')[2]),
+    this.horaAgendamento,
+    this.minutoAgendamento,
+    0,
+    0
+  );
+  return dataLocal.toISOString();
+}
 
   openModal(content: any) {
+    this.newAppointment = {
+    id: 0,
+    servico: '',
+    cliente: '',
+    veiculo: '',
+    clienteTelefone: '',
+    placa: '',
+    data: undefined,
+    duracao: 0,
+    valor: 0,
+    status: 'confirmado'
+  };
+
+  this.horaAgendamento = null;
+  this.minutoAgendamento = null;
+  this.selectedService = null;
+  this.searchTerm = '';
+  this.alertMessage = '';
 
     if (this.dataSelecionada) {
       this.dataAgendamento = new Date(this.dataSelecionada).toISOString().split('T')[0];
