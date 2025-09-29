@@ -4,4 +4,5 @@ export const environment = {
   canRegister: true,
   enableCalendar: true,
   enablePromotions: false
+  
 };
