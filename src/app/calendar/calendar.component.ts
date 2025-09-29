@@ -77,11 +77,10 @@ export class CalendarComponent implements OnInit{
 
   events: CalendarEvent[] = [];
 
-  appointments: AgendamentoAutomotivo[] = [];
-
   agendamentosCompletos: AgendamentoAutomotivo[] = [];
   closeResult: string;
   searchTerm: string = '';
+  appointmentToCancel = null;
 
   constructor(private modalService: NgbModal,
     private calendar: NgbCalendar, private plateService: PlateService,
@@ -322,6 +321,23 @@ export class CalendarComponent implements OnInit{
     });
   }
 
+  openConfirmationModal(content: any, appointmentToCancel: any) {
+    this.appointmentToCancel = appointmentToCancel;
+    const modalRef = this.modalService.open(content, {
+      size: 'lg',
+      centered: true,
+      backdrop: 'static',
+      keyboard: false,
+      container: 'body'
+    });
+
+    modalRef.result.then((result) => {
+      console.log('Modal fechado com:', result);
+    }).catch((error) => {
+      console.log('Modal cancelado');
+    });
+  }
+
   // Função para desabilitar datas passadas
   isDisabled = (date: NgbDate, current: { month: number, year: number }) => {
     const today = this.calendar.getToday();
@@ -441,16 +457,7 @@ export class CalendarComponent implements OnInit{
   cancelarAgendamento(agendamento: AgendamentoAutomotivo): void {
     console.log('Cancelar agendamento:', agendamento);
     this.appointmentService.cancelAppointment(agendamento.id, { message: 'Cancelado pela Empresa' }).subscribe();
-  }
-
-  iniciarServico(agendamento: AgendamentoAutomotivo): void {
-    agendamento.status = 'em_andamento';
-    console.log('Iniciando serviço:', agendamento);
-  }
-
-  concluirServico(agendamento: AgendamentoAutomotivo): void {
-    agendamento.status = 'concluido';
-    console.log('Concluindo serviço:', agendamento);
+    this.initData();
   }
 
   private isSameDay(date1: Date, date2: Date): boolean {

@@ -126,23 +126,13 @@
 
                         <!-- Ações -->
                         <div class="appointment-actions">
-                            <button *ngIf="agendamento.status === 'confirmado'" class="btn-action btn-start"
-                                (click)="iniciarServico(agendamento)" title="Iniciar Serviço">
-                                🔧
-                            </button>
-
-                            <button *ngIf="agendamento.status === 'em_andamento'" class="btn-action btn-complete"
-                                (click)="concluirServico(agendamento)" title="Concluir Serviço">
-                                ✅
-                            </button>
-
                             <button class="btn-action btn-edit" (click)="editarAgendamento(agendamento)" title="Editar">
                                 ✏️
                             </button>
 
                             <button *ngIf="agendamento.status !== 'concluido' && agendamento.status !== 'cancelado'"
-                                class="btn-action btn-delete" (click)="cancelarAgendamento(agendamento)"
-                                title="Cancelar">
+                                class="btn-action btn-delete"
+                                (click)="openConfirmationModal(confirmationModal, agendamento)" title="Cancelar">
                                 🗑️
                             </button>
                         </div>
@@ -269,5 +259,40 @@
         <button type="button" class="btn btn-secondary" (click)="dismiss('dismiss')">Cancelar</button>
         <button type="button" class="btn btn-success" (click)="createAppointment(); c('save')"><i
                 class="now-ui-icons ui-1_check"></i> Salvar</button>
+    </div>
+</ng-template>
+
+<ng-template #confirmationModal let-c="close" let-dismiss="dismiss">
+    <div class="modal-header justify-content-center">
+        <button type="button" class="close" (click)="dismiss('Cross click')">
+            <i class="now-ui-icons ui-1_simple-remove"></i>
+        </button>
+        <h4 class="title title-up">Cancelar Agendamento</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-6 col-lg-8">
+                <div class="form-group">
+                    <label>Nome do Cliente</label>
+                    <input type="text" [(ngModel)]="appointmentToCancel.cliente" class="form-control"
+                        [disabled]="true" />
+
+                </div>
+            </div>
+             <div class="col-sm-6 col-lg-4">
+                <div class="form-group">
+                    <label>Placa</label>
+                    <input type="text" [(ngModel)]="appointmentToCancel.placa" class="form-control"
+                        [disabled]="true" />
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="dismiss('dismiss')">Cancelar</button>
+        <button type="button" class="btn btn-success" (click)="cancelarAgendamento(appointmentToCancel); c('save')">
+            <i class="now-ui-icons ui-1_check"></i> Confirmar
+        </button>
     </div>
 </ng-template>
