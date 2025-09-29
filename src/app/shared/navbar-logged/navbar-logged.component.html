@@ -17,13 +17,19 @@
         </div>
         <div class="collapse navbar-collapse" data-nav-image="assets/img/blurred-image-1.jpg" data-color="orange">
             <ul class="navbar-nav ml-auto">
+                <li class="nav-item" *ngIf="enableCalendar">
+                    <a class="nav-link" [routerLink]="['calendar']">
+                        <i class="now-ui-icons ui-1_calendar-60"></i>
+                        <p>Agendamentos</p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" [routerLink]="['my-services']">
                         <i class="now-ui-icons ui-2_settings-90"></i>
                         <p>Meus Serviços</p>
                     </a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item"  *ngIf="enablePromotions">
                     <a class="nav-link" [routerLink]="['my-promotions']">
                         <i class="now-ui-icons shopping_tag-content"></i>
                         <p>Promoções</p>

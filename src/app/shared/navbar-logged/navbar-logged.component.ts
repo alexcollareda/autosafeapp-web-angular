@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { AuthService } from 'app/services/auth.service';
+import { environment } from 'environments/environment';
 
 @Component({
   selector: 'app-navbar-logged',
@@ -9,12 +10,18 @@ import { AuthService } from 'app/services/auth.service';
 export class NavbarLoggedComponent implements OnInit {
   private toggleButton: any;
   private sidebarVisible: boolean;
+  enableCalendar: boolean;
+  enablePromotions: boolean;
 
   constructor(private element: ElementRef, private authService: AuthService) { }
 
   ngOnInit(): void {
     const navbar: HTMLElement = this.element.nativeElement;
     this.toggleButton = navbar.getElementsByClassName('navbar-toggler')[0];
+    if(environment){
+      this.enableCalendar = environment.enableCalendar;
+      this.enablePromotions = environment.enablePromotions;
+    }
   }
 
   logout() {
