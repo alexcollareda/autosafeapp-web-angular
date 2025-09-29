@@ -243,7 +243,7 @@ export class RegisterComponent implements OnInit {
 
         if (this.step === 4) {
             // Validação de senha: ao menos 6 caracteres, pelo menos uma letra e um número
-            const senhaValida = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(this.password);
+            const senhaValida = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\|,.<>\/?~]{6,}$/.test(this.password);
             if (!senhaValida) {
                 this.createAlert(
                     'danger',
