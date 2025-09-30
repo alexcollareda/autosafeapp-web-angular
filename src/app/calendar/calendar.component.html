@@ -126,9 +126,9 @@
 
                         <!-- Ações -->
                         <div class="appointment-actions">
-                            <button class="btn-action btn-edit" (click)="editarAgendamento(agendamento)" title="Editar">
+                            <!--<button class="btn-action btn-edit" (click)="editarAgendamento(agendamento)" title="Editar">
                                 ✏️
-                            </button>
+                            </button>-->
 
                             <button *ngIf="agendamento.status !== 'concluido' && agendamento.status !== 'cancelado'"
                                 class="btn-action btn-delete"
@@ -281,7 +281,7 @@
     </div>
     <div class="modal-body">
         <div class="row">
-            <div class="col-sm-6 col-lg-8">
+            <div class="col-sm-6 col-lg-6">
                 <div class="form-group">
                     <label>Nome do Cliente</label>
                     <input type="text" [(ngModel)]="appointmentToCancel.cliente" class="form-control"
@@ -289,7 +289,7 @@
 
                 </div>
             </div>
-             <div class="col-sm-6 col-lg-4">
+             <div class="col-sm-6 col-lg-3">
                 <div class="form-group">
                     <label>Placa</label>
                     <input type="text" [(ngModel)]="appointmentToCancel.placa" class="form-control"
@@ -297,6 +297,22 @@
 
                 </div>
             </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="text" value="{{ appointmentToCancel.data | date:'dd/MM HH:mm' }}" class="form-control" disabled />
+
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-12">
+                <div class="form-group">
+                    <label>Motivo</label>
+                     <textarea class="form-control" name="name" rows="3" cols="80"
+                            placeholder="Motivo..." maxlength="150" [(ngModel)]="messageToCancel"></textarea>
+
+                </div>
+            </div>
+           
         </div>
     </div>
     <div class="modal-footer">

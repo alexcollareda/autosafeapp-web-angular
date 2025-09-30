@@ -4,7 +4,7 @@ import { CalendarEvent, CalendarView } from 'angular-calendar';
 import { NgbModal, NgbCalendar, NgbDate, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 import { PlateService } from 'app/services/plate.service';
 import { ServicesService } from 'app/services/services.service';
-import { firstValueFrom } from 'rxjs'; 
+import { firstValueFrom } from 'rxjs';
 
 interface AgendamentoAutomotivo {
   id: number;
@@ -42,7 +42,7 @@ interface Service {
   templateUrl: './calendar.component.html',
   styleUrls: ['./calendar.component.scss']
 })
-export class CalendarComponent implements OnInit{
+export class CalendarComponent implements OnInit {
   horasDisponiveis: number[] = Array.from({ length: 23 }, (_, i) => i + 1); // 1 até 23
   minutosDisponiveis: number[] = [0, 15, 30, 45];
   alertMessage: string = '';
@@ -55,6 +55,7 @@ export class CalendarComponent implements OnInit{
   proximosAgendamentosFiltrados: AgendamentoAutomotivo[] = [];
   model: NgbDate | null = null;
   selectedTime = { hour: 9, minute: 0 };
+  messageToCancel = '';
   newAppointment: AgendamentoAutomotivo = {
     id: 0,
     servico: '',
@@ -72,14 +73,7 @@ export class CalendarComponent implements OnInit{
   selectedService: Service;
   horaAgendamento: number;
   minutoAgendamento: number;
-
-  isWeekend(date: NgbDateStruct) {
-    const d = new Date(date.year, date.month - 1, date.day);
-    return d.getDay() === 0 || d.getDay() === 6;
-  }
-
   events: CalendarEvent[] = [];
-
   agendamentosCompletos: AgendamentoAutomotivo[] = [];
   closeResult: string;
   searchTerm: string = '';
@@ -89,11 +83,9 @@ export class CalendarComponent implements OnInit{
     private calendar: NgbCalendar, private plateService: PlateService,
     private servicesService: ServicesService, private appointmentService: AppointmentService) {
     this.model = this.calendar.getToday();
-
-
   }
 
-    ngOnInit(): void {
+  ngOnInit(): void {
     // Chama o método assíncrono
     this.initData();
   }
@@ -109,9 +101,14 @@ export class CalendarComponent implements OnInit{
     }
   }
 
-   performDependentActions(): void {
+  performDependentActions(): void {
     this.getAppointments();
-    
+
+  }
+
+  isWeekend(date: NgbDateStruct) {
+    const d = new Date(date.year, date.month - 1, date.day);
+    return d.getDay() === 0 || d.getDay() === 6;
   }
 
   recoverServices() {
@@ -129,14 +126,11 @@ export class CalendarComponent implements OnInit{
 
   get filteredServiceList(): Service[] {
     if (!this.searchTerm) {
-      // Se o termo de busca estiver vazio, retorna a lista completa
       return this.serviceList;
     }
 
-    // Converte o termo de busca para minúsculas para uma comparação sem distinção de maiúsculas/minúsculas
     const lowerCaseSearchTerm = this.searchTerm.toLowerCase();
 
-    // Filtra a lista completa, verificando se o título do serviço inclui o termo de busca
     return this.serviceList.filter(service =>
       service.title.toLowerCase().includes(lowerCaseSearchTerm)
     );
@@ -259,118 +253,118 @@ export class CalendarComponent implements OnInit{
 
 
   createAppointment(closeModal: any) {
-  this.alertMessage = '';
-   setTimeout(() => this.alertMessage=null, 7000);
+    this.alertMessage = '';
+    setTimeout(() => this.alertMessage = null, 7000);
 
-  if (!this.newAppointment.cliente || this.newAppointment.cliente.trim() === '') {
-    this.alertMessage = 'O nome do cliente é obrigatório.';
-    return;
-  }
-
-  if (!this.newAppointment.clienteTelefone || this.newAppointment.clienteTelefone.trim() === '') {
-    this.alertMessage = 'O telefone do cliente é obrigatório.';
-    return;
-  }
-  if (!this.newAppointment.placa || this.newAppointment.placa.trim() === '') {
-    this.alertMessage = 'A placa do veículo é obrigatória.';
-    return;
-  }
-
-  const placaRegex = /^[A-Z]{3}[0-9][0-9A-Z][0-9]{2}$/;
-  const placaFormatada = this.newAppointment.placa.toUpperCase();
-
-  if (!placaRegex.test(placaFormatada)) {
-    this.alertMessage = 'A placa informada não é válida.';
-    return;
-  }
-
-  if (!this.newAppointment.veiculo || this.newAppointment.veiculo.trim() === '') {
-    this.alertMessage = 'Placa inválida ou não encontrada na base.';
-    return;
-  }
-
-  if (!this.selectedService) {
-    this.alertMessage = 'Selecione um serviço para o agendamento.';
-    return;
-  }
-
-  if (!this.dataAgendamento) {
-    this.alertMessage = 'A data do agendamento é obrigatória.';
-    return;
-  }
-
-  const dataSelecionada = new Date(this.dataAgendamento + 'T00:00:00');
-  const hoje = new Date();
-  hoje.setHours(0, 0, 0, 0);
-
-  if (dataSelecionada < hoje) {
-    this.alertMessage = 'A data do agendamento não pode ser anterior à data atual.';
-    return;
-  }
-
-  if (this.horaAgendamento == null || this.minutoAgendamento == null) {
-    this.alertMessage = 'O horário deve ser informado.';
-    return;
-  }
-  if (this.horaAgendamento < 0 || this.horaAgendamento > 23) {
-  this.alertMessage = 'A hora deve estar entre 00 e 23.';
-  return;
-}
-
-  let payload = {
-    clientName: this.newAppointment.cliente.toUpperCase(),
-    clientPhone: this.newAppointment.clienteTelefone,
-    scheduledBy: 'COMPANY',
-    requestedDatetime: this.convertToInstant(),
-    vehicleDescription: this.newAppointment.veiculo.toUpperCase(),
-    vehiclePlate: this.newAppointment.placa.toUpperCase(),
-    serviceId: this.selectedService.id
-  };
-
-  this.appointmentService.createAppointment(payload).subscribe({
-    next: () => {
-      this.alertMessage = '';
-      this.initData(); 
-      closeModal('save'); 
-    },
-    error: () => {
-      this.alertMessage = 'Erro ao salvar agendamento. Tente novamente.';
+    if (!this.newAppointment.cliente || this.newAppointment.cliente.trim() === '') {
+      this.alertMessage = 'O nome do cliente é obrigatório.';
+      return;
     }
-  });
-}
+
+    if (!this.newAppointment.clienteTelefone || this.newAppointment.clienteTelefone.trim() === '') {
+      this.alertMessage = 'O telefone do cliente é obrigatório.';
+      return;
+    }
+    if (!this.newAppointment.placa || this.newAppointment.placa.trim() === '') {
+      this.alertMessage = 'A placa do veículo é obrigatória.';
+      return;
+    }
+
+    const placaRegex = /^[A-Z]{3}[0-9][0-9A-Z][0-9]{2}$/;
+    const placaFormatada = this.newAppointment.placa.toUpperCase();
+
+    if (!placaRegex.test(placaFormatada)) {
+      this.alertMessage = 'A placa informada não é válida.';
+      return;
+    }
+
+    if (!this.newAppointment.veiculo || this.newAppointment.veiculo.trim() === '') {
+      this.alertMessage = 'Placa inválida ou não encontrada na base.';
+      return;
+    }
+
+    if (!this.selectedService) {
+      this.alertMessage = 'Selecione um serviço para o agendamento.';
+      return;
+    }
+
+    if (!this.dataAgendamento) {
+      this.alertMessage = 'A data do agendamento é obrigatória.';
+      return;
+    }
+
+    const dataSelecionada = new Date(this.dataAgendamento + 'T00:00:00');
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    if (dataSelecionada < hoje) {
+      this.alertMessage = 'A data do agendamento não pode ser anterior à data atual.';
+      return;
+    }
+
+    if (this.horaAgendamento == null || this.minutoAgendamento == null) {
+      this.alertMessage = 'O horário deve ser informado.';
+      return;
+    }
+    if (this.horaAgendamento < 0 || this.horaAgendamento > 23) {
+      this.alertMessage = 'A hora deve estar entre 00 e 23.';
+      return;
+    }
+
+    let payload = {
+      clientName: this.newAppointment.cliente.toUpperCase(),
+      clientPhone: this.newAppointment.clienteTelefone,
+      scheduledBy: 'COMPANY',
+      requestedDatetime: this.convertToInstant(),
+      vehicleDescription: this.newAppointment.veiculo.toUpperCase(),
+      vehiclePlate: this.newAppointment.placa.toUpperCase(),
+      serviceId: this.selectedService.id
+    };
+
+    this.appointmentService.createAppointment(payload).subscribe({
+      next: () => {
+        this.alertMessage = '';
+        this.initData();
+        closeModal('save');
+      },
+      error: () => {
+        this.alertMessage = 'Erro ao salvar agendamento. Tente novamente.';
+      }
+    });
+  }
 
   convertToInstant(): string {
-  const dataLocal = new Date(
-    parseInt(this.dataAgendamento.split('-')[0]),
-    parseInt(this.dataAgendamento.split('-')[1]) - 1,
-    parseInt(this.dataAgendamento.split('-')[2]),
-    this.horaAgendamento,
-    this.minutoAgendamento,
-    0,
-    0
-  );
-  return dataLocal.toISOString();
-}
+    const dataLocal = new Date(
+      parseInt(this.dataAgendamento.split('-')[0]),
+      parseInt(this.dataAgendamento.split('-')[1]) - 1,
+      parseInt(this.dataAgendamento.split('-')[2]),
+      this.horaAgendamento,
+      this.minutoAgendamento,
+      0,
+      0
+    );
+    return dataLocal.toISOString();
+  }
 
   openModal(content: any) {
     this.newAppointment = {
-    id: 0,
-    servico: '',
-    cliente: '',
-    veiculo: '',
-    clienteTelefone: '',
-    placa: '',
-    data: undefined,
-    duracao: 0,
-    valor: 0,
-    status: 'confirmado'
-  };
+      id: 0,
+      servico: '',
+      cliente: '',
+      veiculo: '',
+      clienteTelefone: '',
+      placa: '',
+      data: undefined,
+      duracao: 0,
+      valor: 0,
+      status: 'confirmado'
+    };
 
-  this.horaAgendamento = null;
-  this.minutoAgendamento = null;
-  this.selectedService = null;
-  this.searchTerm = '';
-  this.alertMessage = '';
+    this.horaAgendamento = null;
+    this.minutoAgendamento = null;
+    this.selectedService = null;
+    this.searchTerm = '';
+    this.alertMessage = '';
 
     if (this.dataSelecionada) {
       this.dataAgendamento = new Date(this.dataSelecionada).toISOString().split('T')[0];
@@ -393,6 +387,7 @@ export class CalendarComponent implements OnInit{
   }
 
   openConfirmationModal(content: any, appointmentToCancel: any) {
+    this.messageToCancel = '';
     this.appointmentToCancel = appointmentToCancel;
     const modalRef = this.modalService.open(content, {
       size: 'lg',
@@ -434,7 +429,7 @@ export class CalendarComponent implements OnInit{
   }
 
   filtrarAgendamentos(): void {
-    const agora =new Date(Date.now() - (30 * 60 * 1000));
+    const agora = new Date(Date.now() - (30 * 60 * 1000));
     const hoje = new Date(agora.getFullYear(), agora.getMonth(), agora.getDate());
 
     switch (this.filtroSelecionado) {
@@ -487,10 +482,6 @@ export class CalendarComponent implements OnInit{
     return diffHoras <= 2 && diffHoras >= 0;
   }
 
-  cancelAppointment() {
-    //this.appointmentService.cancelAppointment()
-  }
-
   getStatusText(status: string): string {
     const statusMap: { [key: string]: string } = {
       'confirmado': 'Confirmado',
@@ -521,7 +512,7 @@ export class CalendarComponent implements OnInit{
   }
 
   cancelarAgendamento(agendamento: AgendamentoAutomotivo): void {
-    this.appointmentService.cancelAppointment(agendamento.id, { message: 'Cancelado pela Empresa' }).subscribe();
+    this.appointmentService.cancelAppointment(agendamento.id, { message: this.messageToCancel !== null && this.messageToCancel !== '' ? this.messageToCancel : 'Cancelado pela Empresa' }).subscribe();
     this.initData();
   }
 
