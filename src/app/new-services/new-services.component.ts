@@ -6,6 +6,7 @@ import { BrandService } from 'app/services/brand.service';
 import { ModelService } from 'app/services/model.service';
 import { Observable, of, firstValueFrom } from 'rxjs';
 import { ImageService } from 'app/services/image.service'; // upload de imagem
+import { AuthService } from 'app/services/auth.service';
 
 interface CompanyType {
   id: number;
@@ -110,6 +111,7 @@ export class NewServicesComponent implements OnInit {
     private modelService: ModelService,
     private servicesService: ServicesService,
     private imageService: ImageService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -126,17 +128,17 @@ export class NewServicesComponent implements OnInit {
 
     this.companyTypesService.getMyCompanyTypes().subscribe({
       next: (data) => this.companyTypes = data,
-      error: () => {}
+      error: () => { }
     });
 
     this.priceTypes = [
-      { value: 'EXACT',         label: 'Fixo' },
+      { value: 'EXACT', label: 'Fixo' },
       { value: 'STARTING_FROM', label: 'A Partir de' }
     ];
 
-    this.brandService.getAllBrands().subscribe({
-      next: (data) => { this.brandList = data; this.filteredBrandList = this.brandList; },
-      error: () => {}
+    this.brandService.getAllBrands(this.authService.getCompanyVehicle()).subscribe({
+      next: (data) => { this.brandList = data; this.filteredBrandList = this.brandList.slice(0, 5); },
+      error: () => { }
     });
 
     // Edição: carrega dados do serviço
@@ -156,7 +158,7 @@ export class NewServicesComponent implements OnInit {
             this.listBrandModelSelected.push(item);
           });
         }
-        
+
         if (this.service.models?.length) {
           this.service.models.forEach(m => {
             const item: brandModelSelected = { brand: m.brand, model: m };
@@ -199,9 +201,9 @@ export class NewServicesComponent implements OnInit {
   private callImageUpload(file: File): Observable<any> {
     const img: any = this.imageService as any;
     if (typeof img.uploadImage === 'function') return img.uploadImage(file);
-    if (typeof img.upload      === 'function') return img.upload(file);
-    if (typeof img.enviar      === 'function') return img.enviar(file);
-    if (typeof img.send        === 'function') return img.send(file);
+    if (typeof img.upload === 'function') return img.upload(file);
+    if (typeof img.enviar === 'function') return img.enviar(file);
+    if (typeof img.send === 'function') return img.send(file);
     return of({ url: '' });
   }
 
@@ -239,7 +241,8 @@ export class NewServicesComponent implements OnInit {
   filterBrands(): void {
     if (!this.searchBrandTerm?.trim()) { this.filteredBrandList = this.brandList; return; }
     const q = this.searchBrandTerm.toLowerCase();
-    this.filteredBrandList = this.brandList.filter(b => b.name.toLowerCase().includes(q));
+    const filtered = this.brandList.filter(b => b.name.toLowerCase().includes(q));
+    this.filteredBrandList = filtered.length > 0 ? filtered.slice(0, 5) : [];
   }
 
   setBrandSelected(brand: Brand): void {
@@ -250,8 +253,8 @@ export class NewServicesComponent implements OnInit {
   searchModelByBrand(): void {
     if (this.brandSelected) {
       this.modelService.getModelByBrand(this.brandSelected.idBrand).subscribe({
-        next: (data) => { this.modelList = data; this.filteredModelList = this.modelList; },
-        error: () => {}
+        next: (data) => { this.modelList = data; this.filteredModelList = this.modelList ? this.modelList.slice(0, 5) : []; },
+        error: () => { }
       });
     }
   }
@@ -261,7 +264,9 @@ export class NewServicesComponent implements OnInit {
   filterModels(): void {
     if (!this.searchModelTerm?.trim()) { this.filteredModelList = this.modelList; return; }
     const q = this.searchModelTerm.toLowerCase();
-    this.filteredModelList = this.modelList.filter(m => m.name.toLowerCase().includes(q));
+    this.filteredModelList = this.modelList
+      ?.filter(m => m.name.toLowerCase().includes(q))
+      ?.slice(0, 5) ?? [];
   }
 
   setModelSelected(model: Model): void {
@@ -287,7 +292,7 @@ export class NewServicesComponent implements OnInit {
   }
   createRequestObject() {
     this.serviceRequest.title = this.service.title;
-    this.serviceRequest.description = this.service.description; 
+    this.serviceRequest.description = this.service.description;
     this.serviceRequest.price = this.service.price;
     this.serviceRequest.priceType = this.service.priceType;
     this.serviceRequest.imageUrl = this.service.imageUrl;
@@ -373,23 +378,23 @@ export class NewServicesComponent implements OnInit {
 
   validateService(): boolean {
     if (!this.service.companyTypeId) {
-      this.createAlert('danger', '', 'Deve ser selecionado um tipo de produto.');
+      this.createAlert('danger', '', 'Deve ser selecionado um tipo de Serviço.');
       return false;
     }
     if (!this.service.title || this.service.title.trim() === '') {
-      this.createAlert('danger', '', 'Titulo deve ser informado.');
+      this.createAlert('danger', '', 'Título deve ser informado.');
       return false;
     }
     if (!this.service.description || this.service.description.trim() === '') {
-      this.createAlert('danger', '', 'Descricao deve ser informada.');
+      this.createAlert('danger', '', 'Descrição deve ser informada.');
       return false;
     }
     if (!this.service.priceType) {
-      this.createAlert('danger', '', 'Tipo do Preco deve ser informado.');
+      this.createAlert('danger', '', 'Tipo do Preço deve ser informado.');
       return false;
     }
     if ((!this.service.price || this.service.price <= 0)) {
-      this.createAlert('danger', '', 'Preco deve ser informado.');
+      this.createAlert('danger', '', 'Preço deve ser informado.');
       return false;
     }
     if (!this.service.appliesToAllVehicles && this.listBrandModelSelected.length === 0) {

@@ -45,6 +45,7 @@ export class LoginComponent implements OnInit {
             next: (data) => {
                 this.authService.setToken(data.token);
                 this.authService.setCompanyName(data.companyName);
+                this.authService.setCompanyVehicle(data.companyVehicle);
                 if (this.authService.isAuthenticated()) {
                     this.router.navigate(['/app/dashboard']);
                 } else {

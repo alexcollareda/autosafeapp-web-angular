@@ -346,12 +346,6 @@
                                                                     formControlName="end"
                                                                     [disabled]="daysArray.at(i).value.closed || daysArray.at(i).value.open24h" />
                                                             </div>
-                                                            <div class="col-2 text-end">
-                                                                <button type="button"
-                                                                    class="btn btn-outline-danger btn-sm"
-                                                                    (click)="removeRange(i, j)"
-                                                                    [disabled]="rangesAt(i).length <= 1">Remover</button>
-                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="text-danger small mt-2" *ngIf="showDayError(i)">

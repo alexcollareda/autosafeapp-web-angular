@@ -8,6 +8,7 @@ import { ImageService } from 'app/services/image.service';
 import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from 'app/services/auth.service';
 
 interface CompanyType {
   id: number;
@@ -112,15 +113,15 @@ export class MyCompanyComponent implements OnInit {
   readonly baseUrl = '/api/day-config';
 
   activeTab: HeaderTab = 'empresa';
-  constructor(private operatingHoursService: OperatingHoursService, private fb: FormBuilder, private companiesService: CompaniesService, private companyTypesService: CompanyTypesService, private modalService: NgbModal, private cepService: CepService, private imageService: ImageService, private route: ActivatedRoute) { }
+  constructor(private operatingHoursService: OperatingHoursService, private fb: FormBuilder, private companiesService: CompaniesService, private companyTypesService: CompanyTypesService, private modalService: NgbModal, private cepService: CepService, private imageService: ImageService, private route: ActivatedRoute, private authService: AuthService) { }
 
   ngOnInit(): void {
-     this.route.queryParams.subscribe(params => {
-    const tab = params['tab'] as HeaderTab;
-    if (tab) {
-      this.setTab(tab);
-    }
-  });
+    this.route.queryParams.subscribe(params => {
+      const tab = params['tab'] as HeaderTab;
+      if (tab) {
+        this.setTab(tab);
+      }
+    });
     this.initForm();
     this.loadConfig();
     this.companiesService.getCompanyById().subscribe(
@@ -142,9 +143,9 @@ export class MyCompanyComponent implements OnInit {
         this.rate = data.rate;
         this.vehicleType = data.vehicleType || 'ALL';
 
-        this.selectedCompanyTypeIds =[];
+        this.selectedCompanyTypeIds = [];
         this.types.forEach(type => {
-          
+
           this.toggleCompanyType(type.id);
         });
       }
@@ -165,7 +166,7 @@ export class MyCompanyComponent implements OnInit {
   buildDayGroup(dayOfWeek: number): FormGroup {
     return this.fb.group({
       dayOfWeek: new FormControl(dayOfWeek, { nonNullable: true, validators: [Validators.required] }),
-      closed: new FormControl(false, { nonNullable: true }),
+      closed: new FormControl(dayOfWeek === 7 ? true : false, { nonNullable: true }),
       open24h: new FormControl(false, { nonNullable: true }),
       ranges: this.fb.array([this.buildRangeGroup()])
     });
@@ -475,7 +476,9 @@ export class MyCompanyComponent implements OnInit {
   }
 
   saveCompany() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 2000);
     if (this.activeTab === 'horario') {
       this.save();
       return;
@@ -505,9 +508,8 @@ export class MyCompanyComponent implements OnInit {
       } else {
         this.updateCompany();
       }
-this.loadCompanyTypes();
+      this.loadCompanyTypes();
     }
-
   }
 
   private updateCompany() {
@@ -522,10 +524,11 @@ this.loadCompanyTypes();
       address: this.address,
       types: this.selectedCompanyTypeIds,
       active: this.active,
-      vehicleType: this.vehicleType 
+      vehicleType: this.vehicleType
     }).subscribe({
       next: (response) => {
         this.createAlert('success', 'Sucesso!', 'Empresa atualizada com sucesso.');
+        this.authService.setCompanyVehicle(this.vehicleType);
         this.ngOnInit();
       }
       , error: (error) => {

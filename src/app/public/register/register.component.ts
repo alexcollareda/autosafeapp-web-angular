@@ -84,6 +84,9 @@ export class RegisterComponent implements OnInit {
     }
 
     onCnpjBlur() {
+        if(this.cnpj === ''){
+            return;
+        }
         if (this.cnpj && this.cnpj.length === 14 && isValidCnpj(this.cnpj)) {
             this.isCnpjExiste = false;
             this.companiesService.getCompanyByCNPJ(this.cnpj).subscribe({

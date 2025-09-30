@@ -8,8 +8,8 @@ import { Observable } from 'rxjs';
 export class BrandService {
     constructor(private authService: AuthService, private http: HttpClient) { }
 
-    getAllBrands(): Observable<any> {
-        return this.http.get<any>(environment.backendApiUrl + '/brand')
+    getAllBrands(companyVehicle:string): Observable<any> {
+        return this.http.get<any>(environment.backendApiUrl + '/brand/'+companyVehicle)
            
     }
 }
