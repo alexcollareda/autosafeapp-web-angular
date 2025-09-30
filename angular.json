@@ -19,7 +19,9 @@
             "allowedCommonJsDependencies": ["nouislider", "rellax"],
             "assets": [
               "src/assets",
-              "src/favicon.ico"
+              "src/favicon.ico",
+              "src/robots.txt",
+              "src/sitemap.xml"
             ],
             "styles": [
               "src/styles.scss",
