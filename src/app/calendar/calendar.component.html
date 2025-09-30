@@ -99,11 +99,11 @@
                                     <i class="icon">👤</i>
                                     {{ agendamento.cliente }}
                                 </p>
-                                <p class="appointment-vehicle">
+                                <p class="appointment-vehicle" *ngIf="agendamento.placa">
                                     <i class="icon">🚗</i>
                                     {{ agendamento.veiculo }}
                                 </p>
-                                <p class="appointment-plate">
+                                <p class="appointment-plate" *ngIf="agendamento.placa">
                                     <i class="icon">🏷️</i>
                                     {{ agendamento.placa }}
                                 </p>

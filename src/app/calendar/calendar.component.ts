@@ -265,22 +265,21 @@ export class CalendarComponent implements OnInit {
       this.alertMessage = 'O telefone do cliente é obrigatório.';
       return;
     }
-    if (!this.newAppointment.placa || this.newAppointment.placa.trim() === '') {
-      this.alertMessage = 'A placa do veículo é obrigatória.';
-      return;
-    }
 
-    const placaRegex = /^[A-Z]{3}[0-9][0-9A-Z][0-9]{2}$/;
-    const placaFormatada = this.newAppointment.placa.toUpperCase();
+    if (this.newAppointment.placa) {
 
-    if (!placaRegex.test(placaFormatada)) {
-      this.alertMessage = 'A placa informada não é válida.';
-      return;
-    }
+      const placaRegex = /^[A-Z]{3}[0-9][0-9A-Z][0-9]{2}$/;
+      const placaFormatada = this.newAppointment.placa.toUpperCase();
 
-    if (!this.newAppointment.veiculo || this.newAppointment.veiculo.trim() === '') {
-      this.alertMessage = 'Placa inválida ou não encontrada na base.';
-      return;
+      if (!placaRegex.test(placaFormatada)) {
+        this.alertMessage = 'A placa informada não é válida.';
+        return;
+      }
+
+      if (!this.newAppointment.veiculo || this.newAppointment.veiculo.trim() === '') {
+        this.alertMessage = 'Placa inválida ou não encontrada na base.';
+        return;
+      }
     }
 
     if (!this.selectedService) {
