@@ -198,8 +198,24 @@ export class MyCompanyComponent implements OnInit {
   }
 
   onDayFlagChange(dayIndex: number): void {
-    this.updateRangesDisabled(dayIndex);
+  const dayGroup = this.daysArray.at(dayIndex);
+
+  const closedCtrl = dayGroup.get('closed');
+  const open24hCtrl = dayGroup.get('open24h');
+
+  const closed = closedCtrl?.value;
+  const open24h = open24hCtrl?.value;
+
+  if (closed && open24h) {
+    if (closed) {
+      open24hCtrl?.setValue(false, { emitEvent: false });
+    } else {
+      closedCtrl?.setValue(false, { emitEvent: false });
+    }
   }
+
+  this.updateRangesDisabled(dayIndex);
+}
 
   updateRangesDisabled(dayIndex: number): void {
     const dayGroup = this.daysArray.at(dayIndex);
