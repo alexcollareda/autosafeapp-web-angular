@@ -64,7 +64,12 @@ export class MyServicesComponent implements OnInit {
     this.router.navigate(['/app/new-services']);
   }
 
-  openNewService(serviceId: number): void {
-    this.router.navigate(['/app/new-services'], { queryParams: { serviceId: serviceId } });
+ openNewService(serviceId: number): void {
+  const service = this.serviceList.find(s => s.id === serviceId);
+  if (service) {
+    this.router.navigate(['/app/new-services'], { state: { service } });
+  } else {
+    this.router.navigate(['/app/new-services'], { queryParams: { serviceId } });
   }
+}
 }

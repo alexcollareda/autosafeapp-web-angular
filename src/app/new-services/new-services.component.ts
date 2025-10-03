@@ -115,9 +115,29 @@ export class NewServicesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.serviceId = null;
-    this.selectedCompanyTypeIds = 0;
+  this.serviceId = null;
+  this.selectedCompanyTypeIds = 0;
 
+  // 1. Tenta pegar o service passado pelo state
+  const navState = history.state;
+  if (navState && navState.service) {
+    // Já veio o objeto inteiro
+    this.service = navState.service;
+    this.serviceId = this.service.id;
+
+    this.selectedCompanyTypeIds = this.service.companyTypeId;
+    this.priceTypeSelected = this.priceTypes.find(pt => pt.value === this.service.priceType) || null;
+    this.previewUrl = this.service?.imageUrl || null;
+
+    if (this.service.brands?.length) {
+      this.service.brands.forEach(b => this.listBrandModelSelected.push({ brand: b, model: null }));
+    }
+
+    if (this.service.models?.length) {
+      this.service.models.forEach(m => this.listBrandModelSelected.push({ brand: m.brand, model: m }));
+    }
+  } else {
+    // 2. Se não veio pelo state, usa queryParam e API
     const serviceIdString = this.route.snapshot.queryParamMap.get('serviceId');
     if (serviceIdString) this.serviceId = +serviceIdString;
 
@@ -126,20 +146,41 @@ export class NewServicesComponent implements OnInit {
       this.service.appliesToAllVehicles = true;
     }
 
-    this.companyTypesService.getMyCompanyTypes().subscribe({
-      next: (data) => this.companyTypes = data,
-      error: () => { }
-    });
+    if (this.serviceId && this.serviceId !== 0) {
+      this.servicesService.findByServiceId(this.serviceId).subscribe((data) => {
+        this.service = data;
 
-    this.priceTypes = [
-      { value: 'EXACT', label: 'Fixo' },
-      { value: 'STARTING_FROM', label: 'A Partir de' }
-    ];
+        this.selectedCompanyTypeIds = this.service.companyTypeId;
+        this.priceTypeSelected = this.priceTypes.find(pt => pt.value === this.service.priceType) || null;
+        this.previewUrl = this.service?.imageUrl || null;
 
-    this.brandService.getAllBrands(this.authService.getCompanyVehicle()).subscribe({
-      next: (data) => { this.brandList = data; this.filteredBrandList = this.brandList.slice(0, 5); },
-      error: () => { }
-    });
+        if (this.service.brands?.length) {
+          this.service.brands.forEach(b => this.listBrandModelSelected.push({ brand: b, model: null }));
+        }
+
+        if (this.service.models?.length) {
+          this.service.models.forEach(m => this.listBrandModelSelected.push({ brand: m.brand, model: m }));
+        }
+      });
+    }
+  }
+
+  // Carregar tipos e marcas (mantém igual)
+  this.companyTypesService.getMyCompanyTypes().subscribe({
+    next: (data) => this.companyTypes = data,
+    error: () => {}
+  });
+
+  this.priceTypes = [
+    { value: 'EXACT', label: 'Fixo' },
+    { value: 'STARTING_FROM', label: 'A Partir de' }
+  ];
+
+  this.brandService.getAllBrands(this.authService.getCompanyVehicle()).subscribe({
+    next: (data) => { this.brandList = data; this.filteredBrandList = this.brandList.slice(0, 5); },
+    error: () => {}
+  });
+
 
     // Edição: carrega dados do serviço
     if (this.serviceId && this.serviceId !== 0) {
