@@ -30,6 +30,7 @@ interface Service {
   companyTypeId: number;
   brands: Brand[];
   models: Model[];
+   enableScheduling: boolean;
 }
 interface serviceRequest {
   title: string;
@@ -42,6 +43,7 @@ interface serviceRequest {
   companyTypeId: number;
   brandIds: number[];
   modelIds: number[];
+   enableScheduling: boolean;
 }
 
 interface PriceTypeOption {
@@ -144,6 +146,7 @@ export class NewServicesComponent implements OnInit {
     if (!this.serviceId) {
       this.service.isActive = true;
       this.service.appliesToAllVehicles = true;
+      this.service.enableScheduling = true;
     }
 
     if (this.serviceId && this.serviceId !== 0) {
@@ -340,6 +343,7 @@ export class NewServicesComponent implements OnInit {
     this.serviceRequest.appliesToAllVehicles = this.service.appliesToAllVehicles;
     this.serviceRequest.isActive = this.service.isActive;
     this.serviceRequest.companyTypeId = this.selectedCompanyTypeIds;
+    this.serviceRequest.enableScheduling = this.service.enableScheduling;
   }
 
   async saveService() {
