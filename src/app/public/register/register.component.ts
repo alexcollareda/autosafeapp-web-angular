@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { CepService } from 'app/services/cep.service';
 import { CompaniesService } from 'app/services/companies.service';
 import { isValidCnpj } from '../../utils/cnpj.utils';
+import { MetaService } from 'app/services/meta.service';
 
 interface CompanyType {
     id: number;
@@ -53,10 +54,21 @@ export class RegisterComponent implements OnInit {
         private companyTypesService: CompanyTypesService,
         private cepService: CepService,
         private companiesService: CompaniesService,
-        private loginCompanyService: LoginCompanyService
+        private loginCompanyService: LoginCompanyService,
+        private metaService: MetaService
     ) { }
 
     ngOnInit() {
+        this.metaService.updatePageMeta({
+            title: 'Cadastre sua Empresa - Oficina, Estética Automotiva, Lava-Rápido | Autosafe',
+            description: '📈 Cadastre sua oficina, estética automotiva, lava-rápido, lava-jato ou funilaria no Autosafe. Aumente sua clientela e receba mais pedidos. Cadastro gratuito para prestadores!',
+            keywords: 'cadastrar oficina app, cadastrar estética automotiva, cadastrar lava rápido, prestador serviços automotivos, parceiro autosafe, aumentar clientes oficina, cadastro gratuito prestadores',
+            canonical: 'https://autosafeapp.com.br/public/register',
+            ogTitle: 'Seja Parceiro Autosafe - Cadastre sua Empresa Automotiva',
+            ogDescription: 'Conecte-se a milhares de proprietários de veículos. Cadastre sua oficina, estética automotiva ou lava-rápido no Autosafe e aumente seus clientes.',
+            ogUrl: 'https://autosafeapp.com.br/public/register'
+        });
+        this.addStructuredData();
         document.body.classList.add('register-page');
         document.getElementsByTagName('nav')[0].classList.add('navbar-transparent');
         this.loadCompanyTypes();
@@ -65,6 +77,13 @@ export class RegisterComponent implements OnInit {
     ngOnDestroy() {
         document.body.classList.remove('register-page');
         document.getElementsByTagName('nav')[0].classList.remove('navbar-transparent');
+
+        const scripts = document.querySelectorAll('script[type="application/ld+json"]');
+        scripts.forEach(script => {
+            if (script.textContent?.includes('Cadastro de Prestadores Automotivos')) {
+                script.remove();
+            }
+        });
     }
 
     loadCompanyTypes() {
@@ -84,6 +103,9 @@ export class RegisterComponent implements OnInit {
     }
 
     onCnpjBlur() {
+        if (this.cnpj === '') {
+            return;
+        }
         if (this.cnpj && this.cnpj.length === 14 && isValidCnpj(this.cnpj)) {
             this.isCnpjExiste = false;
             this.companiesService.getCompanyByCNPJ(this.cnpj).subscribe({
@@ -235,15 +257,15 @@ export class RegisterComponent implements OnInit {
                 return false;
             }
             if (!this.vehicleType) {
-            this.createAlert('danger', 'Atenção!', 'Selecione o tipo de veículo atendido.');
-            return false;
+                this.createAlert('danger', 'Atenção!', 'Selecione o tipo de veículo atendido.');
+                return false;
             }
             return true;
         }
 
         if (this.step === 4) {
             // Validação de senha: ao menos 6 caracteres, pelo menos uma letra e um número
-            const senhaValida = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/.test(this.password);
+            const senhaValida = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d!@#$%^&*()_+\-=\[\]{};':"\|,.<>\/?~]{6,}$/.test(this.password);
             if (!senhaValida) {
                 this.createAlert(
                     'danger',
@@ -278,6 +300,7 @@ export class RegisterComponent implements OnInit {
             name: this.nomeFantasia,
             cnpj: this.cnpj,
             phone: this.telefone,
+            cellphone: this.celular,
             phoneIsWpp: this.isWatsApp,
             email: this.email,
             description: '',
@@ -316,6 +339,68 @@ export class RegisterComponent implements OnInit {
             next: () => this.createAlert('success', 'Sucesso!', 'Cadastro realizado com sucesso!'),
             error: () => this.createAlert('danger', 'Erro!', 'Erro ao cadastrar login.')
         });
+    }
+
+    private addStructuredData() {
+        const structuredData = {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "Cadastro de Empresas Automotivas - Autosafe",
+            "description": "Cadastre sua empresa do setor automotivo: oficinas mecânicas, estética automotiva, lava-rápido, jato, funilaria",
+            "url": "https://autosafeapp.com.br/public/register",
+            "inLanguage": "pt-BR",
+            "isPartOf": {
+                "@type": "WebSite",
+                "name": "Autosafe App",
+                "url": "https://autosafeapp.com.br/"
+            },
+            "mainEntity": {
+                "@type": "Service",
+                "name": "Cadastro de Prestadores Automotivos",
+                "description": "Plataforma para cadastro de empresas do setor automotivo",
+                "provider": {
+                    "@type": "Organization",
+                    "name": "Autosafe App",
+                    "url": "https://autosafeapp.com.br/"
+                },
+                "serviceType": [
+                    "Cadastro de Oficinas Mecânicas",
+                    "Cadastro de Estética Automotiva",
+                    "Cadastro de Lava-Rápido",
+                    "Cadastro de Lava Jato",
+                    "Cadastro de Funilaria",
+                    "Cadastro de Guincho"
+                ],
+                "areaServed": "BR",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "BRL",
+                    "description": "Cadastro gratuito para prestadores de serviços automotivos"
+                }
+            },
+            "breadcrumb": {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://autosafeapp.com.br/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "Cadastro de Parceiros",
+                        "item": "https://autosafeapp.com.br/public/register"
+                    }
+                ]
+            }
+        };
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.text = JSON.stringify(structuredData);
+        document.head.appendChild(script);
     }
 }
 

@@ -15,9 +15,12 @@
           'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
     })(window, document, 'script', 'dataLayer', 'GTM-MP3PH2MV');</script>
   <!-- End Google Tag Manager -->
-  <title>Autosafe App — Manutenção, revisões e serviços automotivos</title>
+  <title>Autosafe App - Conecte-se a Oficinas, Estética Automotiva e Lava-Rápido</title>
   <meta name="description"
-    content="O Autosafe App é seu assistente de manutenção e cuidados com o veículo. Conecte-se a prestadores de serviços como guincho, estética automotiva, mecânicos, pneus e acessórios. Organize revisões e mantenha seu carro sempre em dia." />
+    content="🚗 Encontre oficinas mecânicas, estética automotiva, lava-rápido, jato e funilaria próximos a você. Conecte-se aos melhores prestadores de serviços automotivos. Baixe grátis!" />
+
+  <meta name="keywords"
+    content="oficina mecânica, estética automotiva, lava rápido, lava jato, funilaria, guincho, serviços automotivos, app carro, manutenção veicular, pintura, chaveiro" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no" />
   <meta name="robots" content="index, follow" />
@@ -25,8 +28,8 @@
   <link rel="canonical" href="https://autosafeapp.com.br/" />
 
   <!-- Branding e ícones -->
-  <link rel="icon" type="image/png" href="assets/img/isotipo_branco.png" />
-  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/isotipo_branco.png" />
+  <link rel="icon" type="image/png" href="assets/img/isotipo_laranja.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/img/isotipo_laranja.png" />
   <meta name="theme-color" content="#0F172A" />
   <meta name="application-name" content="Autosafe App" />
   <meta name="author" content="Autosafe App" />
@@ -60,48 +63,76 @@
 
   <!-- Dados estruturados (Organization + WebSite + MobileApplication) -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "Organization",
-        "name": "Autosafe App",
-        "url": "https://autosafeapp.com.br/",
-        "logo": "https://autosafeapp.com.br/assets/img/logo-as.png",
-        "sameAs": [
-          "https://www.instagram.com/autosafeapp/"
-        ]
-      },
-      {
-        "@type": "WebSite",
-        "name": "Autosafe App",
-        "url": "https://autosafeapp.com.br/",
-        "inLanguage": "pt-BR",
-        "potentialAction": {
-          "@type": "ViewAction",
-          "target": "https://autosafeapp.com.br/"
-        }
-      },
-      {
-        "@type": "MobileApplication",
-        "name": "Autosafe App",
-        "operatingSystem": "Android, iOS",
-        "applicationCategory": "UtilitiesApplication",
-        "url": "https://autosafeapp.com.br/",
-        "description": "Assistente para manutenção e cuidados com veículos, conectando proprietários a prestadores (guincho, estética, mecânicos, pneus e acessórios) e organizando revisões.",
-        "publisher": {
-          "@type": "Organization",
-          "name": "Autosafe App"
-        },
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "BRL"
-        }
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://autosafeapp.com.br/#organization",
+      "name": "Autosafe App",
+      "url": "https://autosafeapp.com.br/",
+      "logo": "https://autosafeapp.com.br/assets/img/logo-as.png",
+      "description": "Plataforma digital que conecta proprietários de veículos a prestadores de serviços automotivos especializados",
+      "foundingDate": "2024",
+      "areaServed": "BR",
+      "serviceType": "Plataforma de Serviços Automotivos",
+      "sameAs": [
+        "https://www.instagram.com/autosafeapp/"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "areaServed": "BR",
+        "availableLanguage": "Portuguese"
       }
-    ]
-  }
-  </script>
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://autosafeapp.com.br/#website",
+      "name": "Autosafe App",
+      "url": "https://autosafeapp.com.br/",
+      "inLanguage": "pt-BR",
+      "publisher": {
+        "@id": "https://autosafeapp.com.br/#organization"
+      }
+    },
+    {
+      "@type": "MobileApplication",
+      "name": "Autosafe App",
+      "operatingSystem": "Android, iOS",
+      "applicationCategory": "UtilitiesApplication",
+      "url": "https://autosafeapp.com.br/",
+      "description": "App que conecta proprietários de veículos a oficinas, estética automotiva, lava-rápido, jato e outros serviços automotivos",
+      "publisher": {
+        "@id": "https://autosafeapp.com.br/#organization"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "BRL"
+      }
+    },
+    {
+      "@type": "Service",
+      "name": "Plataforma de Conexão Automotiva",
+      "description": "Conectamos proprietários de veículos a prestadores especializados: oficinas mecânicas, estética automotiva, lava-rápido, jato e funilaria",
+      "provider": {
+        "@id": "https://autosafeapp.com.br/#organization"
+      },
+      "areaServed": "BR",
+      "serviceType": [
+        "Oficinas Mecânicas",
+        "Estética Automotiva", 
+        "Lava-Rápido",
+        "Lava-Jato",
+        "Funilaria",
+        "Chaveiro 24h",
+        "Guincho 24h"
+      ]
+    }
+  ]
+}
+</script>
 
   <!-- Opcional: verificação do Google Search Console (substitua o content pelo seu token) -->
   <!-- <meta name="google-site-verification" content="COLE_A_CHAVE_AQUI" /> -->

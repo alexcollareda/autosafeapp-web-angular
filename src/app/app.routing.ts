@@ -20,7 +20,6 @@ import { NewPromotionsComponent } from './new-promotions/new-promotions.componen
 import { MyPromotionsComponent } from './my-promotions/my-promotions.component';
 import { WorkingComponent } from './public/working/working.component';
 import { environment } from '../environments/environment';
-import { CompanyProfileComponent } from './public/company-profile/company-profile.component';
 import { CalendarA11y } from 'angular-calendar';
 import { CalendarComponent } from './calendar/calendar.component';
 
@@ -41,7 +40,6 @@ const routes: Routes = [
       { path: 'public/profile', component: ProfileComponent },
       { path: 'public/register', component: canregister ? RegisterComponent : WorkingComponent},
       { path: 'public/recover-password', component: RecoverPasswordComponent },
-      { path: 'public/company-profile', component: CompanyProfileComponent },
     ]
   },
 

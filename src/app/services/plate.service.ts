@@ -5,11 +5,10 @@ import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
-export class BrandService {
+export class PlateService {
     constructor(private authService: AuthService, private http: HttpClient) { }
 
-    getAllBrands(companyVehicle:string): Observable<any> {
-        return this.http.get<any>(environment.backendApiUrl + '/brand/'+companyVehicle)
-           
+    findPlate(plate: string): Observable<any> {
+        return this.http.get<any>(environment.backendApiUrl + '/plate/' + plate)
     }
 }

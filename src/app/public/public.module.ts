@@ -16,8 +16,6 @@ import { NgxMaskModule } from 'ngx-mask';
 import { RecoverPasswordComponent } from './recover-password/recover-password.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { WorkingComponent } from './working/working.component';
-import { CompanyProfileComponent } from './company-profile/company-profile.component';
-
 
 @NgModule({
     imports: [
@@ -38,8 +36,6 @@ import { CompanyProfileComponent } from './company-profile/company-profile.compo
         ProfileComponent,
         RegisterComponent,
         RecoverPasswordComponent,
-        WorkingComponent,
-        CompanyProfileComponent
-    ]
+        WorkingComponent    ]
 })
 export class PublicModule { }

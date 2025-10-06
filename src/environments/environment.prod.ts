@@ -1,5 +1,8 @@
 export const environment = {
   production: true,
   backendApiUrl: '/api',
-  canRegister: false
+  canRegister: true,
+  enableCalendar: true,
+  enablePromotions: false
+  
 };

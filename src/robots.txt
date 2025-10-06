@@ -1,0 +1,59 @@
+# Robots.txt para Autosafe App
+# https://autosafeapp.com.br/robots.txt
+
+User-agent: *
+Allow: /
+
+# Páginas principais permitidas
+Allow: /public/landing
+Allow: /public/register
+
+# Bloquear arquivos e pastas técnicas
+Disallow: /assets/
+Disallow: /*.js$
+Disallow: /*.css$
+Disallow: /*.json$
+Disallow: /node_modules/
+Disallow: /src/
+
+# Bloquear páginas administrativas (se existirem)
+Disallow: /admin/
+Disallow: /dashboard/
+Disallow: /api/
+Disallow: /login/
+Disallow: /auth/
+
+# Bloquear parâmetros de URL desnecessários
+Disallow: /*?utm_*
+Disallow: /*?ref=*
+Disallow: /*?source=*
+Disallow: /*?campaign=*
+
+# Permitir especificamente para Googlebot
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Permitir para Bingbot
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 2
+
+# Bloquear bots maliciosos conhecidos
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+# Localização do Sitemap
+Sitemap: https://autosafeapp.com.br/sitemap.xml
+
+# Host preferido (opcional)
+Host: autosafeapp.com.br

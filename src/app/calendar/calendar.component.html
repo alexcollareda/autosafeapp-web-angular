@@ -1,46 +1,320 @@
-<!-- agenda.component.html -->
-<div class="calendar-wrapper">
-  <!-- Header com navegação -->
-  <div class="calendar-header">
-    <div class="nav-buttons">
-      <button 
-        class="btn btn-nav" 
-        mwlCalendarPreviousView
-        [view]="view"
-        [(viewDate)]="viewDate">
-        ← Anterior
-      </button>
-      
-      <h2 class="current-month">
-        {{ viewDate | date:'MMMM yyyy':'pt-BR' }}
-      </h2>
-      
-      <button 
-        class="btn btn-nav"
-        mwlCalendarNextView
-        [view]="view"
-        [(viewDate)]="viewDate">
-        Próximo →
-      </button>
-    </div>
-    
-    <button 
-      class="btn btn-today"
-      mwlCalendarToday
-      [(viewDate)]="viewDate">
-      Hoje
-    </button>
-  </div>
+<!-- calendar.component.html -->
+<div class="calendar-page">
+    <!-- Layout Principal -->
+    <div class="main-layout">
+        <!-- Calendário (Lado Esquerdo - 60%) -->
+        <div class="calendar-section">
+            <div class="calendar-wrapper">
+                <!-- Header com navegação -->
+                <div class="calendar-header">
+                    <div class="nav-buttons">
+                        <button class="btn btn-nav" mwlCalendarPreviousView [view]="view" [(viewDate)]="viewDate">
+                            ← Anterior
+                        </button>
 
-  <!-- Calendário -->
-  <div class="calendar-container">
-    <mwl-calendar-month-view
-      [viewDate]="viewDate"
-      [events]="events"
-      [activeDayIsOpen]="activeDayIsOpen"
-      [locale]="locale"
-      (dayClicked)="onDayClicked($event)"
-      (eventClicked)="onEventClicked($event)">
-    </mwl-calendar-month-view>
-  </div>
+                        <h2 class="current-month">
+                            {{ viewDate | date:'MMMM yyyy':'pt-BR' }}
+                        </h2>
+
+                        <button class="btn btn-nav" mwlCalendarNextView [view]="view" [(viewDate)]="viewDate">
+                            Próximo →
+                        </button>
+                    </div>
+
+                    <button class="btn btn-primary" (click)="openModal(classic)">
+                        <i class="now-ui-icons ui-1_simple-add"></i>
+                        Novo Agendamento
+                    </button>
+                    <button class="btn btn-today" mwlCalendarToday [(viewDate)]="viewDate">
+                        Hoje
+                    </button>
+                </div>
+
+                <!-- Calendário -->
+                <div class="calendar-container">
+                    <mwl-calendar-month-view [viewDate]="viewDate" [events]="events" [activeDayIsOpen]="activeDayIsOpen"
+                        [locale]="locale" (dayClicked)="onDayClicked($event)" (eventClicked)="onEventClicked($event)">
+                    </mwl-calendar-month-view>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Agendamentos (Lado Direito - 40%) -->
+        <div class="appointments-section">
+            <div class="appointments-wrapper">
+                <!-- Header da Lista -->
+                <div class="appointments-header">
+                    <h3>
+                        <span *ngIf="filtroSelecionado === 'dia_especifico'">
+                            🗓️ Agendamentos - {{ dataSelecionada | date:'dd/MM/yyyy' }}
+                        </span>
+                        <span *ngIf="filtroSelecionado !== 'dia_especifico'">
+                            🕒 Próximos Agendamentos
+                        </span>
+                    </h3>
+                    <span class="appointments-count">{{ proximosAgendamentosFiltrados.length }} agendamentos</span>
+                </div>
+
+                <!-- Filtros -->
+                <div class="appointments-filters">
+                    <div class="filter-row">
+                        <select class="filter-select" [(ngModel)]="filtroSelecionado" (change)="filtrarAgendamentos()">
+                            <option value="proximos">Próximos</option>
+                            <option value="hoje">Hoje</option>
+                            <option value="semana">Esta Semana</option>
+                            <option value="mes">Este Mês</option>
+                            <option value="dia_especifico" *ngIf="dataSelecionada">Dia Selecionado</option>
+                        </select>
+
+                        <button *ngIf="filtroSelecionado === 'dia_especifico'" class="btn btn-back"
+                            (click)="voltarParaProximos()">
+                            ← Voltar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista de Agendamentos -->
+                <div class="appointments-list">
+                    <div *ngFor="let agendamento of proximosAgendamentosFiltrados; trackBy: trackByAgendamento"
+                        class="appointment-card" [class.appointment-today]="isToday(agendamento.data)"
+                        [class.appointment-urgent]="isUrgent(agendamento.data)"
+                        [class.appointment-in-progress]="agendamento.status === 'em_andamento'">
+
+                        <!-- Data e Hora -->
+                        <div class="appointment-time">
+                            <div class="appointment-date">
+                                {{ agendamento.data | date:'dd/MM' }}
+                            </div>
+                            <div class="appointment-hour">
+                                {{ agendamento.data | date:'HH:mm' }}
+                            </div>
+                        </div>
+
+                        <!-- Informações do Serviço -->
+                        <div class="appointment-info">
+                            <h4 class="appointment-title">{{ agendamento.servico }}</h4>
+
+                            <div class="appointment-details">
+                                <p class="appointment-client">
+                                    <i class="icon">👤</i>
+                                    {{ agendamento.cliente }}
+                                </p>
+                                <p class="appointment-vehicle" *ngIf="agendamento.placa">
+                                    <i class="icon">🚗</i>
+                                    {{ agendamento.veiculo }}
+                                </p>
+                                <p class="appointment-plate" *ngIf="agendamento.placa">
+                                    <i class="icon">🏷️</i>
+                                    {{ agendamento.placa }}
+                                </p>
+                            </div>
+
+                            <div class="appointment-status">
+                                <span class="status-badge" [class]="'status-' + agendamento.status">
+                                    {{ getStatusIcon(agendamento.status) }} {{ getStatusText(agendamento.status) }}
+                                </span>
+                            </div>
+
+                            <div *ngIf="agendamento.observacoes" class="appointment-notes">
+                                <small>📝 {{ agendamento.observacoes }}</small>
+                            </div>
+                        </div>
+
+                        <!-- Ações -->
+                        <div class="appointment-actions">
+                            <!--<button class="btn-action btn-edit" (click)="editarAgendamento(agendamento)" title="Editar">
+                                ✏️
+                            </button>-->
+
+                            <button *ngIf="agendamento.status !== 'concluido' && agendamento.status !== 'cancelado'"
+                                class="btn-action btn-delete"
+                                (click)="openConfirmationModal(confirmationModal, agendamento)" title="Cancelar">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Estado Vazio -->
+                    <div *ngIf="proximosAgendamentosFiltrados.length === 0" class="empty-state">
+                        <div class="empty-icon">🚗</div>
+                        <h4>Nenhum agendamento encontrado</h4>
+                        <p *ngIf="filtroSelecionado === 'dia_especifico'">
+                            Não há agendamentos para {{ dataSelecionada | date:'dd/MM/yyyy' }}.
+                        </p>
+                        <p *ngIf="filtroSelecionado !== 'dia_especifico'">
+                            Não há agendamentos para o período selecionado.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<!-- Seu modal atualizado -->
+<ng-template #classic let-c="close" let-dismiss="dismiss">
+    <div class="modal-header justify-content-center">
+        <button type="button" class="close" (click)="dismiss('Cross click')">
+            <i class="now-ui-icons ui-1_simple-remove"></i>
+        </button>
+        <h4 class="title title-up">Novo Agendamento</h4>
+    </div>
+    <div *ngIf="alertMessage" class="alert alert-danger text-center">
+  {{ alertMessage }}
+</div>
+    <div id="modal-body" class="modal-body">
+        <div class="row">
+            <div class="col-sm-6 col-lg-8">
+                <div class="form-group">
+                    <label>Nome do Cliente</label>
+                    <input type="text" placeholder="Nome" [(ngModel)]="newAppointment.cliente" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+                <div class="form-group">
+                    <label>Telefone</label>
+                    <input type="text" placeholder="(11) 9 9820 0000" [(ngModel)]="newAppointment.clienteTelefone"
+                        mask="(00) 00000-0000" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4">
+                <div class="form-group">
+                    <label>Placa</label>
+                    <input type="text" [(ngModel)]="newAppointment.placa" placeholder="XPT0101" maxlength="7"
+                        (blur)="findPlate()" class="form-control" />
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-8">
+                <div class="form-group">
+                    <label>Veiculo</label>
+                    <input type="text" [(ngModel)]="newAppointment.veiculo" class="form-control" [disabled]="true" />
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-12">
+                <div class="form-group">
+                    <label>Serviço</label>
+
+                    <div class="search-input-wrapper" *ngIf="!selectedService">
+                        <input type="text" placeholder="Digite para buscar serviços ..." [(ngModel)]="searchTerm"
+                            class="form-control" (focus)="showSuggestions = true" (blur)="hideSuggestions()">
+
+                        <!-- Lista de sugestões/dropdown -->
+                        <div *ngIf="searchTerm && filteredServiceList.length > 0" class="suggestions-dropdown">
+                            <ul class="suggestions-list">
+                                <li *ngFor="let service of filteredServiceList" (mousedown)="selectService(service)"
+                                    class="suggestion-item">
+                                    {{ service.title }} : <i>{{service.description}}</i> <b> R$ {{ service.price |
+                                        number:'1.2-2' }}</b>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Mensagem de "nenhum resultado" se o termo não estiver vazio mas a lista filtrada sim -->
+                        <div *ngIf="searchTerm && filteredServiceList.length === 0" class="no-results-dropdown">
+                            <p>Nenhum serviço encontrado para "{{ searchTerm }}".</p>
+                        </div>
+                    </div>
+
+                    <div *ngIf="selectedService" class="selected-service-display">
+                        <div class="selected-service-details">
+                            <div>
+                                <b>{{ selectedService.title }}</b>
+                                <i>{{ selectedService.description }}</i>
+                            </div>
+                            <button (click)="excludeService()" class="remove-service-button">Remover</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-sm-6 col-lg-4">
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" class="form-control" [(ngModel)]="dataAgendamento" [min]="dataMinima" />
+                </div>
+            </div>
+
+            <div class="col-sm-6 col-lg-8">
+                <div class="form-group">
+                    <label>Horário</label>
+                    <div class="input-group" style="width: fit-content; gap: 5px;">
+                    <!-- Dropdown de Horas -->
+                    <input class="form-control text-center" mask="00" placeholder="HH"
+                        style="width: 65px; flex: none;" maxlength="2"
+                        [(ngModel)]="horaAgendamento" />
+                    <b>:</b>
+                    <!-- Dropdown de Minutos -->
+                    <select class="form-control" style="width: 80px;"
+                            [(ngModel)]="minutoAgendamento">
+                        <option *ngFor="let m of minutosDisponiveis" [value]="m">
+                        {{ m < 10 ? '0' + m : m }}
+                        </option>
+                    </select>
+                    </div>
+                </div>
+                </div>
+
+
+
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="dismiss('dismiss')">Cancelar</button>
+        <button type="button" class="btn btn-success" (click)="createAppointment(c)">
+            <i class="now-ui-icons ui-1_check"></i> Salvar
+            </button>
+    </div>
+</ng-template>
+
+<ng-template #confirmationModal let-c="close" let-dismiss="dismiss">
+    <div class="modal-header justify-content-center">
+        <button type="button" class="close" (click)="dismiss('Cross click')">
+            <i class="now-ui-icons ui-1_simple-remove"></i>
+        </button>
+        <h4 class="title title-up">Cancelar Agendamento</h4>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-6 col-lg-6">
+                <div class="form-group">
+                    <label>Nome do Cliente</label>
+                    <input type="text" [(ngModel)]="appointmentToCancel.cliente" class="form-control"
+                        [disabled]="true" />
+
+                </div>
+            </div>
+             <div class="col-sm-6 col-lg-3">
+                <div class="form-group">
+                    <label>Placa</label>
+                    <input type="text" [(ngModel)]="appointmentToCancel.placa" class="form-control"
+                        [disabled]="true" />
+
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="text" value="{{ appointmentToCancel.data | date:'dd/MM HH:mm' }}" class="form-control" disabled />
+
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-12">
+                <div class="form-group">
+                    <label>Motivo</label>
+                     <textarea class="form-control" name="name" rows="3" cols="80"
+                            placeholder="Motivo..." maxlength="150" [(ngModel)]="messageToCancel"></textarea>
+
+                </div>
+            </div>
+           
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="dismiss('dismiss')">Cancelar</button>
+        <button type="button" class="btn btn-success" (click)="cancelarAgendamento(appointmentToCancel); c('save')">
+            <i class="now-ui-icons ui-1_check"></i> Confirmar
+        </button>
+    </div>
+</ng-template>

@@ -82,14 +82,21 @@
                                 <div class="form-group">
                                     <label>Telefone</label>
                                     <input type="text" [(ngModel)]="phone" placeholder="Telefone" class="form-control"
+                                        mask="(00) 0000-0000?0" />
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-lg-3">
+                                <div class="form-group">
+                                    <label>Celular</label>
+                                    <input type="text" [(ngModel)]="cellphone" placeholder="Celular" class="form-control"
                                         mask="(00) 00000-0000" />
                                 </div>
                             </div>
 
-                            <div class="col-sm-6 col-lg-4">
+                            <div class="col-sm-6 col-lg-6">
                                 <div class="form-group">
                                     <label>E-mail</label>
-                                    <input type="text" [(ngModel)]="email" placeholder="E-Mail" class="form-control" />
+                                    <input type="text" [(ngModel)]="email" placeholder="E-Mail" class="form-control" [disabled]="true"/>
                                 </div>
                             </div>
 
@@ -98,7 +105,7 @@
                                     <label>Imagem da Empresa</label>
                                     <input *ngIf="!logoUrl && !preview" (change)="selectFile($event)"
                                         class="form-control" type="file" />
-                                    <p *ngIf="!logoUrl && !preview">Dimesao Sugerida: 1200x675 px Proporcao:16:9</p>
+                                    <p *ngIf="!logoUrl && !preview">Dimensão Sugerida: 1200x675 px Proporção:16:9</p>
 
                                     <a *ngIf="logoUrl || preview" class="btn btn-primary btn-round" type="button"
                                         (click)="open(classic,'' , '')">
@@ -338,12 +345,6 @@
                                                                 <input type="time" class="form-control"
                                                                     formControlName="end"
                                                                     [disabled]="daysArray.at(i).value.closed || daysArray.at(i).value.open24h" />
-                                                            </div>
-                                                            <div class="col-2 text-end">
-                                                                <button type="button"
-                                                                    class="btn btn-outline-danger btn-sm"
-                                                                    (click)="removeRange(i, j)"
-                                                                    [disabled]="rangesAt(i).length <= 1">Remover</button>
                                                             </div>
                                                         </div>
                                                     </div>
