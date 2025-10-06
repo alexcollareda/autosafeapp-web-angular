@@ -17,6 +17,7 @@ interface Service {
   companyTypeId: number;
   brands: number[];
   models: number[];
+  enableScheduling: boolean;
 }
 
 @Component({
