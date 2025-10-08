@@ -222,14 +222,14 @@ export class CalendarComponent implements OnInit {
       placa: apiData.vehiclePlate || '',
       duracao: 100,
       valor: 200,
-      data: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : null,
+      data: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : new Date(apiData.requestedDatetime),
       status: this.mapStatus(apiData.status)
     };
   }
 
   private mapEventsApiToLocal(apiData: any): any {
     return {
-      start: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : null,
+      start: apiData.confirmedDatetime ? new Date(apiData.confirmedDatetime) : new Date(apiData.requestedDatetime),
       title: apiData.clientName + ' ' + apiData.vehicleDescription,
       color: { primary: '#1e90ff', secondary: '#D1E7DD' }
     };
@@ -239,6 +239,7 @@ export class CalendarComponent implements OnInit {
     const statusMap: { [key: string]: string } = {
       'CREATED_BY_COMPANY': 'confirmado',
       'APPROVED_BY_COMPANY': 'confirmado',
+      'PENDING_CLIENT_REQUEST': 'pendente',
       'CONFIRMED': 'confirmado',
       'PENDING': 'pendente',
       'CANCELLED': 'cancelado',

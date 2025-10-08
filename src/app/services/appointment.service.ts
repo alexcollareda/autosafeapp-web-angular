@@ -19,5 +19,19 @@ export class AppointmentService {
     cancelAppointment(idAppointment: any, playloadCancel:any){
         return this.http.put<any>(environment.backendApiUrl + '/api/appointments/'+idAppointment+'/cancel/company',playloadCancel)
     }
-
+    getPendingAppointments(): Observable<any> {
+        return this.http.get<any>(environment.backendApiUrl + '/api/appointments/company/pending');
+    }
+    approveAppointment(idAppointment: any, payloadApprove: any) {
+        return this.http.put<any>(
+        environment.backendApiUrl + '/api/appointments/' + idAppointment + '/approve/company',
+        payloadApprove
+        );
+    }
+    rejectAppointment(idAppointment: any, payloadReject: any) {
+        return this.http.put<any>(
+        environment.backendApiUrl + '/api/appointments/' + idAppointment + '/cancel/company',
+        payloadReject
+        );
+    }
 }
