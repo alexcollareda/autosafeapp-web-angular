@@ -185,7 +185,7 @@ export class NewServicesComponent implements OnInit {
     if (this.service.brands?.length) {
       this.service.brands.forEach((b) => {
         const exists = this.listBrandModelSelected.some(
-          (item) => item.brand?.idBrand === b.idBrand
+          (item) => item.brand?.idBrand === b.idBrand && item.model === null
         );
         if (!exists) {
           const item: brandModelSelected = { brand: b, model: null };
@@ -350,10 +350,11 @@ export class NewServicesComponent implements OnInit {
       if (this.service.appliesToAllVehicles) {
         this.serviceRequest.brandIds = [];
         this.serviceRequest.modelIds = [];
-      } else {
+      } else {console.log(this.listBrandModelSelected);
         this.serviceRequest.brandIds = this.listBrandModelSelected
-          .map((item) => (item.brand ? item.brand.idBrand : null))
-          .filter((id): id is number => id !== null);
+        .filter(item => item.brand && item.brand.idBrand !== null && item.model === null)
+        .map(item => item.brand.idBrand);
+
         this.serviceRequest.modelIds = this.listBrandModelSelected
           .map((item) => (item.model ? item.model.idModel : null))
           .filter((id): id is number => id !== null);
