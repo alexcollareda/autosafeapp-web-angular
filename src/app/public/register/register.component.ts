@@ -63,12 +63,28 @@ export class RegisterComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        // 1. Tenta pegar o código da URL
         this.route.queryParamMap.subscribe(params => {
-    this.affiliateCode = params.get('affiliateCode');
-    if (this.affiliateCode) {
-      console.log('Affiliate Code Captured:', this.affiliateCode);
-    }
-  });
+            const codeFromUrl = params.get('affiliateCode');
+
+            if (codeFromUrl) {
+                // 2. Se achou na URL, SALVA no sessionStorage (e sobrescreve o antigo)
+                this.affiliateCode = codeFromUrl;
+                sessionStorage.setItem('affiliateCode', codeFromUrl);
+                console.log('Affiliate Code Capturado e Salvo (URL):', this.affiliateCode);
+            } else {
+                // 3. Se NÃO achou na URL, tenta RECUPERAR do sessionStorage
+                const codeFromStorage = sessionStorage.getItem('affiliateCode');
+
+                if (codeFromStorage) {
+                    this.affiliateCode = codeFromStorage;
+                    console.log('Affiliate Code Recuperado (SessionStorage):', this.affiliateCode);
+                } else {
+                    // Se não tem na URL e nem no storage, o valor será null
+                    console.log('Nenhum Affiliate Code encontrado.');
+                }
+            }
+        });
 
         this.metaService.updatePageMeta({
             title: 'Cadastre sua Empresa - Oficina, Estética Automotiva, Lava-Rápido | Autosafe',
