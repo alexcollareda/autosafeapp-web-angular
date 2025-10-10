@@ -124,6 +124,8 @@ export class DashboardComponent implements OnInit {
     },
     error: (err) => console.error('Erro ao aprovar agendamento', err)
   });
+
+  this.loadPendingAppointments();
 }
 
 
@@ -138,6 +140,7 @@ rejectAppointment(id: number) {
     },
     error: (err) => console.error('Erro ao rejeitar agendamento', err)
   });
+  this.loadPendingAppointments();
 }
 
 }

@@ -7,12 +7,12 @@
             <br />
             <br />
             <div class="row">
-                <div class="col-md-12 ml-auto col-xl-12 mr-auto">
+                <div class="col-md-12 ml-auto col-xl-12 mr-auto" *ngIf="pendingAppointments.length>0">
                     <div class="row">
                         <div class="pending-appointments-card">
                             <div class="pending-appointments-title">
                                 <i class="now-ui-icons ui-1_calendar-60"></i>
-                                Agendamentos Pendentes
+                              Agendamentos Pendentes
                             </div>
 
                             <div class="pending-appointments-container">
