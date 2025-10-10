@@ -268,34 +268,36 @@
             Seus serviços aparecerão apenas para donos de:
           </p>
         </div>
-        <div class="row" *ngIf="!service.appliesToAllVehicles && listBrandModelSelected.length > 0">
-          <div class="vehicles-list col-lg-12 col-lg-4" *ngFor="let brandModel of listBrandModelSelected; let i = index">
-            <div class="vehicle-item">
-              <div class="vehicle-info">
-                <div class="vehicle-icon-container">
-                  <svg class="vehicle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path
-                      d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18.4 10c-.2-.5-.8-.9-1.4-.9H7c-.6 0-1.2.4-1.4.9L3.5 11.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2" />
-                    <circle cx="7" cy="17" r="2" />
-                    <path d="M9 17h6" />
-                    <circle cx="17" cy="17" r="2" />
-                  </svg>
-                </div>
-                <div class="vehicle-details">
-                  <div class="vehicle-brand">{{brandModel.brand.name}}</div>
-                  <div class="vehicle-model" *ngIf="brandModel.model">{{brandModel.model.name}}</div>
-                </div>
-              </div>
-
-              <button class="remove-button" (click)="removeBrandModelSelected(i)">
-                <svg class="x-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M18 6 6 18" />
-                  <path d="M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-          </div>
+       <div class="row" *ngIf="!service.appliesToAllVehicles && listBrandModelSelected.length > 0">
+  <div class="vehicles-list col-lg-12">
+    <div class="vehicle-item" *ngFor="let brandModel of listBrandModelSelected; let i = index">
+      <div class="vehicle-info">
+        <div class="vehicle-icon-container">
+          <svg class="vehicle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18.4 10c-.2-.5-.8-.9-1.4-.9H7c-.6 0-1.2.4-1.4.9L3.5 11.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2" />
+            <circle cx="7" cy="17" r="2" />
+            <path d="M9 17h6" />
+            <circle cx="17" cy="17" r="2" />
+          </svg>
         </div>
+
+        <div class="vehicle-details">
+          <div class="vehicle-brand">{{ brandModel.brand.name }}</div>
+          <div class="vehicle-model" *ngIf="brandModel.model">{{ brandModel.model.name }}</div>
+        </div>
+      </div>
+
+      <button class="remove-button" (click)="removeBrandModelSelected(i)">
+        <svg class="x-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18" />
+          <path d="M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
 
         <br />
         <br />

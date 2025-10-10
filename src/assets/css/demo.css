@@ -554,3 +554,60 @@ html, body {
   background: url('assets/img/appbackground.png') center center / cover no-repeat;
   width: 100%;
 }
+/* Container principal (mantém a largura total do card) */
+.pending-appointments-card {
+  width: 100%;
+  background: #f7f9fc;
+  border-radius: 12px;
+  box-shadow: 0 6px 10px -4px rgba(0, 0, 0, 0.15);
+  color: #333;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+
+/* Área rolável interna */
+.pending-appointments-container {
+  max-height: 150px;          /* altura máxima visível */
+  overflow-y: auto;           /* ativa o scroll vertical */
+  padding-right: 8px;
+  margin-top: 10px;
+  scrollbar-width: thin;      /* Firefox */
+  scrollbar-color: #ff7800 #f7f9fc;
+}
+
+/* Scroll personalizado (Chrome/Safari/Edge) */
+.pending-appointments-container::-webkit-scrollbar {
+  width: 6px;
+}
+.pending-appointments-container::-webkit-scrollbar-thumb {
+  background-color: #ff7800;
+  border-radius: 10px;
+}
+.pending-appointments-container::-webkit-scrollbar-track {
+  background: #f7f9fc;
+}
+
+/* Cada item do agendamento */
+.pending-appointment-item {
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.pending-appointment-item:first-child {
+  border-top: none;
+}
+
+/* Título do card */
+.pending-appointments-title {
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending-appointments-title i {
+  font-size: 20px;
+  color: #ff7800;
+}
