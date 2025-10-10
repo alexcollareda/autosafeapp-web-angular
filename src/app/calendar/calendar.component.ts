@@ -515,6 +515,40 @@ export class CalendarComponent implements OnInit {
     this.appointmentService.cancelAppointment(agendamento.id, { message: this.messageToCancel !== null && this.messageToCancel !== '' ? this.messageToCancel : 'Cancelado pela Empresa' }).subscribe();
     this.initData();
   }
+ aprovarAgendamento(agendamento: AgendamentoAutomotivo): void {
+  const payload = {
+    message: 'Agendamento aprovado pela empresa via calendário'
+  };
+
+  this.appointmentService.approveAppointment(agendamento.id, payload).subscribe({
+    next: () => {
+      console.log('Agendamento aprovado com sucesso');
+      this.initData();
+    },
+    error: (err) => {
+      console.error('Erro ao aprovar agendamento', err);
+      alert('Erro ao aprovar agendamento');
+    }
+  });
+}
+
+rejeitarAgendamento(agendamento: AgendamentoAutomotivo): void {
+  const payload = {
+    message: 'Agendamento cancelado pela empresa via calendário'
+  };
+
+  this.appointmentService.rejectAppointment(agendamento.id, payload).subscribe({
+    next: () => {
+      console.log('Agendamento rejeitado com sucesso');
+      this.initData();
+    },
+    error: (err) => {
+      console.error('Erro ao rejeitar agendamento', err);
+      alert('Erro ao rejeitar agendamento');
+    }
+  });
+}
+
 
   private isSameDay(date1: Date, date2: Date): boolean {
     return date1.getDate() === date2.getDate() &&

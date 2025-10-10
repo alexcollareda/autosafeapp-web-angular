@@ -689,3 +689,38 @@
   background-color: #bd2130; /* Ainda mais escuro no clique */
   transform: translateY(0);
 }
+.appointment-approval-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+
+  .btn-approve,
+  .btn-reject {
+    flex: 1;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-approve {
+    background-color: #28a745; /* Verde padrão */
+    &:hover {
+      background-color: #218838;
+      transform: translateY(-1px);
+    }
+  }
+
+  .btn-reject {
+    background-color: #dc3545; /* Vermelho padrão */
+    &:hover {
+      background-color: #c82333;
+      transform: translateY(-1px);
+    }
+  }
+}
+
