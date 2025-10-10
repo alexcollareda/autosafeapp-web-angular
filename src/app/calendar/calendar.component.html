@@ -114,6 +114,14 @@
                                     {{ getStatusIcon(agendamento.status) }} {{ getStatusText(agendamento.status) }}
                                 </span>
                             </div>
+                            <div class="appointment-approval-buttons" *ngIf="agendamento.status === 'pendente'">
+                            <button class="btn-approve" (click)="aprovarAgendamento(agendamento)">
+                                ✓ Aprovar
+                            </button>
+                            <button class="btn-reject" (click)="rejeitarAgendamento(agendamento)">
+                                ✕ Rejeitar
+                            </button>
+                            </div>
 
                             <div *ngIf="agendamento.observacoes" class="appointment-notes">
                                 <small>📝 {{ agendamento.observacoes }}</small>

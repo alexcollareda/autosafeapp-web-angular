@@ -6,6 +6,7 @@ import { CepService } from 'app/services/cep.service';
 import { CompaniesService } from 'app/services/companies.service';
 import { isValidCnpj } from '../../utils/cnpj.utils';
 import { MetaService } from 'app/services/meta.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 interface CompanyType {
     id: number;
@@ -45,6 +46,7 @@ export class RegisterComponent implements OnInit {
     companyId: number | null = null;
     isCnpjExiste = false;
     isEmailExiste = false;
+    affiliateCode: string | null = null;
 
     step: number = 1;
     buttonDescription: string = 'Continuar Cadastro';
@@ -55,10 +57,35 @@ export class RegisterComponent implements OnInit {
         private cepService: CepService,
         private companiesService: CompaniesService,
         private loginCompanyService: LoginCompanyService,
-        private metaService: MetaService
+        private metaService: MetaService,
+        private route: ActivatedRoute,
+        private router: Router,
     ) { }
 
     ngOnInit() {
+        // 1. Tenta pegar o código da URL
+        this.route.queryParamMap.subscribe(params => {
+            const codeFromUrl = params.get('affiliateCode');
+
+            if (codeFromUrl) {
+                // 2. Se achou na URL, SALVA no sessionStorage (e sobrescreve o antigo)
+                this.affiliateCode = codeFromUrl;
+                sessionStorage.setItem('affiliateCode', codeFromUrl);
+                console.log('Affiliate Code Capturado e Salvo (URL):', this.affiliateCode);
+            } else {
+                // 3. Se NÃO achou na URL, tenta RECUPERAR do sessionStorage
+                const codeFromStorage = sessionStorage.getItem('affiliateCode');
+
+                if (codeFromStorage) {
+                    this.affiliateCode = codeFromStorage;
+                    console.log('Affiliate Code Recuperado (SessionStorage):', this.affiliateCode);
+                } else {
+                    // Se não tem na URL e nem no storage, o valor será null
+                    console.log('Nenhum Affiliate Code encontrado.');
+                }
+            }
+        });
+
         this.metaService.updatePageMeta({
             title: 'Cadastre sua Empresa - Oficina, Estética Automotiva, Lava-Rápido | Autosafe',
             description: '📈 Cadastre sua oficina, estética automotiva, lava-rápido, lava-jato ou funilaria no Autosafe. Aumente sua clientela e receba mais pedidos. Cadastro gratuito para prestadores!',
@@ -317,7 +344,8 @@ export class RegisterComponent implements OnInit {
                 complement: '',
                 latitude: 0,
                 longitude: 0
-            }
+            },
+            affiliateCode: this.affiliateCode
         };
 
         this.companiesService.createCompany(companyPayload).subscribe({

@@ -7,8 +7,47 @@
             <br />
             <br />
             <div class="row">
-                <div class="col-md-12 ml-auto col-xl-12 mr-auto">
+                <div class="col-md-12 ml-auto col-xl-12 mr-auto" *ngIf="pendingAppointments.length>0">
                     <div class="row">
+                        <div class="pending-appointments-card">
+                            <div class="pending-appointments-title">
+                                <i class="now-ui-icons ui-1_calendar-60"></i>
+                              Agendamentos Pendentes
+                            </div>
+
+                            <div class="pending-appointments-container">
+                                <div
+                                *ngFor="let appt of pendingAppointments"
+                                class="pending-appointment-item"
+                                >
+                                <p>
+                                    <b>{{ appt.clientName }}</b> solicitou:
+                                    <b>{{ appt.serviceTitle }}</b>
+                                </p>
+                                <p style="font-size: 13px; color: #666;">
+                                    {{ appt.requestedDatetime | date:'dd/MM/yyyy HH:mm' }}
+                                </p>
+
+                                <div class="d-flex gap-2">
+                                    <button
+                                    class="btn btn-success btn-round btn-sm"
+                                    (click)="approveAppointment(appt.id)"
+                                    >
+                                    ✓ Aprovar
+                                    </button>
+                                    <button
+                                    class="btn btn-danger btn-round btn-sm"
+                                    (click)="rejectAppointment(appt.id)"
+                                    >
+                                    ✕ Rejeitar
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
+                            </div>
+                            </div>
+                        <div class="row">
                         <div class="col-lg-4 col-md-4 col-sm-12">
                             <!-- Aqui se inicia um novo card, deve ser feito o ngFor aqui-->
                             <div class="autosafe-card">

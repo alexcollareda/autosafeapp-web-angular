@@ -6,6 +6,7 @@ import { ServicesService } from 'app/services/services.service';
 import { MetricsService } from 'app/services/metrics.service';
 import { OperatingHoursService } from 'app/services/operating-hours.service';
 import { Router } from '@angular/router';
+import { AppointmentService } from 'app/services/appointment.service';
 
 export interface Informative {
   message: string;
@@ -30,9 +31,10 @@ export class DashboardComponent implements OnInit {
     callCount: number = 0;
     viewCount: number = 0;
     informatives: Informative[] = [];
+    pendingAppointments: any[] = [];
 
     constructor(private authService: AuthService, private servicesService: ServicesService, private reviewService: ReviewService, private metricsService:MetricsService, private operatingHoursService: OperatingHoursService,
-    private router: Router, private companiesService: CompaniesService,) {   
+    private router: Router, private companiesService: CompaniesService, private appointmentService: AppointmentService,) {   
     }
 
   ngOnInit(): void {
@@ -51,8 +53,8 @@ export class DashboardComponent implements OnInit {
         this.viewCount = data.companyView;
         this.callCount = data.clickPhoneCompany;
       });
+      this.loadPendingAppointments();
     
-
     this.reviewService.findMyReviews().subscribe(
       (data) => {
 
@@ -100,5 +102,45 @@ export class DashboardComponent implements OnInit {
 
   goToMyCompanyTab(tab: string) {
   this.router.navigate(['/app/my-company'], { queryParams: { tab } });
+  }
+
+  loadPendingAppointments() {
+    this.appointmentService.getPendingAppointments().subscribe({
+      next: (data) => {
+        this.pendingAppointments = data || [];
+      },
+      error: (err) => console.error('Erro ao buscar agendamentos pendentes', err)
+    });
+  }
+
+ approveAppointment(id: number) {
+  const payload = {
+    message: 'Agendamento aprovado pela empresa'
+  };
+
+  this.appointmentService.approveAppointment(id, payload).subscribe({
+    next: () => {
+      this.pendingAppointments = this.pendingAppointments.filter(a => a.id !== id);
+    },
+    error: (err) => console.error('Erro ao aprovar agendamento', err)
+  });
+
+  this.loadPendingAppointments();
 }
+
+
+rejectAppointment(id: number) {
+  const payload = {
+    message: 'Cancelado pela empresa via painel'
+  };
+
+  this.appointmentService.rejectAppointment(id, payload).subscribe({
+    next: () => {
+      this.pendingAppointments = this.pendingAppointments.filter(a => a.id !== id);
+    },
+    error: (err) => console.error('Erro ao rejeitar agendamento', err)
+  });
+  this.loadPendingAppointments();
+}
+
 }
