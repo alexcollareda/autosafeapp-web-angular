@@ -252,6 +252,7 @@ export class NewServicesComponent implements OnInit {
 
   toggleCompanyType(id: number) {
     this.selectedCompanyTypeIds = id;
+    this.service.companyTypeId = id;
   }
 
   isCompanyTypeSelected(id: number): boolean {
